@@ -1,0 +1,8 @@
+{
+  "name": "@gh-inbox/main",
+  "version": "1.0.0",
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "^22.5.0"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "name": "gh-inbox",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "out/main/main.js",
+  "scripts": {
+    "build": "tsc --build . && mkdir -p out/static && cp -r src/static/* out/static/",
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "format": "prettier --write .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@electron-forge/cli": "^7.8.1",
+    "@electron-forge/maker-squirrel": "^7.8.1",
+    "@electron-forge/maker-zip": "^7.8.1",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.8.1",
+    "@electron-forge/plugin-fuses": "^7.8.1",
+    "@electron-forge/publisher-github": "^7.8.1",
+    "@electron/fuses": "^1.8.0",
+    "@eslint/js": "^9.31.0",
+    "@types/electron": "^1.6.12",
+    "electron": "^37.2.1",
+    "eslint": "^9.31.0",
+    "eslint-config-prettier": "^10.1.5",
+    "prettier": "^3.6.2",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.37.0"
+  },
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.1"
+  },
+  "workspaces": [
+    "src/app",
+    "src/main"
+  ]
+}

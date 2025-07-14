@@ -1,0 +1,8 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "module": "esnext",
+    "lib": ["es2024", "DOM", "DOM.AsyncIterable", "DOM.Iterable"]
+  },
+  "include": ["./**/*.ts"]
+}

@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "incremental": true,
+    "composite": true,
+    "tsBuildInfoFile": "./out/.tsbuildinfo",
+  },
+  "references": [
+    { "path": "./src/app/tsconfig.json" },
+    { "path": "./src/main/tsconfig.json" }
+  ]
+}

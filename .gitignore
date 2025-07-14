@@ -1,0 +1,9 @@
+!.gitignore
+
+node_modules
+
+!.vscode
+!.vscode/launch.json
+.vscode/*
+
+out/
