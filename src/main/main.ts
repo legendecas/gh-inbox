@@ -1,6 +1,6 @@
 import { app, BrowserWindow, ipcMain } from "electron";
 import path from "node:path";
-import { kAppDir, kStaticDir } from "./constants.ts";
+import { kAppDir } from "./constants.ts";
 
 function createWindow() {
   console.log("Creating main window", kAppDir);
@@ -13,7 +13,7 @@ function createWindow() {
     },
   });
 
-  win.loadFile(path.join(kStaticDir, "index.html"));
+  win.loadFile(path.join(kAppDir, "index.html"));
 }
 
 app.whenReady().then(() => {

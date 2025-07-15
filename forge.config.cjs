@@ -1,11 +1,18 @@
 const { FusesPlugin } = require("@electron-forge/plugin-fuses");
 const { FuseV1Options, FuseVersion } = require("@electron/fuses");
+const fs = require("node:fs");
+const childProcess = require("node:child_process");
 
+const enableAsar = !process.env.DEBUG;
+const projectDir = __dirname;
 module.exports = {
   packagerConfig: {
-    asar: true,
+    asar: enableAsar,
+    ignore: ["src", /^\..*/],
   },
-  rebuildConfig: {},
+  rebuildConfig: {
+    force: true,
+  },
   makers: [
     {
       name: "@electron-forge/maker-squirrel",
@@ -30,10 +37,14 @@ module.exports = {
     },
   ],
   plugins: [
-    {
-      name: "@electron-forge/plugin-auto-unpack-natives",
-      config: {},
-    },
+    ...(enableAsar
+      ? [
+          {
+            name: "@electron-forge/plugin-auto-unpack-natives",
+            config: {},
+          },
+        ]
+      : []),
     // Fuses are used to enable/disable various Electron functionality
     // at package time, before code signing the application
     new FusesPlugin({
@@ -46,4 +57,20 @@ module.exports = {
       [FuseV1Options.OnlyLoadAppFromAsar]: true,
     }),
   ],
+  hooks: {
+    generateAssets: async (_forgeConfig) => {
+      childProcess.execSync("npm run build", {
+        stdio: "inherit",
+        cwd: projectDir,
+      });
+
+      fs.globSync("src/app/**/*.html", { cwd: projectDir }).forEach((file) => {
+        fs.copyFileSync(file, file.replace("src/", "dist/"));
+      });
+
+      fs.globSync("src/static/**/*", { cwd: projectDir }).forEach((file) => {
+        fs.copyFileSync(file, file.replace("src/", "dist/"));
+      });
+    },
+  },
 };

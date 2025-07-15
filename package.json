@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "description": "",
   "type": "module",
-  "main": "out/main/main.js",
+  "main": "dist/main/main.js",
   "scripts": {
-    "build": "tsc --build . && mkdir -p out/static && cp -r src/static/* out/static/",
+    "build": "tsc --build .",
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
+    "lint": "eslint . --ext .ts,.js",
     "format": "prettier --write .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -24,11 +25,13 @@
     "@electron-forge/publisher-github": "^7.8.1",
     "@electron/fuses": "^1.8.0",
     "@eslint/js": "^9.31.0",
+    "@tailwindcss/cli": "^4.1.11",
     "@types/electron": "^1.6.12",
     "electron": "^37.2.1",
     "eslint": "^9.31.0",
     "eslint-config-prettier": "^10.1.5",
     "prettier": "^3.6.2",
+    "tailwindcss": "^4.1.11",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.37.0"
   },
@@ -38,5 +41,6 @@
   "workspaces": [
     "src/app",
     "src/main"
-  ]
+  ],
+  "config.forge": "forge.config.cjs"
 }
