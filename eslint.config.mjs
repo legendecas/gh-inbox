@@ -3,9 +3,8 @@ import prettierConfig from "eslint-config-prettier";
 import tseslint from "typescript-eslint";
 import { globalIgnores } from "eslint/config";
 
-
 export default tseslint.config(
-  globalIgnores(['dist', 'out']),
+  globalIgnores(["dist", "out"]),
   eslint.configs.recommended,
   tseslint.configs.strict,
   tseslint.configs.stylistic,
@@ -15,11 +14,11 @@ export default tseslint.config(
       "@typescript-eslint/no-unused-vars": [
         "error",
         {
-          "args": "all",
-          "argsIgnorePattern": "^_",
-        }
+          args: "all",
+          argsIgnorePattern: "^_",
+        },
       ],
-    }
+    },
   },
   {
     files: ["*.cjs"],
@@ -32,7 +31,7 @@ export default tseslint.config(
         require: "readonly",
         module: "readonly",
         __dirname: "readonly",
-      }
-    }
-  }
+      },
+    },
+  },
 );
