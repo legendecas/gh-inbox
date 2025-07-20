@@ -5,6 +5,12 @@ declare global {
     node: () => string;
     chrome: () => string;
     electron: () => string;
-    ping: () => Promise<string>;
+  };
+  var ipc: {
+    invoke: (
+      namespace: string,
+      channel: string,
+      ...args: unknown[]
+    ) => Promise<unknown>;
   };
 }

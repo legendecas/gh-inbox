@@ -8,3 +8,9 @@ contextBridge.exposeInMainWorld("versions", {
   ping: () => ipcRenderer.invoke("ping"),
   // we can also expose variables, not just functions
 });
+
+contextBridge.exposeInMainWorld("ipc", {
+  invoke: (namespace: string, channel: string, ...args: unknown[]) => {
+    return ipcRenderer.invoke(`${namespace}:${channel}`, ...args);
+  },
+});

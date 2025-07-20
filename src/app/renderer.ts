@@ -1,12 +1,18 @@
 import type {} from "./ipc.ts";
 
-// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 const information = document.getElementById("info")!;
 information.innerText = `This app is using Chrome (v${versions.chrome()}), Node.js (v${versions.node()}), and Electron (v${versions.electron()})`;
 
-const func = async () => {
-  const response = await window.versions.ping();
-  console.log(response); // prints out 'pong'
-};
+async function fetchNotifications() {
+  try {
+    const notifications = await window.ipc.invoke("threads", "list");
+    console.log("Fetched notifications:", notifications);
+  } catch (error) {
+    console.error("Error fetching notifications:", error);
+  }
+}
 
-func();
+const btn = document.getElementById("fetch-notifications");
+if (btn) {
+  btn.addEventListener("click", fetchNotifications);
+}
