@@ -1,6 +1,6 @@
 import { app, BrowserWindow } from "electron";
 import path from "node:path";
-import { kAppDir } from "./constants.ts";
+import { kAppDir, kPreloadDir } from "./constants.ts";
 import { Application } from "./application.ts";
 
 const instance = new Application();
@@ -12,7 +12,7 @@ function createWindow() {
     width: 800,
     height: 600,
     webPreferences: {
-      preload: path.join(kAppDir, "preload.js"),
+      preload: path.join(kPreloadDir, "preload.js"),
     },
   });
 

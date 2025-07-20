@@ -1,8 +1,10 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "jsx": "react",
     "module": "esnext",
-    "lib": ["es2024", "DOM", "DOM.AsyncIterable", "DOM.Iterable"]
+    "moduleResolution": "bundler",
+    "lib": ["ES2024", "DOM", "DOM.AsyncIterable", "DOM.Iterable"]
   },
-  "include": ["./**/*.ts"]
+  "include": ["./**/*.ts", "./**/*.tsx"]
 }

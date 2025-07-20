@@ -1,6 +1,5 @@
 const { FusesPlugin } = require("@electron-forge/plugin-fuses");
 const { FuseV1Options, FuseVersion } = require("@electron/fuses");
-const fs = require("node:fs");
 const childProcess = require("node:child_process");
 
 const enableAsar = !process.env.DEBUG;
@@ -62,14 +61,6 @@ module.exports = {
       childProcess.execSync("npm run build", {
         stdio: "inherit",
         cwd: projectDir,
-      });
-
-      fs.globSync("src/app/**/*.html", { cwd: projectDir }).forEach((file) => {
-        fs.copyFileSync(file, file.replace("src/", "dist/"));
-      });
-
-      fs.globSync("src/static/**/*", { cwd: projectDir }).forEach((file) => {
-        fs.copyFileSync(file, file.replace("src/", "dist/"));
       });
     },
   },
