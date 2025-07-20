@@ -14,6 +14,10 @@ await $`tsc --build .`;
 await $`npx @tailwindcss/cli -i ./src/app/index.css -o ./dist/app/index.css`;
 
 await $`cp ./src/app/index.html ./dist/app/index.html`;
-await $`cp -R ./src/generated ./dist/generated`;
+
+await $`rm -rf ./dist/generated`;
+await $`cp -R ./src/generated ./dist/`;
+
+await $`rm -rf ./dist/prisma`;
 await $`mkdir -p ./dist/prisma`;
 await $`cp -R ./src/prisma/migrations ./dist/prisma/`;

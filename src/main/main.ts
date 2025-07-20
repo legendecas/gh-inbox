@@ -3,6 +3,8 @@ import path from "node:path";
 import { kAppDir } from "./constants.ts";
 import { Migrator } from "./database/migrator.ts";
 import { Prisma } from "./database/prisma.ts";
+import { GitHubClient } from "./github/client.ts";
+import { FetchNotificationsTask } from "./tasks/fetch-notifications.ts";
 
 async function test() {
   const databasePath = path.join(process.cwd(), "prisma.db");
@@ -10,18 +12,13 @@ async function test() {
   await migrator.runMigrations();
 
   await using db = new Prisma(databasePath);
-  await db.instance.label.create({
-    data: {
-      id: crypto.randomUUID(),
-      name: "Test Label",
-      color: "#FF5733",
-      description: "This is a test label",
-      url: "https://example.com",
-    },
-  });
 
-  const labels = await db.instance.label.findMany();
-  console.log("Labels in database:", labels);
+  const gh = new GitHubClient(
+    "https://api.github.com",
+    process.env.GITHUB_TOKEN || "",
+  );
+  const task = new FetchNotificationsTask(db, gh);
+  await task.run();
 }
 
 function createWindow() {

@@ -12,51 +12,100 @@ datasource db {
 }
 
 model Thread {
-  id           String  @unique
-  unread       Boolean
+  id           String  @id
   reasons      String
-  updated_at   String
-  last_read_at String
+  updated_at   DateTime
+
+  unread       Boolean
+  last_read_at DateTime?
+
+  archived     Boolean @default(false)
+  archived_at  DateTime?
+
+  bookmarked   Boolean @default(false)
+  bookmarked_at DateTime?
 
   subject_title              String
   subject_url                String
   subject_type               String
-  subject_latest_comment_url String
+  subject_latest_comment_url String?
 
   repository_id String
 
   labels ThreadLabel[]
+  labels_updated_at String?
+
+  endpoint_id Int
 }
 
 model Repository {
-  id        String @unique
+  id        String @id
   name      String
   full_name String
-  private   String
+  private   Boolean
 
   description String
   fork        Boolean
 
   html_url String
+  owner_id String
+
+  labels Label[]
+
+  endpoint_id Int
+}
+
+model Owner {
+  id        String @id
+  login     String
+  avatar_url String
+  type      String
+
+  endpoint_id Int
 }
 
 model Label {
-  id          String @unique
+  id          String @id
   url         String
   name        String
   color       String
   description String
 
+  repository_id String
+
+  repository Repository @relation(fields: [repository_id], references: [id])
   threads ThreadLabel[]
+
+  endpoint_id Int
 }
 
 model ThreadLabel {
-  id          String @unique
+  id          Int      @id @default(autoincrement())
   thread_id   String
   label_id    String
-  created_at  String
-  updated_at  String
 
   thread Thread @relation(fields: [thread_id], references: [id])
   label Label @relation(fields: [label_id], references: [id])
+
+  endpoint_id Int
+}
+
+model Task {
+  id Int @id @default(autoincrement())
+  type String @unique
+
+  last_run DateTime?
+  next_run DateTime?
+}
+
+model Endpoint {
+  id Int @id @default(autoincrement())
+  url String
+
+  username String
+  token String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  expires_at DateTime
 }

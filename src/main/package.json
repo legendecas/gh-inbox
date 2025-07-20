@@ -2,7 +2,11 @@
   "name": "@gh-inbox/main",
   "version": "1.0.0",
   "type": "module",
+  "scripts": {
+    "test": "node --test"
+  },
   "devDependencies": {
+    "@octokit/openapi-types": "^25.1.0",
     "@types/node": "^22.5.0"
   },
   "dependencies": {

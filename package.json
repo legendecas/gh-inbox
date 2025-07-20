@@ -12,7 +12,7 @@
     "publish": "electron-forge publish",
     "lint": "eslint . --ext .ts,.js",
     "format": "prettier --write .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npm run test --workspaces --if-present"
   },
   "author": "",
   "license": "ISC",
