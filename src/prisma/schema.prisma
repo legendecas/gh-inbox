@@ -1,0 +1,62 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Thread {
+  id           String  @unique
+  unread       Boolean
+  reasons      String
+  updated_at   String
+  last_read_at String
+
+  subject_title              String
+  subject_url                String
+  subject_type               String
+  subject_latest_comment_url String
+
+  repository_id String
+
+  labels ThreadLabel[]
+}
+
+model Repository {
+  id        String @unique
+  name      String
+  full_name String
+  private   String
+
+  description String
+  fork        Boolean
+
+  html_url String
+}
+
+model Label {
+  id          String @unique
+  url         String
+  name        String
+  color       String
+  description String
+
+  threads ThreadLabel[]
+}
+
+model ThreadLabel {
+  id          String @unique
+  thread_id   String
+  label_id    String
+  created_at  String
+  updated_at  String
+
+  thread Thread @relation(fields: [thread_id], references: [id])
+  label Label @relation(fields: [label_id], references: [id])
+}

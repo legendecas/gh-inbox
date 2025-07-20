@@ -1,0 +1,71 @@
+import { DatabaseSync } from "node:sqlite";
+import { readdir, readFile } from "node:fs/promises";
+import { kPrismaDir } from "../constants.js";
+
+const kMigrationsDir = `${kPrismaDir}/migrations`;
+const kMigrationTableName = "_migrations";
+const kCreateMigrationTable = `CREATE TABLE IF NOT EXISTS "${kMigrationTableName}" (
+    "id"                    TEXT PRIMARY KEY NOT NULL,
+    "checksum"              TEXT NOT NULL,
+    "finished_at"           DATETIME,
+    "migration_name"        TEXT NOT NULL,
+    "logs"                  TEXT,
+    "rolled_back_at"        DATETIME,
+    "started_at"            DATETIME NOT NULL DEFAULT current_timestamp,
+    "applied_steps_count"   INTEGER UNSIGNED NOT NULL DEFAULT 0
+)`;
+const kListMigrations = `SELECT migration_name FROM ${kMigrationTableName} ORDER BY started_at`;
+const kCreateMigration = `INSERT INTO ${kMigrationTableName} (id, checksum, finished_at, migration_name, logs, rolled_back_at, started_at, applied_steps_count) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+
+const decoder = new TextDecoder("utf-8");
+export class Migrator {
+  #db: DatabaseSync;
+
+  constructor(databasePath: string) {
+    this.#db = new DatabaseSync(databasePath);
+  }
+
+  async runMigrations() {
+    const migrations = (await readdir(kMigrationsDir))
+      .filter((name) => name !== "migration_lock.toml")
+      .sort();
+
+    this.#db.exec(kCreateMigrationTable);
+
+    const existingMigrations = this.#db
+      .prepare(kListMigrations)
+      .all()
+      .map((row) => row.migration_name);
+
+    const insert = this.#db.prepare(kCreateMigration);
+    for (const migration of migrations) {
+      if (existingMigrations.includes(migration)) {
+        console.log(`Skipping migration ${migration}, already applied.`);
+        continue;
+      }
+      const startedAt = Date.now();
+      const migrationPath = `${kMigrationsDir}/${migration}/migration.sql`;
+      const sqlBuffer = await readFile(migrationPath);
+      const sql = decoder.decode(sqlBuffer);
+      this.#db.exec(sql);
+
+      const finishedAt = Date.now();
+      const checksum = await crypto.subtle.digest("SHA-256", sqlBuffer);
+      insert.run(
+        crypto.randomUUID(),
+        Buffer.from(checksum).toString("hex"),
+        finishedAt,
+        migration,
+        "",
+        null,
+        startedAt,
+        1,
+      );
+    }
+  }
+
+  [Symbol.dispose]() {
+    console.log("Closing database connection");
+    this.#db.close();
+  }
+}
