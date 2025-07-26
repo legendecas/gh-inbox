@@ -16,6 +16,7 @@ export class ThreadsService implements IService {
   async listThreads() {
     const threads = await this.#db.instance.thread.findMany({
       where: { archived: false },
+      orderBy: { updated_at: "desc" },
     });
     return threads;
   }

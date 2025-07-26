@@ -6,5 +6,8 @@
     "moduleResolution": "bundler",
     "lib": ["ES2024", "DOM", "DOM.AsyncIterable", "DOM.Iterable"]
   },
+  "references": [
+    { "path": "../common" }
+  ],
   "include": ["./**/*.ts", "./**/*.tsx"]
 }

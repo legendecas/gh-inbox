@@ -1,0 +1,11 @@
+.status-open {
+  color: #28a745 !important;
+}
+
+.status-merged {
+  color: #a128ca !important;
+}
+
+.status-closed {
+  color: #dc3545 !important;
+}
