@@ -1,7 +1,7 @@
 import React from "react";
-import { useThreads } from '../../hooks/use-threads';
-import { Header } from './header';
-import { ThreadItem } from './thread-item';
+import { useThreads } from "../../hooks/use-threads";
+import { Header } from "./header";
+import { ThreadItem } from "./thread-item";
 
 export function Content() {
   const threads = useThreads();
@@ -10,7 +10,7 @@ export function Content() {
       <Header />
       <table className="threads-table">
         <tbody>
-          {threads.map(thread => (
+          {threads.map((thread) => (
             <ThreadItem key={thread.id} thread={thread} />
           ))}
         </tbody>

@@ -1,3 +1,9 @@
+import type {
+  IpcEndpointParameters,
+  IpcEndpointReturnType,
+  IpcEndpoints,
+} from "../common/ipc/ipc";
+
 export {};
 
 declare global {
@@ -7,10 +13,13 @@ declare global {
     electron: () => string;
   };
   var ipc: {
-    invoke<ReturnType = unknown>(
-      namespace: string,
-      channel: string,
-      ...args: unknown[]
-    ): Promise<ReturnType>;
+    invoke<
+      Namespace extends keyof IpcEndpoints,
+      Channel extends keyof IpcEndpoints[Namespace],
+    >(
+      namespace: Namespace,
+      channel: Channel,
+      ...args: IpcEndpointParameters<Namespace, Channel>
+    ): Promise<IpcEndpointReturnType<Namespace, Channel>>;
   };
 }

@@ -16,7 +16,7 @@ export function useThreads() {
   useEffect(() => {
     const fetch = async () => {
       try {
-        const data = await window.ipc.invoke<Thread[]>("threads", "list");
+        const data = await window.ipc.invoke("threads", "list");
         setThreads(data);
       } catch (error) {
         console.error("Error fetching threads:", error);
