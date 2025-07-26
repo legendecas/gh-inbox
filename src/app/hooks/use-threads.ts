@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import type { Thread } from "../../generated/prisma/index.js";
 
 export async function fetchThreads() {

@@ -1,32 +1,17 @@
 import { app, BrowserWindow } from "electron";
-import path from "node:path";
-import { kAppDir, kPreloadDir } from "./constants.ts";
 import { Application } from "./application.ts";
 
 const instance = new Application();
 
-function createWindow() {
-  console.log("Creating main window", kAppDir);
-
-  const win = new BrowserWindow({
-    width: 800,
-    height: 600,
-    webPreferences: {
-      preload: path.join(kPreloadDir, "preload.js"),
-    },
-  });
-
-  win.loadFile(path.join(kAppDir, "index.html"));
-}
-
 app.whenReady().then(async () => {
   await instance.onReady();
 
-  createWindow();
+  await instance.loadDevTools();
+  instance.createMainWindow();
 
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
+      instance.createMainWindow();
     }
   });
 });

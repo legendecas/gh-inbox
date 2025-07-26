@@ -1,6 +1,7 @@
 import { DatabaseSync } from "node:sqlite";
 import { readdir, readFile } from "node:fs/promises";
 import { kPrismaDir } from "../constants.js";
+import { logger } from "../utils/logger.ts";
 
 const kMigrationsDir = `${kPrismaDir}/migrations`;
 const kMigrationTableName = "_migrations";
@@ -40,7 +41,7 @@ export class Migrator {
     const insert = this.#db.prepare(kCreateMigration);
     for (const migration of migrations) {
       if (existingMigrations.includes(migration)) {
-        console.log(`Skipping migration ${migration}, already applied.`);
+        logger.log(`Skipping migration ${migration}, already applied.`);
         continue;
       }
       const startedAt = Date.now();
@@ -65,7 +66,7 @@ export class Migrator {
   }
 
   [Symbol.dispose]() {
-    console.log("Closing database connection");
+    logger.log("Closing database connection");
     this.#db.close();
   }
 }

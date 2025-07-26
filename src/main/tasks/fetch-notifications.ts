@@ -1,6 +1,7 @@
 import type { Prisma } from "../database/prisma.ts";
 import { GitHubClient } from "../github/client.ts";
 import type { Owner, Thread, ThreadRepository } from "../github/types.ts";
+import { logger } from "../utils/logger.ts";
 import {
   formatReasons,
   parseHeaderLink,
@@ -23,14 +24,14 @@ export class FetchNotificationsTask {
     let page: number | undefined = 1;
     while (true) {
       try {
-        console.log(`Fetching page: ${page}`);
+        logger.log(`Fetching page: ${page}`);
         page = await this.runForPage(page, since, before);
         if (page === undefined) {
-          console.log("All pages fetched");
+          logger.log("All pages fetched");
           break; // No more pages to fetch
         }
       } catch (error) {
-        console.error("Error fetching notifications:", error);
+        logger.error("Error fetching notifications:", error);
         break; // Exit on error
       }
     }
@@ -59,10 +60,10 @@ export class FetchNotificationsTask {
       );
     }
     if (threads.length === 0) {
-      console.log("No new notifications");
+      logger.log("No new notifications");
       return;
     }
-    console.log(`Fetched ${threads.length} notifications`);
+    logger.log(`Fetched ${threads.length} notifications`);
 
     await this.saveNotifications(threads);
 

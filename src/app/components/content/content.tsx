@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 
 export function Content() {
   return (
-    <div className='content'>
+    <div className="content">
       <h2>Content</h2>
     </div>
   );

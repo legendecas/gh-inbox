@@ -24,11 +24,16 @@ export async function buildApp() {
   `;
 }
 
-export async function serveApp(port: number) {
+export async function serveApp(port: number, signal: AbortSignal) {
   using _dir = chdir("src/app");
-  await $`vite -c vite.config.ts \
+  await $({ signal })`vite -c vite.config.ts \
     --host 127.0.0.1 \
     --port ${port} \
     --strictPort
-  `;
+  `.catch((err) => {
+    if (err.signal === "SIGTERM") {
+      return;
+    }
+    throw err;
+  });
 }

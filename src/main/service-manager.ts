@@ -1,3 +1,5 @@
+import { logger } from "./utils/logger.ts";
+
 export class ServiceManager {
   #services: Map<string, IService>;
 
@@ -42,7 +44,7 @@ export class IpcHandle {
         try {
           return await listener.apply(this.#service, args);
         } catch (error) {
-          console.error(`Error handling IPC message ${channel}:`, error);
+          logger.error(`Error handling IPC message ${channel}:`, error);
         }
       },
     );
