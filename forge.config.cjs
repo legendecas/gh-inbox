@@ -1,9 +1,7 @@
 const { FusesPlugin } = require("@electron-forge/plugin-fuses");
 const { FuseV1Options, FuseVersion } = require("@electron/fuses");
-const childProcess = require("node:child_process");
 
 const enableAsar = !process.env.DEBUG;
-const projectDir = __dirname;
 module.exports = {
   packagerConfig: {
     asar: enableAsar,
@@ -56,12 +54,4 @@ module.exports = {
       [FuseV1Options.OnlyLoadAppFromAsar]: true,
     }),
   ],
-  hooks: {
-    generateAssets: async (_forgeConfig) => {
-      childProcess.execSync("npm run build", {
-        stdio: "inherit",
-        cwd: projectDir,
-      });
-    },
-  },
 };

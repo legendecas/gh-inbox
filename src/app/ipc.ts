@@ -7,10 +7,10 @@ declare global {
     electron: () => string;
   };
   var ipc: {
-    invoke: (
+    invoke<ReturnType = unknown>(
       namespace: string,
       channel: string,
       ...args: unknown[]
-    ) => Promise<unknown>;
+    ): Promise<ReturnType>;
   };
 }
