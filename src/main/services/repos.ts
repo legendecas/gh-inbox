@@ -36,16 +36,24 @@ export class ReposService implements IService, ReposEndpoint {
       }),
     );
 
-    const namespaces = repoInfos.reduce((acc, repo) => {
-      const owner = ownerFromFullName(repo.full_name);
-      const namespace = acc.get(owner);
+    const namespaces = new Map<string, RepoNamespace>();
+    for (const repo of repoInfos) {
+      const ownerFullName = ownerFromFullName(repo.full_name);
+      const namespace = namespaces.get(ownerFullName);
       if (namespace) {
         namespace.repos.push(repo);
       } else {
-        acc.set(owner, { owner, repos: [repo] });
+        const owner = await this.#db.instance.owner.findUnique({
+          where: { id: repo.owner_id },
+        });
+        if (owner == null) continue; // Skip if owner not found
+        namespaces.set(ownerFullName, {
+          owner: ownerFullName,
+          avatar_url: owner.avatar_url,
+          repos: [repo],
+        });
       }
-      return acc;
-    }, new Map<string, RepoNamespace>());
+    }
 
     return Array.from(namespaces.values());
   }

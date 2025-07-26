@@ -6,6 +6,7 @@ export interface RepoInfo extends Repository {
 
 export interface RepoNamespace {
   owner: string;
+  avatar_url: string;
   repos: RepoInfo[];
 }
 

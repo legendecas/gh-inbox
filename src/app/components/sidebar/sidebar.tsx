@@ -11,11 +11,18 @@ export function Sidebar() {
       <ul className="w-full">
         {namespaces.map((ns) => (
           <Fragment key={ns.owner}>
-            <li key={ns.owner} className="nav-item owner-item w-full">
-              <a className="owner-label">{ns.owner}</a>
+            <li key={ns.owner} className="nav-item owner-item">
+              <a className="owner-label">
+                <img
+                  className="owner-avatar"
+                  src={ns.avatar_url}
+                  alt={`${ns.owner}'s avatar`}
+                />
+                {ns.owner}
+              </a>
             </li>
             {ns.repos.map((repo) => (
-              <li key={repo.id} className="nav-item repo-item w-full">
+              <li key={repo.id} className="nav-item repo-item">
                 <a className="repo-label">
                   <RepoIcon /> {repoNameFromFullName(repo.full_name)}{" "}
                   <span className="badge unread-badge">
