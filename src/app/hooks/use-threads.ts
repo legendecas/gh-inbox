@@ -11,6 +11,7 @@ export async function fetchThreads() {
 }
 
 export function useThreads() {
+  const [updateTime, setUpdateTime] = useState(Date.now());
   const [threads, setThreads] = useState<ThreadItem[]>([]);
 
   useEffect(() => {
@@ -24,7 +25,7 @@ export function useThreads() {
     };
 
     fetch();
-  }, []);
+  }, [updateTime]);
 
-  return threads;
+  return [threads, () => setUpdateTime(Date.now())] as const;
 }

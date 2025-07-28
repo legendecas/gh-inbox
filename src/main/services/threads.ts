@@ -14,6 +14,7 @@ export class ThreadsService implements IService, ThreadEndpoint {
 
   wire(ipcHandle: IpcHandle) {
     ipcHandle.wire("list", this.list);
+    ipcHandle.wire("archive", this.archive);
   }
 
   async list() {
@@ -52,5 +53,12 @@ export class ThreadsService implements IService, ThreadEndpoint {
       }),
     );
     return threadItems;
+  }
+
+  async archive(threads: string[]) {
+    await this.#db.instance.thread.updateMany({
+      where: { id: { in: threads } },
+      data: { archived: true, archived_at: new Date() },
+    });
   }
 }

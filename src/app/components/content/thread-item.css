@@ -1,3 +1,9 @@
+.thread-checkbox {
+  width: 16px;
+  height: 16px;
+  margin-right: 0.5rem;
+}
+
 .status-open {
   color: #28a745 !important;
 }

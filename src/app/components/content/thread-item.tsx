@@ -16,6 +16,8 @@ import "./thread-item.css";
 
 export interface ThreadItemProps {
   thread: ThreadItem;
+  checked: boolean;
+  setChecked: (threadId: string, checked: boolean) => void;
 }
 
 function ThreadIcon({
@@ -49,9 +51,19 @@ function ThreadIcon({
   }
 }
 
-export function ThreadItem({ thread }: ThreadItemProps) {
+export function ThreadItem({ thread, checked, setChecked }: ThreadItemProps) {
   return (
     <tr className="thread-item" data-state={thread.unread ? "unread" : "read"}>
+      <td>
+        <input
+          className="thread-checkbox"
+          type="checkbox"
+          checked={checked}
+          onChange={(e) => {
+            setChecked(thread.id, e.target.checked);
+          }}
+        ></input>
+      </td>
       <td>
         <div className="thread-icon" data-state={thread.state}>
           <ThreadIcon subjectType={thread.subject_type} state={thread.state} />

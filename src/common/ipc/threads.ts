@@ -9,4 +9,5 @@ export interface ThreadItem extends Thread {
 
 export interface ThreadEndpoint {
   list: () => Promise<ThreadItem[]>;
+  archive: (threads: string[]) => Promise<void>;
 }
