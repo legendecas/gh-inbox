@@ -1,26 +1,71 @@
 import React from "react";
-import { IssueOpenedIcon, GitPullRequestIcon } from "@primer/octicons-react";
-import type { Thread } from "../../../generated/prisma";
-import { kSubjectType } from "../../../common/github-constants";
+import {
+  IssueOpenedIcon,
+  IssueClosedIcon,
+  GitPullRequestIcon,
+  GitPullRequestClosedIcon,
+  GitPullRequestDraftIcon,
+  CommentDiscussionIcon,
+  DiscussionClosedIcon,
+} from "@primer/octicons-react";
+import { kSubjectType, type StateType } from "../../../common/github-constants";
+import { parseStringListStr } from "../../../common/string-list";
+import type { ThreadItem } from "../../../common/ipc/threads";
+import { LabelBadge } from "./label-badge";
+import "./thread-item.css";
 
 export interface ThreadItemProps {
-  thread: Thread;
+  thread: ThreadItem;
+}
+
+function ThreadIcon({
+  subjectType,
+  state,
+}: {
+  subjectType: string;
+  state: StateType;
+}) {
+  switch (subjectType) {
+    case kSubjectType.Issue:
+      if (state === "closed") {
+        return <IssueClosedIcon size={16} />;
+      }
+      return <IssueOpenedIcon size={16} />;
+    case kSubjectType.PullRequest:
+      if (state === "closed") {
+        return <GitPullRequestClosedIcon size={16} />;
+      }
+      if (state === "draft") {
+        return <GitPullRequestDraftIcon size={16} />;
+      }
+      return <GitPullRequestIcon size={16} />;
+    case kSubjectType.Discussion:
+      if (state === "closed") {
+        return <DiscussionClosedIcon size={16} />;
+      }
+      return <CommentDiscussionIcon size={16} />;
+    default:
+      return null;
+  }
 }
 
 export function ThreadItem({ thread }: ThreadItemProps) {
   return (
-    <tr className="thread-item">
+    <tr className="thread-item" data-state={thread.unread ? "unread" : "read"}>
       <td>
-        <div className="">
-          {thread.subject_type === kSubjectType.Issue ? (
-            <IssueOpenedIcon size={16} />
-          ) : (
-            <GitPullRequestIcon size={16} />
-          )}
+        <div className="thread-icon" data-state={thread.state}>
+          <ThreadIcon subjectType={thread.subject_type} state={thread.state} />
         </div>
       </td>
       <td>
-        <a>{thread.subject_title}</a>
+        <div className="">
+          <a className="title" href={thread.html_url} target="_blank">
+            {thread.subject_title}
+          </a>
+          {thread.labels.map((label) => (
+            <LabelBadge key={label.id} label={label} />
+          ))}
+        </div>
       </td>
       <td>
         <span className="thread-repo">
@@ -28,7 +73,9 @@ export function ThreadItem({ thread }: ThreadItemProps) {
         </span>
       </td>
       <td>
-        <span className="thread-reason">{thread.reasons}</span>
+        <span className="thread-reason">
+          {parseStringListStr(thread.reasons).join(",")}
+        </span>
       </td>
       <td>
         <span className="thread-updated-at">

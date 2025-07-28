@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain } from "electron";
+import { BrowserWindow, ipcMain, shell } from "electron";
 import path from "node:path";
 import { Migrator } from "./database/migrator.ts";
 import { Prisma } from "./database/prisma.js";
@@ -67,6 +67,11 @@ export class Application {
     } else {
       this.#mainWindow.loadFile(path.join(kAppDir, "index.html"));
     }
+
+    this.#mainWindow.webContents.setWindowOpenHandler((details) => {
+      shell.openExternal(details.url);
+      return { action: "deny" };
+    });
 
     this.#mainWindow.on("close", () => {
       logger.info("Main window closed.");

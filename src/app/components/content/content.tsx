@@ -2,6 +2,7 @@ import React from "react";
 import { useThreads } from "../../hooks/use-threads";
 import { Header } from "./header";
 import { ThreadItem } from "./thread-item";
+import "./content.css";
 
 export function Content() {
   const threads = useThreads();

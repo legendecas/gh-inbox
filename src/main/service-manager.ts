@@ -37,7 +37,7 @@ export class IpcHandle {
     this.#service = service;
   }
 
-  wire(channel: string, listener: (...args: unknown[]) => Promise<unknown>) {
+  wire(channel: string, listener: (...args: any[]) => Promise<unknown>) {
     this.#ipcMain.handle(
       `${this.#service.namespace}:${channel}`,
       async (_event: Electron.IpcMainInvokeEvent, ...args: unknown[]) => {

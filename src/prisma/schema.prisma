@@ -12,19 +12,20 @@ datasource db {
 }
 
 model Thread {
-  id           String  @id
-  reasons      String
-  updated_at   DateTime
+  id         String   @id
+  reasons    String
+  updated_at DateTime
 
   unread       Boolean
   last_read_at DateTime?
 
-  archived     Boolean @default(false)
-  archived_at  DateTime?
+  archived    Boolean   @default(false)
+  archived_at DateTime?
 
-  bookmarked   Boolean @default(false)
+  bookmarked    Boolean   @default(false)
   bookmarked_at DateTime?
 
+  subject_number             Int
   subject_title              String
   subject_url                String
   subject_type               String
@@ -32,14 +33,11 @@ model Thread {
 
   repository_id String
 
-  labels ThreadLabel[]
-  labels_updated_at String?
-
   endpoint_id Int
 }
 
 model Repository {
-  id        String @id
+  id        String  @id
   name      String
   full_name String
   private   Boolean
@@ -50,16 +48,14 @@ model Repository {
   html_url String
   owner_id String
 
-  labels Label[]
-
   endpoint_id Int
 }
 
 model Owner {
-  id        String @id
-  login     String
+  id         String @id
+  login      String
   avatar_url String
-  type      String
+  type       String
 
   endpoint_id Int
 }
@@ -72,26 +68,43 @@ model Label {
   description String
 
   repository_id String
-
-  repository Repository @relation(fields: [repository_id], references: [id])
-  threads ThreadLabel[]
-
   endpoint_id Int
 }
 
-model ThreadLabel {
-  id          Int      @id @default(autoincrement())
-  thread_id   String
-  label_id    String
+model Subject {
+  id           String @id
+  subject_type String
 
-  thread Thread @relation(fields: [thread_id], references: [id])
-  label Label @relation(fields: [label_id], references: [id])
+  number        Int
+  title         String
+  state         String
+  locked        Boolean @default(false)
+  is_draft      Boolean @default(false)
+  comment_count Int     @default(0)
+
+  html_url String
+
+  created_at DateTime
+  updated_at DateTime
+  closed_at  DateTime?
+  merged_at  DateTime?
+
+  user_id    String
+  user_login String
+
+  repository_id String
+
+  labels            String
+
+  merged          Boolean @default(false)
+  mergeable       Boolean @default(false)
+  mergeable_state String?
 
   endpoint_id Int
 }
 
 model Task {
-  id Int @id @default(autoincrement())
+  id   Int    @id @default(autoincrement())
   type String @unique
 
   last_run DateTime?
@@ -99,11 +112,11 @@ model Task {
 }
 
 model Endpoint {
-  id Int @id @default(autoincrement())
+  id  Int    @id @default(autoincrement())
   url String
 
   username String
-  token String
+  token    String
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt

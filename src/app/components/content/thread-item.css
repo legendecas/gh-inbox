@@ -9,3 +9,40 @@
 .status-closed {
   color: #dc3545 !important;
 }
+
+.thread-item {
+  border-bottom: 1px solid rgba(128, 128, 128, 0.1);
+}
+
+.thread-item:hover {
+  color: #212529;
+  background-color: rgba(0, 0, 0, 0.075);
+}
+
+.thread-item[data-state="read"] {
+  background-color: #f4f6f7;
+}
+
+.title {
+  color: #0366d6;
+}
+
+.thread-item[data-state="read"] .title {
+  color: #586069;
+}
+
+.thread-item td {
+  padding: 0.6rem;
+}
+
+.thread-icon[data-state="open"] {
+  color: #28a745;
+}
+
+.thread-icon[data-state="merged"] {
+  color: #a128ca;
+}
+
+.thread-icon[data-state="closed"] {
+  color: #dc3545;
+}

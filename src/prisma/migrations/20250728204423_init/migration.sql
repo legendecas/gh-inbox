@@ -9,12 +9,12 @@ CREATE TABLE "Thread" (
     "archived_at" DATETIME,
     "bookmarked" BOOLEAN NOT NULL DEFAULT false,
     "bookmarked_at" DATETIME,
+    "subject_number" INTEGER NOT NULL,
     "subject_title" TEXT NOT NULL,
     "subject_url" TEXT NOT NULL,
     "subject_type" TEXT NOT NULL,
     "subject_latest_comment_url" TEXT,
     "repository_id" TEXT NOT NULL,
-    "labels_updated_at" TEXT,
     "endpoint_id" INTEGER NOT NULL
 );
 
@@ -48,18 +48,32 @@ CREATE TABLE "Label" (
     "color" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "repository_id" TEXT NOT NULL,
-    "endpoint_id" INTEGER NOT NULL,
-    CONSTRAINT "Label_repository_id_fkey" FOREIGN KEY ("repository_id") REFERENCES "Repository" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    "endpoint_id" INTEGER NOT NULL
 );
 
 -- CreateTable
-CREATE TABLE "ThreadLabel" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "thread_id" TEXT NOT NULL,
-    "label_id" TEXT NOT NULL,
-    "endpoint_id" INTEGER NOT NULL,
-    CONSTRAINT "ThreadLabel_thread_id_fkey" FOREIGN KEY ("thread_id") REFERENCES "Thread" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "ThreadLabel_label_id_fkey" FOREIGN KEY ("label_id") REFERENCES "Label" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+CREATE TABLE "Subject" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "subject_type" TEXT NOT NULL,
+    "number" INTEGER NOT NULL,
+    "title" TEXT NOT NULL,
+    "state" TEXT NOT NULL,
+    "locked" BOOLEAN NOT NULL DEFAULT false,
+    "is_draft" BOOLEAN NOT NULL DEFAULT false,
+    "comment_count" INTEGER NOT NULL DEFAULT 0,
+    "html_url" TEXT NOT NULL,
+    "created_at" DATETIME NOT NULL,
+    "updated_at" DATETIME NOT NULL,
+    "closed_at" DATETIME,
+    "merged_at" DATETIME,
+    "user_id" TEXT NOT NULL,
+    "user_login" TEXT NOT NULL,
+    "repository_id" TEXT NOT NULL,
+    "labels" TEXT NOT NULL,
+    "merged" BOOLEAN NOT NULL DEFAULT false,
+    "mergeable" BOOLEAN NOT NULL DEFAULT false,
+    "mergeable_state" TEXT,
+    "endpoint_id" INTEGER NOT NULL
 );
 
 -- CreateTable

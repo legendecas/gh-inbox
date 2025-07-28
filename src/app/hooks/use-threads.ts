@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { Thread } from "../../generated/prisma/index.js";
+import type { ThreadItem } from "../../common/ipc/threads.js";
 
 export async function fetchThreads() {
   try {
@@ -11,7 +11,7 @@ export async function fetchThreads() {
 }
 
 export function useThreads() {
-  const [threads, setThreads] = useState<Thread[]>([]);
+  const [threads, setThreads] = useState<ThreadItem[]>([]);
 
   useEffect(() => {
     const fetch = async () => {

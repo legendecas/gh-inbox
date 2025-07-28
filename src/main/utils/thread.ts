@@ -1,26 +1,6 @@
 import type { Thread } from "../github/types.ts";
 import type { Thread as PrismaThread } from "../../generated/prisma/index.js";
 
-export function parseReasonsString(reasonsString: string): string[] {
-  if (reasonsString === "") {
-    return [];
-  }
-  let arr = reasonsString.split("|");
-  arr = arr.slice(1, arr.length - 1);
-
-  return arr;
-}
-
-export function formatReasons(reasons: string[]): string {
-  if (reasons.length === 0) {
-    return "";
-  }
-  if (reasons.length === 1) {
-    return `|${reasons[0]}|`;
-  }
-  return `|${reasons.join("|")}|`;
-}
-
 export function resolveIfRead(
   thread: Thread,
   localThread: PrismaThread,
