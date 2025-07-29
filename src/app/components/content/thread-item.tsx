@@ -80,17 +80,17 @@ export function ThreadItem({ thread, checked, setChecked }: ThreadItemProps) {
         </div>
       </td>
       <td>
-        <span className="thread-repo">
+        <span className="thread-repo text-sm">
           {getRepoFromSubjectUrl(thread.subject_url)}
         </span>
       </td>
       <td>
-        <span className="thread-reason">
+        <span className="thread-reason text-sm">
           {parseStringListStr(thread.reasons).join(",")}
         </span>
       </td>
       <td>
-        <span className="thread-updated-at">
+        <span className="thread-updated-at text-sm">
           {new Date(thread.updated_at).toLocaleDateString()}
         </span>
       </td>
