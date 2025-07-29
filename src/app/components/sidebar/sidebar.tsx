@@ -21,11 +21,6 @@ export function Sidebar() {
                 />
               </NavList.LeadingVisual>
               {ns.owner}
-              <NavList.TrailingVisual>
-                <CounterLabel>
-                  {ns.repos.reduce((acc, repo) => acc + repo.unread_count, 0)}
-                </CounterLabel>
-              </NavList.TrailingVisual>
 
               <NavList.SubNav>
                 {ns.repos.map((repo) => (
