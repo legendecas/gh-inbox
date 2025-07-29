@@ -1,10 +1,10 @@
-import type { ReposEndpoint } from "./repos";
+import type { PresetFilterEndpoint } from "./preset-filter";
 import type { ShellEndpoint } from "./shell";
 import type { ThreadEndpoint } from "./threads";
 
 export interface IpcEndpoints {
   threads: ThreadEndpoint;
-  repos: ReposEndpoint;
+  presetFilter: PresetFilterEndpoint;
   shell: ShellEndpoint;
 }
 

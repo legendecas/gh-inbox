@@ -3,11 +3,12 @@ import type { IpcHandle, IService } from "../service-manager.ts";
 import type {
   RepoInfo,
   RepoNamespace,
-  ReposEndpoint,
-} from "../../common/ipc/repos.ts";
+  PresetFilterEndpoint,
+  PresetFilter,
+} from "../../common/ipc/preset-filter.ts";
 
-export class ReposService implements IService, ReposEndpoint {
-  namespace = "repos";
+export class PresetFilterService implements IService, PresetFilterEndpoint {
+  namespace = "presetFilter";
 
   #db: Prisma;
   constructor(db: Prisma) {
@@ -19,6 +20,55 @@ export class ReposService implements IService, ReposEndpoint {
   }
 
   async list() {
+    return {
+      presetFilters: await this.listPresetFilters(),
+      repoNamespaces: await this.listRepos(),
+    };
+  }
+
+  private async listPresetFilters(): Promise<PresetFilter[]> {
+    return [
+      {
+        type: "my_turn",
+        unread_count: await this.#db.instance.thread.count({
+          where: {
+            AND: [
+              { archived: false, unread: true },
+              {
+                OR: [
+                  { reasons: { contains: "|author|" } },
+                  { reasons: { contains: "|comment|" } },
+                  { reasons: { contains: "|manual|" } },
+                  { reasons: { contains: "|mention|" } },
+                ],
+              },
+            ],
+          },
+        }),
+      },
+      {
+        type: "involved",
+        unread_count: await this.#db.instance.thread.count({
+          where: {
+            AND: [
+              { archived: false, unread: true },
+              {
+                OR: [
+                  { reasons: { contains: "|author|" } },
+                  { reasons: { contains: "|comment|" } },
+                  { reasons: { contains: "|manual|" } },
+                  { reasons: { contains: "|mention|" } },
+                  { reasons: { contains: "|team_mention|" } },
+                ],
+              },
+            ],
+          },
+        }),
+      },
+    ];
+  }
+
+  private async listRepos() {
     const repos = await this.#db.instance.repository.findMany({
       orderBy: { full_name: "asc" },
     });

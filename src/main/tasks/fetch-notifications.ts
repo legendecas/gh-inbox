@@ -21,7 +21,7 @@ import {
   parseStringListStr,
 } from "../../common/string-list.ts";
 
-const kSupportedSubjectTypes = [
+const kSupportedSubjectTypes: string[] = [
   kSubjectType.PullRequest,
   kSubjectType.Issue,
   kSubjectType.Discussion,

@@ -7,7 +7,7 @@ import { ServiceManager } from "./service-manager.ts";
 import { ThreadsService } from "./services/threads.ts";
 import { logger } from "./utils/logger.ts";
 import { kAppDir, kPreloadDir } from "./constants.ts";
-import { ReposService } from "./services/repos.ts";
+import { PresetFilterService } from "./services/preset-filter.ts";
 import { TaskRunner } from "./task-runner.ts";
 
 export class Application {
@@ -32,7 +32,7 @@ export class Application {
 
     const serviceManager = new ServiceManager();
     serviceManager.registerService(new ThreadsService(this.#db));
-    serviceManager.registerService(new ReposService(this.#db));
+    serviceManager.registerService(new PresetFilterService(this.#db));
     serviceManager.wireAll(ipcMain);
   }
 

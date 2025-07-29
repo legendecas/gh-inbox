@@ -1,15 +1,27 @@
 import React from "react";
 import { Avatar, CounterLabel, NavList } from "@primer/react";
-import { RepoIcon } from "@primer/octicons-react";
+import { RepoIcon, SearchIcon } from "@primer/octicons-react";
 import "./sidebar.css";
-import { useRepos } from "../../hooks/use-repos";
+import { usePresetFilter } from "../../hooks/use-preset-filter";
 
 export function Sidebar() {
-  const namespaces = useRepos();
+  const { presetFilters, repoNamespaces } = usePresetFilter();
 
   return (
     <NavList>
-      {namespaces.map((ns) => (
+      {presetFilters.map((filter) => (
+        <NavList.Item key={filter.type} defaultOpen={true}>
+          <NavList.LeadingVisual>
+            <SearchIcon />
+          </NavList.LeadingVisual>
+          {filter.type}
+          <NavList.TrailingVisual>
+            <CounterLabel>{filter.unread_count}</CounterLabel>
+          </NavList.TrailingVisual>
+        </NavList.Item>
+      ))}
+      <NavList.Divider />
+      {repoNamespaces.map((ns) => (
         <NavList.Item key={ns.owner} defaultOpen={true}>
           <NavList.LeadingVisual>
             <Avatar square src={ns.avatar_url} alt={`${ns.owner}'s avatar`} />
