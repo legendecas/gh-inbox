@@ -53,7 +53,9 @@ export class FetchNotificationsTask {
       this.#lastRun?.toISOString() ??
       new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(); // Fetch notifications from the last 24 hours
     const before = new Date().toISOString();
-    logger.log(`Fetching notifications for endpoint ${this.#endpointId} since ${since} until ${before}`);
+    logger.log(
+      `Fetching notifications for endpoint ${this.#endpointId} since ${since} until ${before}`,
+    );
 
     let page: number | undefined = 1;
     while (true) {

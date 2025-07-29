@@ -1,4 +1,8 @@
 import React from "react";
+
+import "@primer/primitives/dist/css/functional/themes/light.css";
+import { BaseStyles, ThemeProvider } from "@primer/react";
+
 import { Navbar } from "./navbar/navbar";
 import { Sidebar } from "./sidebar/sidebar";
 import { Content } from "./content/content";
@@ -14,5 +18,15 @@ export function App() {
         <Content />
       </div>
     </div>
+  );
+}
+
+export function AppContainer() {
+  return (
+    <ThemeProvider>
+      <BaseStyles>
+        <App />
+      </BaseStyles>
+    </ThemeProvider>
   );
 }

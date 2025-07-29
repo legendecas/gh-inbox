@@ -1,4 +1,5 @@
 import React from "react";
+import { Button } from "@primer/react";
 
 export function Header({
   checkedThreads,
@@ -14,9 +15,7 @@ export function Header({
 
   return (
     <div className="header flex flex-col items-start">
-      <button className="archive-button" onClick={archiveThreads}>
-        Archive
-      </button>
+      <Button onClick={archiveThreads}>Archive</Button>
     </div>
   );
 }

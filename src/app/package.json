@@ -12,7 +12,10 @@
   },
   "dependencies": {
     "@primer/octicons-react": "^19.15.5",
+    "@primer/primitives": "^11.0.0",
+    "@primer/react": "^37.29.1",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "styled-components": "^6.1.19"
   }
 }
