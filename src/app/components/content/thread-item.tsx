@@ -12,7 +12,7 @@ import { RelativeTime } from "@primer/react";
 import { kSubjectType, type StateType } from "../../../common/github-constants";
 import { parseStringListStr } from "../../../common/string-list";
 import type { ThreadItem } from "../../../common/ipc/threads";
-import { LabelBadge } from "./label-badge";
+import { LabelBadgeGroup } from "./label-badge";
 import "./thread-item.css";
 import { ReasonLabel } from "./reason-label";
 
@@ -76,9 +76,7 @@ export function ThreadItem({ thread, checked, setChecked }: ThreadItemProps) {
           <a className="title" href={thread.html_url} target="_blank">
             {thread.subject_title}
           </a>
-          {thread.labels.map((label) => (
-            <LabelBadge key={label.id} label={label} />
-          ))}
+          <LabelBadgeGroup labels={thread.labels} />
         </div>
       </td>
       <td>
