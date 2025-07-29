@@ -14,6 +14,7 @@ import { parseStringListStr } from "../../../common/string-list";
 import type { ThreadItem } from "../../../common/ipc/threads";
 import { LabelBadge } from "./label-badge";
 import "./thread-item.css";
+import { ReasonLabel } from "./reason-label";
 
 export interface ThreadItemProps {
   thread: ThreadItem;
@@ -87,7 +88,9 @@ export function ThreadItem({ thread, checked, setChecked }: ThreadItemProps) {
       </td>
       <td>
         <span className="thread-reason text-sm">
-          {parseStringListStr(thread.reasons).join(",")}
+          {parseStringListStr(thread.reasons).map((reason) => (
+            <ReasonLabel key={reason} reason={reason} />
+          ))}
         </span>
       </td>
       <td>
