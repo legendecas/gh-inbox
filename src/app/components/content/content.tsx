@@ -3,6 +3,7 @@ import { useThreads } from "../../hooks/use-threads";
 import { Header } from "./header";
 import { ThreadItem } from "./thread-item";
 import "./content.css";
+import { PageLayout } from "@primer/react";
 
 export function Content() {
   const [threads, refreshThreads] = useThreads();
@@ -18,20 +19,29 @@ export function Content() {
   };
 
   return (
-    <div className="content flex flex-col w-full">
-      <Header checkedThreads={checkedSet} refreshThreads={refreshThreads} />
-      <table className="threads-table">
-        <tbody>
-          {threads.map((thread) => (
-            <ThreadItem
-              key={thread.id}
-              thread={thread}
-              checked={checkedSet.has(thread.id)}
-              setChecked={onChecked}
-            />
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <PageLayout
+      containerWidth="full"
+      padding="none"
+      columnGap="condensed"
+      rowGap="condensed"
+    >
+      <PageLayout.Header>
+        <Header checkedThreads={checkedSet} refreshThreads={refreshThreads} />
+      </PageLayout.Header>
+      <PageLayout.Content>
+        <table className="threads-table">
+          <tbody>
+            {threads.map((thread) => (
+              <ThreadItem
+                key={thread.id}
+                thread={thread}
+                checked={checkedSet.has(thread.id)}
+                setChecked={onChecked}
+              />
+            ))}
+          </tbody>
+        </table>
+      </PageLayout.Content>
+    </PageLayout>
   );
 }
