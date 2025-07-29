@@ -18,7 +18,7 @@ export function Content() {
   };
 
   return (
-    <div className="content flex flex-col">
+    <div className="content flex flex-col w-full">
       <Header checkedThreads={checkedSet} refreshThreads={refreshThreads} />
       <table className="threads-table">
         <tbody>

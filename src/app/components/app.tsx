@@ -1,7 +1,7 @@
 import React from "react";
 
 import "@primer/primitives/dist/css/functional/themes/light.css";
-import { BaseStyles, ThemeProvider } from "@primer/react";
+import { BaseStyles, SplitPageLayout, ThemeProvider } from "@primer/react";
 
 import { Navbar } from "./navbar/navbar";
 import { Sidebar } from "./sidebar/sidebar";
@@ -9,15 +9,17 @@ import { Content } from "./content/content";
 
 export function App() {
   return (
-    <div className="flex flex-col">
-      <div className="flex-1">
+    <SplitPageLayout>
+      <SplitPageLayout.Header padding="none">
         <Navbar />
-      </div>
-      <div className="flex-1 flex flex-row">
+      </SplitPageLayout.Header>
+      <SplitPageLayout.Pane position="start" padding="none">
         <Sidebar />
+      </SplitPageLayout.Pane>
+      <SplitPageLayout.Content padding="condensed" width="full">
         <Content />
-      </div>
-    </div>
+      </SplitPageLayout.Content>
+    </SplitPageLayout>
   );
 }
 
