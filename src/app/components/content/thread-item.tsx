@@ -8,6 +8,7 @@ import {
   CommentDiscussionIcon,
   DiscussionClosedIcon,
 } from "@primer/octicons-react";
+import { RelativeTime } from "@primer/react";
 import { kSubjectType, type StateType } from "../../../common/github-constants";
 import { parseStringListStr } from "../../../common/string-list";
 import type { ThreadItem } from "../../../common/ipc/threads";
@@ -90,9 +91,12 @@ export function ThreadItem({ thread, checked, setChecked }: ThreadItemProps) {
         </span>
       </td>
       <td>
-        <span className="thread-updated-at text-sm">
-          {new Date(thread.updated_at).toLocaleDateString()}
-        </span>
+        <RelativeTime
+          className="text-sm"
+          format="micro"
+          prefix=""
+          date={thread.updated_at}
+        />
       </td>
     </tr>
   );
