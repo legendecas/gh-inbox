@@ -68,7 +68,7 @@ model Label {
   description String
 
   repository_id String
-  endpoint_id Int
+  endpoint_id   Int
 }
 
 model Subject {
@@ -94,7 +94,7 @@ model Subject {
 
   repository_id String
 
-  labels            String
+  labels String
 
   merged          Boolean @default(false)
   mergeable       Boolean @default(false)
@@ -104,11 +104,12 @@ model Subject {
 }
 
 model Task {
-  id   Int    @id @default(autoincrement())
-  type String @unique
+  id          Int    @id @default(autoincrement())
+  type        String
+  endpoint_id Int?
+  data        String
 
-  last_run DateTime?
-  next_run DateTime?
+  last_run DateTime
 }
 
 model Endpoint {

@@ -3,16 +3,17 @@ import path from "node:path";
 import { Migrator } from "./database/migrator.ts";
 import { Prisma } from "./database/prisma.js";
 import { GitHubClient } from "./github/client.js";
-import { FetchNotificationsTask } from "./tasks/fetch-notifications.ts";
 import { ServiceManager } from "./service-manager.ts";
 import { ThreadsService } from "./services/threads.ts";
 import { logger } from "./utils/logger.ts";
 import { kAppDir, kPreloadDir } from "./constants.ts";
 import { ReposService } from "./services/repos.ts";
+import { TaskRunner } from "./task-runner.ts";
 
 export class Application {
   #db!: Prisma;
   #gh!: GitHubClient;
+  #taskRunner!: TaskRunner;
   #mainWindow?: BrowserWindow;
 
   async onReady() {
@@ -26,8 +27,8 @@ export class Application {
       process.env.GITHUB_TOKEN || "",
     );
 
-    const task = new FetchNotificationsTask(this.#db, this.#gh);
-    await task.run();
+    this.#taskRunner = new TaskRunner(this.#db, this.#gh);
+    await this.#taskRunner.schedule();
 
     const serviceManager = new ServiceManager();
     serviceManager.registerService(new ThreadsService(this.#db));

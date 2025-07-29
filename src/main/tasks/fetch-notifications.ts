@@ -33,16 +33,28 @@ type LabelMap = Map<string, [string, Label]>;
 export class FetchNotificationsTask {
   #db: Prisma;
   #gh: GitHubClient;
-  #endpointId = 1;
+  #endpointId: number;
+  #lastRun?: Date;
 
-  constructor(db: Prisma, gh: GitHubClient) {
+  constructor(
+    db: Prisma,
+    gh: GitHubClient,
+    endpointId: number,
+    lastRun?: Date,
+  ) {
     this.#db = db;
     this.#gh = gh;
+    this.#endpointId = endpointId;
+    this.#lastRun = lastRun;
   }
 
   async run() {
-    const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(); // Fetch notifications from the last 24 hours
+    const since =
+      this.#lastRun?.toISOString() ??
+      new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(); // Fetch notifications from the last 24 hours
     const before = new Date().toISOString();
+    logger.log(`Fetching notifications for endpoint ${this.#endpointId} since ${since} until ${before}`);
+
     let page: number | undefined = 1;
     while (true) {
       try {
