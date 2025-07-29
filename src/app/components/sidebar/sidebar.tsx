@@ -10,7 +10,7 @@ export function Sidebar() {
   return (
     <NavList>
       {presetFilters.map((filter) => (
-        <NavList.Item key={filter.type} defaultOpen={true}>
+        <NavList.Item key={filter.type}>
           <NavList.LeadingVisual>
             <SearchIcon />
           </NavList.LeadingVisual>

@@ -3,10 +3,16 @@ import { useThreads } from "../../hooks/use-threads";
 import { Header } from "./header";
 import { ThreadItem } from "./thread-item";
 import "./content.css";
-import { PageLayout } from "@primer/react";
+import { PageLayout, Pagination } from "@primer/react";
+import { kPageSize } from "../../../common/presets";
 
 export function Content() {
-  const [threads, refreshThreads] = useThreads();
+  const [currentPage, setCurrentPage] = React.useState(1);
+
+  const [threads, totalCount, refreshThreads] = useThreads(
+    currentPage,
+    kPageSize,
+  );
   const [checkedSet, setChecked] = React.useState<Set<string>>(new Set());
 
   const onChecked = (threadId: string, checked: boolean) => {
@@ -41,6 +47,15 @@ export function Content() {
             ))}
           </tbody>
         </table>
+
+        <Pagination
+          pageCount={Math.ceil(totalCount / kPageSize)}
+          currentPage={currentPage}
+          onPageChange={(_event, number) => {
+            setCurrentPage(number);
+          }}
+          showPages={{ narrow: false }}
+        />
       </PageLayout.Content>
     </PageLayout>
   );

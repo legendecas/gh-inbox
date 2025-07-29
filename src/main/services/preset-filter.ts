@@ -6,6 +6,7 @@ import type {
   PresetFilterEndpoint,
   PresetFilter,
 } from "../../common/ipc/preset-filter.ts";
+import { kPresetFilterTypes } from "../../common/presets.ts";
 
 export class PresetFilterService implements IService, PresetFilterEndpoint {
   namespace = "presetFilter";
@@ -31,38 +32,13 @@ export class PresetFilterService implements IService, PresetFilterEndpoint {
       {
         type: "my_turn",
         unread_count: await this.#db.instance.thread.count({
-          where: {
-            AND: [
-              { archived: false, unread: true },
-              {
-                OR: [
-                  { reasons: { contains: "|author|" } },
-                  { reasons: { contains: "|comment|" } },
-                  { reasons: { contains: "|manual|" } },
-                  { reasons: { contains: "|mention|" } },
-                ],
-              },
-            ],
-          },
+          where: kPresetFilterTypes.my_turn,
         }),
       },
       {
         type: "involved",
         unread_count: await this.#db.instance.thread.count({
-          where: {
-            AND: [
-              { archived: false, unread: true },
-              {
-                OR: [
-                  { reasons: { contains: "|author|" } },
-                  { reasons: { contains: "|comment|" } },
-                  { reasons: { contains: "|manual|" } },
-                  { reasons: { contains: "|mention|" } },
-                  { reasons: { contains: "|team_mention|" } },
-                ],
-              },
-            ],
-          },
+          where: kPresetFilterTypes.involved,
         }),
       },
     ];

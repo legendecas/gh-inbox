@@ -1,31 +1,32 @@
 import { useEffect, useState } from "react";
-import type { ThreadItem } from "../../common/ipc/threads.js";
+import type { ThreadListResult } from "../../common/ipc/threads.js";
 
-export async function fetchThreads() {
-  try {
-    const threads = await window.ipc.invoke("threads", "list");
-    console.log("Fetched threads:", threads);
-  } catch (error) {
-    console.error("Error fetching threads:", error);
-  }
-}
-
-export function useThreads() {
+export function useThreads(page: number, pageSize: number) {
   const [updateTime, setUpdateTime] = useState(Date.now());
-  const [threads, setThreads] = useState<ThreadItem[]>([]);
+  const [result, setResult] = useState<ThreadListResult>({
+    totalCount: 0,
+    threads: [],
+  });
 
   useEffect(() => {
     const fetch = async () => {
       try {
-        const data = await window.ipc.invoke("threads", "list");
-        setThreads(data);
+        const data = await window.ipc.invoke("threads", "list", {
+          page,
+          pageSize,
+        });
+        setResult(data);
       } catch (error) {
         console.error("Error fetching threads:", error);
       }
     };
 
     fetch();
-  }, [updateTime]);
+  }, [updateTime, page, pageSize]);
 
-  return [threads, () => setUpdateTime(Date.now())] as const;
+  return [
+    result.threads,
+    result.totalCount,
+    () => setUpdateTime(Date.now()),
+  ] as const;
 }

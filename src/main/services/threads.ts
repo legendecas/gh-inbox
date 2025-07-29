@@ -1,5 +1,10 @@
 import { kStateType, type StateType } from "../../common/github-constants.ts";
-import type { ThreadEndpoint, ThreadItem } from "../../common/ipc/threads.ts";
+import type {
+  ThreadEndpoint,
+  ThreadItem,
+  ThreadListOptions,
+} from "../../common/ipc/threads.ts";
+import { kPageSize } from "../../common/presets.ts";
 import { parseStringListStr } from "../../common/string-list.ts";
 import type { Prisma } from "../database/prisma.ts";
 import type { IpcHandle, IService } from "../service-manager.ts";
@@ -17,10 +22,17 @@ export class ThreadsService implements IService, ThreadEndpoint {
     ipcHandle.wire("archive", this.archive);
   }
 
-  async list() {
+  async list(options: ThreadListOptions = {}) {
+    const filter = { archived: false };
+
+    const count = await this.#db.instance.thread.count({
+      where: filter,
+    });
     const threads = await this.#db.instance.thread.findMany({
-      where: { archived: false },
+      where: filter,
       orderBy: { updated_at: "desc" },
+      skip: (options.page ?? 0) * (options.pageSize ?? kPageSize),
+      take: options.pageSize ?? kPageSize,
     });
     const threadItems: ThreadItem[] = await Promise.all(
       threads.map(async (thread) => {
@@ -52,7 +64,10 @@ export class ThreadsService implements IService, ThreadEndpoint {
         };
       }),
     );
-    return threadItems;
+    return {
+      totalCount: count,
+      threads: threadItems,
+    };
   }
 
   async archive(threads: string[]) {
