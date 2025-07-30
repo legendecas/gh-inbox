@@ -28,20 +28,14 @@ export class PresetFilterService implements IService, PresetFilterEndpoint {
   }
 
   private async listPresetFilters(): Promise<PresetFilter[]> {
-    return [
-      {
-        type: "my_turn",
+    return Promise.all(
+      Object.entries(kPresetFilterTypes).map(async ([type, filter]) => ({
+        type,
         unread_count: await this.#db.instance.thread.count({
-          where: kPresetFilterTypes.my_turn,
+          where: filter,
         }),
-      },
-      {
-        type: "involved",
-        unread_count: await this.#db.instance.thread.count({
-          where: kPresetFilterTypes.involved,
-        }),
-      },
-    ];
+      })),
+    );
   }
 
   private async listRepos() {

@@ -6,6 +6,7 @@ import { BaseStyles, SplitPageLayout, ThemeProvider } from "@primer/react";
 import { Navbar } from "./navbar/navbar";
 import { Sidebar } from "./sidebar/sidebar";
 import { Content } from "./content/content";
+import { FilterProvider } from "../hooks/use-filter";
 
 export function App() {
   return (
@@ -27,7 +28,9 @@ export function AppContainer() {
   return (
     <ThemeProvider>
       <BaseStyles>
-        <App />
+        <FilterProvider>
+          <App />
+        </FilterProvider>
       </BaseStyles>
     </ThemeProvider>
   );

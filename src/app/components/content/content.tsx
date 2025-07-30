@@ -5,11 +5,15 @@ import { ThreadItem } from "./thread-item";
 import "./content.css";
 import { PageLayout, Pagination } from "@primer/react";
 import { kPageSize } from "../../../common/presets";
+import { useFilterContext } from "../../hooks/use-filter";
 
 export function Content() {
   const [currentPage, setCurrentPage] = React.useState(1);
+  const { filter } = useFilterContext();
+  console.log("Current filter:", filter);
 
   const [threads, totalCount, refreshThreads] = useThreads(
+    filter,
     currentPage,
     kPageSize,
   );
@@ -35,7 +39,7 @@ export function Content() {
         <Header checkedThreads={checkedSet} refreshThreads={refreshThreads} />
       </PageLayout.Header>
       <PageLayout.Content>
-        <table className="threads-table">
+        <table className="threads-table w-full">
           <tbody>
             {threads.map((thread) => (
               <ThreadItem

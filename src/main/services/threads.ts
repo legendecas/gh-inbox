@@ -23,7 +23,7 @@ export class ThreadsService implements IService, ThreadEndpoint {
   }
 
   async list(options: ThreadListOptions = {}) {
-    const filter = { archived: false };
+    const filter = options.filter ?? { archived: false };
 
     const count = await this.#db.instance.thread.count({
       where: filter,
@@ -31,7 +31,7 @@ export class ThreadsService implements IService, ThreadEndpoint {
     const threads = await this.#db.instance.thread.findMany({
       where: filter,
       orderBy: { updated_at: "desc" },
-      skip: (options.page ?? 0) * (options.pageSize ?? kPageSize),
+      skip: ((options.page ?? 1) - 1) * (options.pageSize ?? kPageSize),
       take: options.pageSize ?? kPageSize,
     });
     const threadItems: ThreadItem[] = await Promise.all(

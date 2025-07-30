@@ -1,12 +1,17 @@
 import type { Prisma } from "../generated/prisma/index";
 
-export type kPresetFilterTypes = "my_turn" | "involved";
+export type kPresetFilterTypes = "inbox" | "my_turn" | "involved";
 export type ThreadFilter = Prisma.ThreadWhereInput;
 
 export const kPageSize = 20;
 
+export const kDefaultFilter: ThreadFilter = {
+  archived: false,
+};
 export type kPresetFilter = Record<kPresetFilterTypes, ThreadFilter>;
+export type kPresetFilterType = keyof kPresetFilter;
 export const kPresetFilterTypes: kPresetFilter = {
+  inbox: kDefaultFilter,
   my_turn: {
     AND: [
       { archived: false, unread: true },
@@ -35,3 +40,10 @@ export const kPresetFilterTypes: kPresetFilter = {
     ],
   },
 };
+
+export function repoFilter(repoId: string): ThreadFilter {
+  return {
+    repository_id: repoId,
+    archived: false,
+  };
+}
