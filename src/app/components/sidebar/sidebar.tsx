@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { Avatar, CounterLabel, ActionList } from "@primer/react";
 import { LockIcon, RepoIcon, SearchIcon } from "@primer/octicons-react";
 import "./sidebar.css";
@@ -35,7 +35,7 @@ export function Sidebar() {
       ))}
       <ActionList.Divider />
       {repoNamespaces.map((ns) => (
-        <>
+        <Fragment key={ns.owner}>
           <ActionList.Item key={ns.owner}>
             <ActionList.LeadingVisual>
               <Avatar square src={ns.avatar_url} alt={`${ns.owner}'s avatar`} />
@@ -60,7 +60,7 @@ export function Sidebar() {
               </ActionList.TrailingVisual>
             </ActionList.Item>
           ))}
-        </>
+        </Fragment>
       ))}
     </ActionList>
   );

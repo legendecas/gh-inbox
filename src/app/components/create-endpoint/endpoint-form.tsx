@@ -49,7 +49,7 @@ export function EndpointForm({ refreshEndpoints }: CreateEndpointProps) {
           <FormControl.Label>Endpoint URL</FormControl.Label>
           <TextInput
             block
-            value="https://api.github.com"
+            defaultValue="https://api.github.com"
             ref={endpointUrlRef}
           />
         </FormControl>
@@ -59,7 +59,7 @@ export function EndpointForm({ refreshEndpoints }: CreateEndpointProps) {
           <TextInput block ref={tokenRef} />
         </FormControl>
 
-        <Stack space={2} direction="horizontal" alignItems="center">
+        <Stack space={2} direction="horizontal">
           <Button variant="primary" onClick={handleTestConnection}>
             Test Connection
           </Button>
