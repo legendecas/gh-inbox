@@ -53,6 +53,10 @@ function ThreadIcon({
 }
 
 export function ThreadItem({ thread, checked, setChecked }: ThreadItemProps) {
+  function onClick() {
+    window.ipc.invoke("threads", "markAsRead", thread.endpoint_id, [thread.id]);
+  }
+
   return (
     <tr className="thread-item" data-state={thread.unread ? "unread" : "read"}>
       <td>
@@ -72,7 +76,12 @@ export function ThreadItem({ thread, checked, setChecked }: ThreadItemProps) {
       </td>
       <td>
         <div className="">
-          <a className="title" href={thread.html_url} target="_blank">
+          <a
+            className="title"
+            href={thread.html_url}
+            target="_blank"
+            onClick={onClick}
+          >
             {thread.subject_title}
           </a>
           <LabelBadgeGroup labels={thread.labels} />

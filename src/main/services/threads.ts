@@ -20,6 +20,7 @@ export class ThreadsService implements IService, ThreadEndpoint {
   wire(ipcHandle: IpcHandle) {
     ipcHandle.wire("list", this.list);
     ipcHandle.wire("archive", this.archive);
+    ipcHandle.wire("markAsRead", this.markAsRead);
   }
 
   async list(options: ThreadListOptions) {
@@ -83,6 +84,13 @@ export class ThreadsService implements IService, ThreadEndpoint {
     await this.#db.instance.thread.updateMany({
       where: { endpoint_id: endpointId, id: { in: threads } },
       data: { archived: true, archived_at: new Date() },
+    });
+  }
+
+  async markAsRead(endpointId: number, threads: string[]) {
+    await this.#db.instance.thread.updateMany({
+      where: { endpoint_id: endpointId, id: { in: threads } },
+      data: { unread: false },
     });
   }
 }

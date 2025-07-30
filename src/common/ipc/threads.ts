@@ -23,4 +23,5 @@ export interface ThreadListResult {
 export interface ThreadEndpoint {
   list: (options: ThreadListOptions) => Promise<ThreadListResult>;
   archive: (endpointId: number, threads: string[]) => Promise<void>;
+  markAsRead: (endpointId: number, threads: string[]) => Promise<void>;
 }
