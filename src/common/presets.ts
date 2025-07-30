@@ -27,7 +27,7 @@ export const kPresetFilterTypes: kPresetFilter = {
   },
   involved: {
     AND: [
-      { archived: false, unread: true },
+      { archived: false },
       {
         OR: [
           { reasons: { contains: "|author|" } },

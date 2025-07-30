@@ -10,11 +10,10 @@ import {
 } from "@primer/octicons-react";
 import { RelativeTime, Tooltip } from "@primer/react";
 import { kSubjectType, type StateType } from "../../../common/github-constants";
-import { parseStringListStr } from "../../../common/string-list";
 import type { ThreadItem } from "../../../common/ipc/threads";
 import { LabelBadgeGroup } from "./label-badge";
 import "./thread-item.css";
-import { ReasonLabel } from "./reason-label";
+import { ReasonLabelGroup } from "./reason-label";
 
 export interface ThreadItemProps {
   thread: ThreadItem;
@@ -86,9 +85,7 @@ export function ThreadItem({ thread, checked, setChecked }: ThreadItemProps) {
       </td>
       <td>
         <span className="thread-reason text-sm">
-          {parseStringListStr(thread.reasons).map((reason) => (
-            <ReasonLabel key={reason} reason={reason} />
-          ))}
+          <ReasonLabelGroup reasonsStr={thread.reasons} />
         </span>
       </td>
       <td>
