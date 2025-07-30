@@ -121,5 +121,5 @@ model Endpoint {
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-  expires_at DateTime
+  expires_at DateTime?
 }

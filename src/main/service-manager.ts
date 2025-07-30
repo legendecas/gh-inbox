@@ -45,6 +45,7 @@ export class IpcHandle {
           return await listener.apply(this.#service, args);
         } catch (error) {
           logger.error(`Error handling IPC message ${channel}:`, error);
+          throw error;
         }
       },
     );

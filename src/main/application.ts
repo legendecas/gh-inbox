@@ -9,6 +9,7 @@ import { logger } from "./utils/logger.ts";
 import { kAppDir, kPreloadDir } from "./constants.ts";
 import { PresetFilterService } from "./services/preset-filter.ts";
 import { TaskRunner } from "./task-runner.ts";
+import { EndpointService } from "./services/endpoint.ts";
 
 export class Application {
   #db!: Prisma;
@@ -33,6 +34,7 @@ export class Application {
     const serviceManager = new ServiceManager();
     serviceManager.registerService(new ThreadsService(this.#db));
     serviceManager.registerService(new PresetFilterService(this.#db));
+    serviceManager.registerService(new EndpointService(this.#db));
     serviceManager.wireAll(ipcMain);
   }
 
