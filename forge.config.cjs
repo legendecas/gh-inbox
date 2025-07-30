@@ -6,6 +6,7 @@ module.exports = {
   packagerConfig: {
     asar: enableAsar,
     ignore: ["src", /^\..*/],
+    icon: "./src/static/icon",
   },
   rebuildConfig: {
     force: true,

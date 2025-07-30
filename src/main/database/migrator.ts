@@ -19,6 +19,8 @@ const kListMigrations = `SELECT migration_name FROM ${kMigrationTableName} ORDER
 const kCreateMigration = `INSERT INTO ${kMigrationTableName} (id, checksum, finished_at, migration_name, logs, rolled_back_at, started_at, applied_steps_count) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
 
 const decoder = new TextDecoder("utf-8");
+const kIgnoredNames = ["migration_lock.toml", ".DS_Store"];
+
 export class Migrator {
   #db: DatabaseSync;
 
@@ -28,7 +30,7 @@ export class Migrator {
 
   async runMigrations() {
     const migrations = (await readdir(kMigrationsDir))
-      .filter((name) => name !== "migration_lock.toml")
+      .filter((name) => !kIgnoredNames.includes(name))
       .sort();
 
     this.#db.exec(kCreateMigrationTable);
