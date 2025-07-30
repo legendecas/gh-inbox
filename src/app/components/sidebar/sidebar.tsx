@@ -1,6 +1,6 @@
 import React from "react";
 import { Avatar, CounterLabel, ActionList } from "@primer/react";
-import { RepoIcon, SearchIcon } from "@primer/octicons-react";
+import { LockIcon, RepoIcon, SearchIcon } from "@primer/octicons-react";
 import "./sidebar.css";
 import { usePresetFilter } from "../../hooks/use-preset-filter";
 import { useFilterContext } from "../../hooks/use-filter";
@@ -52,7 +52,7 @@ export function Sidebar() {
               }}
             >
               <ActionList.LeadingVisual>
-                <RepoIcon />
+                {repo.private ? <LockIcon fill="#dbab09" /> : <RepoIcon />}
               </ActionList.LeadingVisual>
               {repoNameFromFullName(repo.full_name)}{" "}
               <ActionList.TrailingVisual>
