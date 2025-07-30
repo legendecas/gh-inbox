@@ -8,7 +8,7 @@ import {
   CommentDiscussionIcon,
   DiscussionClosedIcon,
 } from "@primer/octicons-react";
-import { RelativeTime } from "@primer/react";
+import { RelativeTime, Tooltip } from "@primer/react";
 import { kSubjectType, type StateType } from "../../../common/github-constants";
 import { parseStringListStr } from "../../../common/string-list";
 import type { ThreadItem } from "../../../common/ipc/threads";
@@ -92,12 +92,17 @@ export function ThreadItem({ thread, checked, setChecked }: ThreadItemProps) {
         </span>
       </td>
       <td>
-        <RelativeTime
-          className="text-sm"
-          format="micro"
-          prefix=""
-          date={thread.updated_at}
-        />
+        <Tooltip text={thread.updated_at.toLocaleString()}>
+          {/* Tooltip requires an interactive child node */}
+          <button>
+            <RelativeTime
+              className="text-sm"
+              format="micro"
+              prefix=""
+              date={thread.updated_at}
+            />
+          </button>
+        </Tooltip>
       </td>
     </tr>
   );
