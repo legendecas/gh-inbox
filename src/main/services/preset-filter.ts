@@ -5,6 +5,7 @@ import type {
   RepoNamespace,
   PresetFilterEndpoint,
   PresetFilter,
+  FilterListOptions,
 } from "../../common/ipc/preset-filter.ts";
 import { kPresetFilterTypes } from "../../common/presets.ts";
 
@@ -20,26 +21,33 @@ export class PresetFilterService implements IService, PresetFilterEndpoint {
     ipcHandle.wire("list", this.list);
   }
 
-  async list() {
+  async list(options: FilterListOptions) {
     return {
-      presetFilters: await this.listPresetFilters(),
-      repoNamespaces: await this.listRepos(),
+      presetFilters: await this.listPresetFilters(options),
+      repoNamespaces: await this.listRepos(options),
     };
   }
 
-  private async listPresetFilters(): Promise<PresetFilter[]> {
+  private async listPresetFilters(
+    options: FilterListOptions,
+  ): Promise<PresetFilter[]> {
     return Promise.all(
       Object.entries(kPresetFilterTypes).map(async ([type, filter]) => ({
         type,
         unread_count: await this.#db.instance.thread.count({
-          where: filter,
+          where: {
+            AND: [{ endpoint_id: options.endpointId }, filter],
+          },
         }),
       })),
     );
   }
 
-  private async listRepos() {
+  private async listRepos(
+    options: FilterListOptions,
+  ): Promise<RepoNamespace[]> {
     const repos = await this.#db.instance.repository.findMany({
+      where: { endpoint_id: options.endpointId },
       orderBy: { full_name: "asc" },
     });
 
@@ -47,7 +55,12 @@ export class PresetFilterService implements IService, PresetFilterEndpoint {
       repos.map((repo) => {
         return this.#db.instance.thread
           .count({
-            where: { repository_id: repo.id, archived: false, unread: true },
+            where: {
+              endpoint_id: options.endpointId,
+              repository_id: repo.id,
+              archived: false,
+              unread: true,
+            },
           })
           .then((unreadCount) => ({
             ...repo,
@@ -64,7 +77,7 @@ export class PresetFilterService implements IService, PresetFilterEndpoint {
         namespace.repos.push(repo);
       } else {
         const owner = await this.#db.instance.owner.findUnique({
-          where: { id: repo.owner_id },
+          where: { endpoint_id: options.endpointId, id: repo.owner_id },
         });
         if (owner == null) continue; // Skip if owner not found
         namespaces.set(ownerFullName, {

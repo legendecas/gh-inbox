@@ -466,7 +466,7 @@ export class FetchNotificationsTask {
           description: repository.description || "",
           fork: repository.fork,
           html_url: repository.html_url,
-          endpoint_id: 1,
+          endpoint_id: this.#endpointId,
           owner_id: `${repository.owner.id}`,
         },
         update: {
@@ -486,7 +486,7 @@ export class FetchNotificationsTask {
           login: owner.login,
           avatar_url: owner.avatar_url,
           type: owner.type,
-          endpoint_id: 1,
+          endpoint_id: this.#endpointId,
         },
         update: {
           login: owner.login,

@@ -2,7 +2,6 @@ import { BrowserWindow, ipcMain, shell } from "electron";
 import path from "node:path";
 import { Migrator } from "./database/migrator.ts";
 import { Prisma } from "./database/prisma.js";
-import { GitHubClient } from "./github/client.js";
 import { ServiceManager } from "./service-manager.ts";
 import { ThreadsService } from "./services/threads.ts";
 import { logger } from "./utils/logger.ts";
@@ -13,7 +12,6 @@ import { EndpointService } from "./services/endpoint.ts";
 
 export class Application {
   #db!: Prisma;
-  #gh!: GitHubClient;
   #taskRunner!: TaskRunner;
   #mainWindow?: BrowserWindow;
 
@@ -23,12 +21,8 @@ export class Application {
     await migrator.runMigrations();
 
     this.#db = new Prisma(databasePath);
-    this.#gh = new GitHubClient(
-      "https://api.github.com",
-      process.env.GITHUB_TOKEN || "",
-    );
 
-    this.#taskRunner = new TaskRunner(this.#db, this.#gh);
+    this.#taskRunner = new TaskRunner(this.#db);
     await this.#taskRunner.schedule();
 
     const serviceManager = new ServiceManager();

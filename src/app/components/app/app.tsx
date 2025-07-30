@@ -5,7 +5,7 @@ import { BaseStyles, ThemeProvider } from "@primer/react";
 
 import { FilterProvider } from "../../hooks/use-filter";
 import { Inbox } from "../inbox/inbox";
-import { useApp } from "../../hooks/use-app";
+import { AppContext, useApp } from "../../hooks/use-app";
 import { CreateEndpoint } from "../create-endpoint/create-endpoint";
 
 export function App() {
@@ -14,7 +14,11 @@ export function App() {
   if (endpoints.length === 0) {
     return <CreateEndpoint refreshEndpoints={refreshEndpoints} />;
   }
-  return <Inbox />;
+  return (
+    <AppContext.Provider value={{ endpointId: endpoints[0].id }}>
+      <Inbox />
+    </AppContext.Provider>
+  );
 }
 
 export function AppContainer() {

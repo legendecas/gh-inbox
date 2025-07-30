@@ -1,5 +1,5 @@
 import type { Prisma } from "./database/prisma.ts";
-import type { GitHubClient } from "./github/client.ts";
+import { GitHubClient } from "./github/client.js";
 import { FetchNotificationsTask } from "./tasks/fetch-notifications.ts";
 import { logger } from "./utils/logger.ts";
 
@@ -7,17 +7,16 @@ const kTaskRunnerInterval = 3 * 60 * 1000; // 3 minutes
 
 export class TaskRunner {
   #db: Prisma;
-  #gh: GitHubClient;
-  constructor(db: Prisma, gh: GitHubClient) {
+
+  constructor(db: Prisma) {
     this.#db = db;
-    this.#gh = gh;
   }
 
   async schedule() {
-    const endpointIds = [1];
+    const endpoints = await this.#db.instance.endpoint.findMany();
 
-    for (const endpointId of endpointIds) {
-      await this.scheduleForEndpoint(endpointId);
+    for (const endpoint of endpoints) {
+      await this.scheduleForEndpoint(endpoint.id);
     }
   }
 
@@ -83,10 +82,20 @@ export class TaskRunner {
   }
 
   private async runTasksForEndpoint(endpointId: number, lastRun?: Date) {
+    const endpoint = await this.#db.instance.endpoint.findUnique({
+      where: { id: endpointId },
+    });
+    if (!endpoint) {
+      logger.error(`Endpoint with ID ${endpointId} not found.`);
+      return;
+    }
+    logger.log(`Running tasks for endpoint ${endpointId}...`);
+    const gh = new GitHubClient(endpoint.url, endpoint.token);
+
     try {
       const task = new FetchNotificationsTask(
         this.#db,
-        this.#gh,
+        gh,
         endpointId,
         lastRun,
       );

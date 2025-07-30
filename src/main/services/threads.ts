@@ -4,7 +4,7 @@ import type {
   ThreadItem,
   ThreadListOptions,
 } from "../../common/ipc/threads.ts";
-import { kPageSize } from "../../common/presets.ts";
+import { kPageSize, type ThreadFilter } from "../../common/presets.ts";
 import { parseStringListStr } from "../../common/string-list.ts";
 import type { Prisma } from "../database/prisma.ts";
 import type { IpcHandle, IService } from "../service-manager.ts";
@@ -22,8 +22,13 @@ export class ThreadsService implements IService, ThreadEndpoint {
     ipcHandle.wire("archive", this.archive);
   }
 
-  async list(options: ThreadListOptions = {}) {
-    const filter = options.filter ?? { archived: false };
+  async list(options: ThreadListOptions) {
+    const filter: ThreadFilter = {
+      AND: [
+        { endpoint_id: options.endpointId },
+        options.filter ?? { archived: false },
+      ],
+    };
 
     const count = await this.#db.instance.thread.count({
       where: filter,
@@ -38,6 +43,7 @@ export class ThreadsService implements IService, ThreadEndpoint {
       threads.map(async (thread) => {
         const subject = await this.#db.instance.subject.findFirst({
           where: {
+            endpoint_id: options.endpointId,
             number: thread.subject_number,
             repository_id: thread.repository_id,
           },
@@ -46,7 +52,10 @@ export class ThreadsService implements IService, ThreadEndpoint {
           subject == null
             ? []
             : await this.#db.instance.label.findMany({
-                where: { id: { in: parseStringListStr(subject.labels) } },
+                where: {
+                  endpoint_id: options.endpointId,
+                  id: { in: parseStringListStr(subject.labels) },
+                },
               });
         const state = (
           subject?.merged === true
@@ -70,9 +79,9 @@ export class ThreadsService implements IService, ThreadEndpoint {
     };
   }
 
-  async archive(threads: string[]) {
+  async archive(endpointId: number, threads: string[]) {
     await this.#db.instance.thread.updateMany({
-      where: { id: { in: threads } },
+      where: { endpoint_id: endpointId, id: { in: threads } },
       data: { archived: true, archived_at: new Date() },
     });
   }

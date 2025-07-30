@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useThreads } from "../../hooks/use-threads";
 import { Header } from "./header";
 import { ThreadItem } from "./thread-item";
@@ -8,7 +8,7 @@ import { kPageSize } from "../../../common/presets";
 import { useFilterContext } from "../../hooks/use-filter";
 
 export function Content() {
-  const [currentPage, setCurrentPage] = React.useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
   const { filter } = useFilterContext();
   console.log("Current filter:", filter);
 
@@ -17,7 +17,7 @@ export function Content() {
     currentPage,
     kPageSize,
   );
-  const [checkedSet, setChecked] = React.useState<Set<string>>(new Set());
+  const [checkedSet, setChecked] = useState<Set<string>>(new Set());
 
   const onChecked = (threadId: string, checked: boolean) => {
     if (checked) {

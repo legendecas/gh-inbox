@@ -12,6 +12,7 @@ export interface ThreadListOptions {
   page?: number;
   pageSize?: number;
   filter?: ThreadFilter;
+  endpointId: number;
 }
 
 export interface ThreadListResult {
@@ -21,5 +22,5 @@ export interface ThreadListResult {
 
 export interface ThreadEndpoint {
   list: (options: ThreadListOptions) => Promise<ThreadListResult>;
-  archive: (threads: string[]) => Promise<void>;
+  archive: (endpointId: number, threads: string[]) => Promise<void>;
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import type { Endpoint } from "../../generated/prisma/index.js";
 
 export function useApp() {
@@ -19,4 +19,12 @@ export function useApp() {
   }, [updateTime]);
 
   return [endpoints, () => setUpdateTime(Date.now())] as const;
+}
+
+export const AppContext = createContext({
+  endpointId: 0,
+});
+
+export function useAppContext() {
+  return useContext(AppContext);
 }

@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import type { ThreadListResult } from "../../common/ipc/threads.js";
 import type { ThreadFilter } from "../../common/presets.js";
+import { useAppContext } from "./use-app.js";
 
 export function useThreads(
   filter: ThreadFilter,
   page: number,
   pageSize: number,
 ) {
+  const ctx = useAppContext();
   const [updateTime, setUpdateTime] = useState(Date.now());
   const [result, setResult] = useState<ThreadListResult>({
     totalCount: 0,
@@ -28,6 +30,7 @@ export function useThreads(
           page,
           pageSize,
           filter,
+          endpointId: ctx.endpointId,
         });
         setResult(data);
       } catch (error) {
@@ -36,7 +39,7 @@ export function useThreads(
     };
 
     fetch();
-  }, [updateTime, filter, page, pageSize]);
+  }, [updateTime, ctx.endpointId, filter, page, pageSize]);
 
   return [
     result.threads,

@@ -1,5 +1,6 @@
 import React from "react";
 import { Button } from "@primer/react";
+import { useAppContext } from "../../hooks/use-app";
 
 export function Header({
   checkedThreads,
@@ -8,8 +9,14 @@ export function Header({
   checkedThreads: Set<string>;
   refreshThreads: () => void;
 }) {
+  const ctx = useAppContext();
   async function archiveThreads() {
-    await window.ipc.invoke("threads", "archive", Array.from(checkedThreads));
+    await window.ipc.invoke(
+      "threads",
+      "archive",
+      ctx.endpointId,
+      Array.from(checkedThreads),
+    );
     refreshThreads();
   }
 
