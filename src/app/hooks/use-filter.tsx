@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext } from "react";
 import { useQueryParam } from "./use-query-params";
 
 export const FilterContext = createContext({
@@ -16,16 +16,12 @@ export function useFilterContext() {
 }
 
 export function FilterProvider({ children }: React.PropsWithChildren) {
-  const [filter, setFilter] = useState("");
+  const [filter, setFilter] = useQueryParam("q", "");
 
-  const [currentPage, setCurrentPage] = useQueryParam(
-    "page",
-    {
-      serialize: (value: number) => value.toString(),
-      deserialize: (value: string) => parseInt(value, 10),
-    },
-    1,
-  );
+  const [currentPage, setCurrentPage] = useQueryParam("page", 1, {
+    serialize: (value: number) => value.toString(),
+    deserialize: (value: string) => parseInt(value, 10),
+  });
 
   function setFilterAndClearPage(newFilter: string) {
     setFilter(newFilter);
