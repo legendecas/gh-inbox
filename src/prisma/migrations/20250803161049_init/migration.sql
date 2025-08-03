@@ -15,7 +15,9 @@ CREATE TABLE "Thread" (
     "subject_type" TEXT NOT NULL,
     "subject_latest_comment_url" TEXT,
     "repository_id" TEXT NOT NULL,
-    "endpoint_id" INTEGER NOT NULL
+    "endpoint_id" INTEGER NOT NULL,
+    CONSTRAINT "Thread_endpoint_id_repository_id_subject_number_fkey" FOREIGN KEY ("endpoint_id", "repository_id", "subject_number") REFERENCES "Subject" ("endpoint_id", "repository_id", "number") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "Thread_repository_id_endpoint_id_fkey" FOREIGN KEY ("repository_id", "endpoint_id") REFERENCES "Repository" ("id", "endpoint_id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -28,7 +30,8 @@ CREATE TABLE "Repository" (
     "fork" BOOLEAN NOT NULL,
     "html_url" TEXT NOT NULL,
     "owner_id" TEXT NOT NULL,
-    "endpoint_id" INTEGER NOT NULL
+    "endpoint_id" INTEGER NOT NULL,
+    CONSTRAINT "Repository_endpoint_id_owner_id_fkey" FOREIGN KEY ("endpoint_id", "owner_id") REFERENCES "Owner" ("endpoint_id", "id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -68,11 +71,12 @@ CREATE TABLE "Subject" (
     "merged_at" DATETIME,
     "user_id" TEXT NOT NULL,
     "user_login" TEXT NOT NULL,
-    "repository_id" TEXT NOT NULL,
     "labels" TEXT NOT NULL,
+    "label_ids" TEXT NOT NULL,
     "merged" BOOLEAN NOT NULL DEFAULT false,
     "mergeable" BOOLEAN NOT NULL DEFAULT false,
     "mergeable_state" TEXT,
+    "repository_id" TEXT NOT NULL,
     "endpoint_id" INTEGER NOT NULL
 );
 
@@ -80,8 +84,9 @@ CREATE TABLE "Subject" (
 CREATE TABLE "Task" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "type" TEXT NOT NULL,
-    "last_run" DATETIME,
-    "next_run" DATETIME
+    "endpoint_id" INTEGER,
+    "data" TEXT NOT NULL,
+    "last_run" DATETIME NOT NULL
 );
 
 -- CreateTable
@@ -92,8 +97,23 @@ CREATE TABLE "Endpoint" (
     "token" TEXT NOT NULL,
     "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" DATETIME NOT NULL,
-    "expires_at" DATETIME NOT NULL
+    "expires_at" DATETIME
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Task_type_key" ON "Task"("type");
+CREATE UNIQUE INDEX "Thread_endpoint_id_id_key" ON "Thread"("endpoint_id", "id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Repository_endpoint_id_id_key" ON "Repository"("endpoint_id", "id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Owner_endpoint_id_id_key" ON "Owner"("endpoint_id", "id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Label_endpoint_id_id_key" ON "Label"("endpoint_id", "id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Subject_endpoint_id_id_key" ON "Subject"("endpoint_id", "id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Subject_endpoint_id_repository_id_number_key" ON "Subject"("endpoint_id", "repository_id", "number");

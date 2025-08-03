@@ -1,9 +1,8 @@
 import React, { createContext, useContext, useState } from "react";
-import { kDefaultFilter, type ThreadFilter } from "../../common/presets";
 
 export const FilterContext = createContext({
-  filter: kDefaultFilter,
-  setFilter: (_filter: ThreadFilter) => {
+  filter: "archived:false",
+  setFilter: (_filter: string) => {
     /* no-op */
   },
 });
@@ -12,7 +11,7 @@ export function useFilterContext() {
 }
 
 export function FilterProvider({ children }: React.PropsWithChildren) {
-  const [filter, setFilter] = useState(kDefaultFilter);
+  const [filter, setFilter] = useState("archived:false");
   return (
     <FilterContext.Provider value={{ filter, setFilter }}>
       {children}

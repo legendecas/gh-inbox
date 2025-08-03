@@ -111,24 +111,23 @@ export class FetchNotificationsTask {
   }
 
   async saveNotifications(threads: Thread[]) {
-    const repositories: RepositoryMap = new Map();
+    const seenRepositories: RepositoryMap = new Map();
     const labels: LabelMap = new Map();
 
     for (const thread of threads) {
       try {
-        await this.updateThread(thread, repositories, labels);
+        await this.updateThread(thread, seenRepositories, labels);
       } catch (error) {
         logger.error(`Error processing thread ${thread.url}:`, error);
       }
     }
 
     await this.updateLabels(labels);
-    await this.updateRepositories(repositories);
   }
 
   async updateThread(
     thread: Thread,
-    repositories: RepositoryMap,
+    seenRepositories: RepositoryMap,
     labels: LabelMap,
   ): Promise<void> {
     const subjectUrl = thread.subject.url;
@@ -148,7 +147,11 @@ export class FetchNotificationsTask {
       return;
     }
 
-    repositories.set(`${repository.id}`, repository);
+    if (!seenRepositories.has(`${repository.id}`)) {
+      await this.updateRepository(repository);
+      seenRepositories.set(`${repository.id}`, repository);
+    }
+
     const subjectNumber = getSubjectNumberFromUrl(subjectUrl);
     if (subjectNumber === null) {
       logger.warn(`Skipping thread with invalid subject URL: ${subjectUrl}`);
@@ -260,6 +263,9 @@ export class FetchNotificationsTask {
       labels,
     } = issue;
     const labelsStr = formatStringList(
+      labels.map((label) => `${(label as Label).name}`),
+    );
+    const labelIdsStr = formatStringList(
       labels.map((label) => `${(label as Label).id}`),
     );
 
@@ -280,6 +286,7 @@ export class FetchNotificationsTask {
         user_id: user ? `${user.id}` : "",
         user_login: user ? user.login : "",
         labels: labelsStr,
+        label_ids: labelIdsStr,
         repository_id: `${repository.id}`,
         endpoint_id: this.#endpointId,
       },
@@ -295,6 +302,7 @@ export class FetchNotificationsTask {
         user_id: user ? `${user.id}` : "",
         user_login: user ? user.login : "",
         labels: labelsStr,
+        label_ids: labelIdsStr,
       },
     });
   }
@@ -322,7 +330,8 @@ export class FetchNotificationsTask {
       mergeable,
       mergeable_state,
     } = pullRequest;
-    const labelsStr = formatStringList(labels.map((label) => `${label.id}`));
+    const labelsStr = formatStringList(labels.map((label) => `${label.name}`));
+    const labelIdsStr = formatStringList(labels.map((label) => `${label.id}`));
 
     await this.#db.instance.subject.upsert({
       where: { id: `${id}` },
@@ -343,6 +352,7 @@ export class FetchNotificationsTask {
         user_id: user ? `${user.id}` : "",
         user_login: user ? user.login : "",
         labels: labelsStr,
+        label_ids: labelIdsStr,
         repository_id: `${repository.id}`,
         merged,
         mergeable: mergeable === true,
@@ -363,6 +373,7 @@ export class FetchNotificationsTask {
         user_id: user ? `${user.id}` : "",
         user_login: user ? user.login : "",
         labels: labelsStr,
+        label_ids: labelIdsStr,
         merged,
         mergeable: mergeable === true,
         mergeable_state,
@@ -389,6 +400,9 @@ export class FetchNotificationsTask {
       labels,
     } = discussion;
     const labelsStr = formatStringList(
+      (labels ?? []).map((label) => `${label.name}`),
+    );
+    const labelIdsStr = formatStringList(
       (labels ?? []).map((label) => `${label.id}`),
     );
 
@@ -409,6 +423,7 @@ export class FetchNotificationsTask {
         user_id: user ? `${user.id}` : "",
         user_login: user ? user.login : "",
         labels: labelsStr,
+        label_ids: labelIdsStr,
         repository_id: `${repository.id}`,
         endpoint_id: this.#endpointId,
       },
@@ -424,6 +439,7 @@ export class FetchNotificationsTask {
         user_id: user ? `${user.id}` : "",
         user_login: user ? user.login : "",
         labels: labelsStr,
+        label_ids: labelIdsStr,
       },
     });
   }
@@ -449,6 +465,56 @@ export class FetchNotificationsTask {
         },
       });
     }
+  }
+
+  async updateRepository(repo: ThreadRepository): Promise<void> {
+    const {
+      id,
+      name,
+      full_name,
+      private: isPrivate,
+      description,
+      fork,
+      html_url,
+      owner,
+    } = repo;
+
+    await this.#db.instance.owner.upsert({
+      where: { id: `${owner.id}` },
+      create: {
+        id: `${owner.id}`,
+        login: owner.login,
+        avatar_url: owner.avatar_url,
+        type: owner.type,
+        endpoint_id: this.#endpointId,
+      },
+      update: {
+        login: owner.login,
+        avatar_url: owner.avatar_url,
+        type: owner.type,
+      },
+    });
+
+    await this.#db.instance.repository.upsert({
+      where: { id: `${id}` },
+      create: {
+        id: `${id}`,
+        name,
+        full_name,
+        private: isPrivate,
+        description: description || "",
+        fork,
+        html_url,
+        endpoint_id: this.#endpointId,
+        owner_id: `${repo.owner.id}`,
+      },
+      update: {
+        name,
+        full_name,
+        private: isPrivate,
+        description: description || "",
+      },
+    });
   }
 
   async updateRepositories(repositories: Map<string, ThreadRepository>) {

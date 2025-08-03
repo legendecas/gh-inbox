@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { Avatar, CounterLabel, ActionList } from "@primer/react";
+import { Avatar, CounterLabel, ActionList, Truncate } from "@primer/react";
 import {
   CommentDiscussionIcon,
   GoalIcon,
@@ -12,8 +12,7 @@ import "./sidebar.css";
 import { usePresetFilter } from "../../hooks/use-preset-filter";
 import { useFilterContext } from "../../hooks/use-filter";
 import {
-  kPresetFilterTypes,
-  repoFilter,
+  kPresetFilterSearches,
   type kPresetFilterType,
 } from "../../../common/presets";
 
@@ -36,61 +35,81 @@ const kPresetFilterSettings: Record<
 };
 
 export function Sidebar() {
-  const { setFilter } = useFilterContext();
+  const { filter, setFilter } = useFilterContext();
   const { presetFilters, repoNamespaces } = usePresetFilter();
 
   return (
     <ActionList>
-      {presetFilters.map((filter) => {
-        const Icon =
-          kPresetFilterSettings[filter.type as kPresetFilterType].icon;
+      {presetFilters.map((pf) => {
+        const Icon = kPresetFilterSettings[pf.type as kPresetFilterType].icon;
         return (
           <ActionList.Item
-            key={filter.type}
+            key={pf.type}
+            active={
+              kPresetFilterSearches[pf.type as kPresetFilterType] === filter
+            }
             onSelect={() => {
-              console.log("Setting filter:", filter.type);
-              setFilter(kPresetFilterTypes[filter.type as kPresetFilterType]);
+              setFilter(kPresetFilterSearches[pf.type as kPresetFilterType]);
             }}
           >
             <ActionList.LeadingVisual>
               <Icon />
             </ActionList.LeadingVisual>
-            {kPresetFilterSettings[filter.type as kPresetFilterType].name}
+            {kPresetFilterSettings[pf.type as kPresetFilterType].name}
             <ActionList.TrailingVisual>
-              <CounterLabel>{filter.unread_count}</CounterLabel>
+              <CounterLabel>{pf.unread_count}</CounterLabel>
             </ActionList.TrailingVisual>
           </ActionList.Item>
         );
       })}
       <ActionList.Divider />
-      {repoNamespaces.map((ns) => (
-        <Fragment key={ns.owner}>
-          <ActionList.Item key={ns.owner}>
-            <ActionList.LeadingVisual>
-              <Avatar square src={ns.avatar_url} alt={`${ns.owner}'s avatar`} />
-            </ActionList.LeadingVisual>
-            {ns.owner}
-          </ActionList.Item>
-
-          {ns.repos.map((repo) => (
+      {repoNamespaces.map((ns) => {
+        const ownerFilter = `archived:false owner:${ns.owner}`;
+        return (
+          <Fragment key={ns.owner}>
             <ActionList.Item
-              key={repo.id}
+              key={ns.owner}
+              active={ownerFilter === filter}
               onSelect={() => {
-                console.log("Setting filter for repo:", repo.full_name);
-                setFilter(repoFilter(repo.id));
+                setFilter(ownerFilter);
               }}
             >
               <ActionList.LeadingVisual>
-                {repo.private ? <LockIcon fill="#dbab09" /> : <RepoIcon />}
+                <Avatar
+                  square
+                  src={ns.avatar_url}
+                  alt={`${ns.owner}'s avatar`}
+                />
               </ActionList.LeadingVisual>
-              {repoNameFromFullName(repo.full_name)}{" "}
-              <ActionList.TrailingVisual>
-                <CounterLabel>{repo.unread_count}</CounterLabel>
-              </ActionList.TrailingVisual>
+              {ns.owner}
             </ActionList.Item>
-          ))}
-        </Fragment>
-      ))}
+
+            {ns.repos.map((repo) => {
+              const repoName = repoNameFromFullName(repo.full_name);
+              const repoFilter = `archived:false repo_id:"${repo.id}"`;
+              return (
+                <ActionList.Item
+                  key={repo.id}
+                  active={repoFilter === filter}
+                  onSelect={() => {
+                    setFilter(repoFilter);
+                  }}
+                >
+                  <ActionList.LeadingVisual>
+                    {repo.private ? <LockIcon fill="#dbab09" /> : <RepoIcon />}
+                  </ActionList.LeadingVisual>
+                  <Truncate title={repoName} maxWidth="100%">
+                    {repoName}
+                  </Truncate>
+                  <ActionList.TrailingVisual>
+                    <CounterLabel>{repo.unread_count}</CounterLabel>
+                  </ActionList.TrailingVisual>
+                </ActionList.Item>
+              );
+            })}
+          </Fragment>
+        );
+      })}
     </ActionList>
   );
 }

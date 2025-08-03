@@ -32,8 +32,12 @@ model Thread {
   subject_latest_comment_url String?
 
   repository_id String
+  endpoint_id   Int
 
-  endpoint_id Int
+  subject    Subject?    @relation(fields: [endpoint_id, repository_id, subject_number], references: [endpoint_id, repository_id, number])
+  repository Repository? @relation(fields: [repository_id, endpoint_id], references: [id, endpoint_id])
+
+  @@unique([endpoint_id, id])
 }
 
 model Repository {
@@ -49,6 +53,12 @@ model Repository {
   owner_id String
 
   endpoint_id Int
+
+  threads Thread[]
+
+  owner Owner? @relation(fields: [endpoint_id, owner_id], references: [endpoint_id, id])
+
+  @@unique([endpoint_id, id])
 }
 
 model Owner {
@@ -58,6 +68,10 @@ model Owner {
   type       String
 
   endpoint_id Int
+
+  repositories Repository[]
+
+  @@unique([endpoint_id, id])
 }
 
 model Label {
@@ -69,6 +83,8 @@ model Label {
 
   repository_id String
   endpoint_id   Int
+
+  @@unique([endpoint_id, id])
 }
 
 model Subject {
@@ -92,15 +108,20 @@ model Subject {
   user_id    String
   user_login String
 
-  repository_id String
-
-  labels String
+  labels    String
+  label_ids String
 
   merged          Boolean @default(false)
   mergeable       Boolean @default(false)
   mergeable_state String?
 
-  endpoint_id Int
+  repository_id String
+  endpoint_id   Int
+
+  threads Thread[]
+
+  @@unique([endpoint_id, id])
+  @@unique([endpoint_id, repository_id, number])
 }
 
 model Task {
@@ -119,7 +140,7 @@ model Endpoint {
   username String
   token    String
 
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
   expires_at DateTime?
 }

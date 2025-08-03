@@ -40,6 +40,11 @@ export const kPresetFilterTypes: kPresetFilter = {
     ],
   },
 };
+export const kPresetFilterSearches: Record<kPresetFilterType, string> = {
+  inbox: "archived:false",
+  my_turn: "archived:false unread:true reasons:author,comment,manual,mention",
+  involved: "archived:false reasons:author,comment,manual,mention,team_mention",
+};
 
 export function repoFilter(repoId: string): ThreadFilter {
   return {

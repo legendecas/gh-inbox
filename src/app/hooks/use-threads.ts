@@ -1,13 +1,10 @@
 import { useEffect, useState } from "react";
 import type { ThreadListResult } from "../../common/ipc/threads.js";
-import type { ThreadFilter } from "../../common/presets.js";
 import { useAppContext } from "./use-app.js";
+import { SearchParser } from "../../common/search-builder/search-parser.js";
+import { FilterBuilder } from "../../common/search-builder/filter-builder.js";
 
-export function useThreads(
-  filter: ThreadFilter,
-  page: number,
-  pageSize: number,
-) {
+export function useThreads(filter: string, page: number, pageSize: number) {
   const ctx = useAppContext();
   const [updateTime, setUpdateTime] = useState(Date.now());
   const [result, setResult] = useState<ThreadListResult>({
@@ -16,9 +13,13 @@ export function useThreads(
   });
 
   useEffect(() => {
+    const searchParser = new SearchParser();
+    const filterBuilder = new FilterBuilder();
+    const parsedFilter = searchParser.parse(filter);
+    const filterQuery = filterBuilder.fromRecord(parsedFilter).build();
     console.log(
       "Fetching threads with filter:",
-      filter,
+      filterQuery,
       "page:",
       page,
       "pageSize:",
@@ -29,7 +30,7 @@ export function useThreads(
         const data = await window.ipc.invoke("threads", "list", {
           page,
           pageSize,
-          filter,
+          filter: filterQuery,
           endpointId: ctx.endpointId,
         });
         setResult(data);

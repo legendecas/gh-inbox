@@ -6,9 +6,17 @@ import "./content.css";
 import { PageLayout, Pagination } from "@primer/react";
 import { kPageSize } from "../../../common/presets";
 import { useFilterContext } from "../../hooks/use-filter";
+import { useQueryParam } from "../../hooks/use-query-params";
 
 export function Content() {
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useQueryParam(
+    "page",
+    {
+      serialize: (value: number) => value.toString(),
+      deserialize: (value: string) => parseInt(value, 10),
+    },
+    1,
+  );
   const { filter } = useFilterContext();
   console.log("Current filter:", filter);
 
