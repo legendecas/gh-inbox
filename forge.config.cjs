@@ -26,11 +26,10 @@ module.exports = {
       name: "@electron-forge/publisher-github",
       config: {
         repository: {
-          owner: "github-user-name",
-          name: "github-repo-name",
+          owner: "legendecas",
+          name: "gh-inbox",
         },
-        prerelease: false,
-        draft: true,
+        prerelease: true,
       },
     },
   ],
