@@ -7,12 +7,18 @@ const kTaskRunnerInterval = 3 * 60 * 1000; // 3 minutes
 
 export class TaskRunner {
   #db: Prisma;
+  #timer: NodeJS.Timeout | null = null;
 
   constructor(db: Prisma) {
     this.#db = db;
   }
 
   async schedule() {
+    if (this.#timer) {
+      clearTimeout(this.#timer);
+      this.#timer = null;
+    }
+
     const endpoints = await this.#db.instance.endpoint.findMany();
 
     for (const endpoint of endpoints) {
@@ -45,7 +51,7 @@ export class TaskRunner {
         `Scheduling TaskRunner for endpoint ${endpointId} in ${delay} ms.`,
       );
     }
-    setTimeout(() => {
+    this.#timer = setTimeout(() => {
       this.run(endpointId).catch((error) => {
         logger.error("Error running TaskRunner:", error);
       });

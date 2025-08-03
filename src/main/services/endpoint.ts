@@ -8,6 +8,7 @@ import type { Prisma } from "../database/prisma.ts";
 import { GitHubClient } from "../github/client.js";
 import type { OctokitResponse } from "@octokit/types";
 import type { IpcHandle, IService } from "../service-manager.ts";
+import type { Application } from "../application.ts";
 
 class ConnectionError extends Error {
   constructor(message: string, resp: OctokitResponse<unknown>) {
@@ -22,9 +23,11 @@ const kRequiredScopes = ["notifications", ["user", "user:email"]];
 export class EndpointService implements IService, EndpointEndpoint {
   namespace = "endpoint";
 
+  #app: Application;
   #db: Prisma;
 
-  constructor(db: Prisma) {
+  constructor(app: Application, db: Prisma) {
+    this.#app = app;
     this.#db = db;
   }
 
@@ -64,7 +67,7 @@ export class EndpointService implements IService, EndpointEndpoint {
 
   async create(data: CreateEndpointData): Promise<Endpoint> {
     const result = await this.test(data);
-    return this.#db.instance.endpoint.create({
+    const endpoint = await this.#db.instance.endpoint.create({
       data: {
         url: data.url,
         token: data.token,
@@ -72,6 +75,10 @@ export class EndpointService implements IService, EndpointEndpoint {
         expires_at: result.expiresAt,
       },
     });
+
+    this.#app.taskRunner.schedule();
+
+    return endpoint;
   }
 
   checkScopes(scopes: readonly string[]): boolean {

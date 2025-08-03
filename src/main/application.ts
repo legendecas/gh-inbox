@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain, shell } from "electron";
+import { app, BrowserWindow, ipcMain, shell } from "electron";
 import path from "node:path";
 import { Migrator } from "./database/migrator.ts";
 import { Prisma } from "./database/prisma.js";
@@ -16,7 +16,9 @@ export class Application {
   #mainWindow?: BrowserWindow;
 
   async onReady() {
-    const databasePath = path.join(process.cwd(), "prisma.db");
+    const userDataPath = app.getPath("userData");
+
+    const databasePath = path.join(userDataPath, "gh-inbox.db");
     await using migrator = new Migrator(databasePath);
     await migrator.runMigrations();
 
@@ -28,8 +30,12 @@ export class Application {
     const serviceManager = new ServiceManager();
     serviceManager.registerService(new ThreadsService(this.#db));
     serviceManager.registerService(new PresetFilterService(this.#db));
-    serviceManager.registerService(new EndpointService(this.#db));
+    serviceManager.registerService(new EndpointService(this, this.#db));
     serviceManager.wireAll(ipcMain);
+  }
+
+  get taskRunner() {
+    return this.#taskRunner;
   }
 
   async onQuit() {
