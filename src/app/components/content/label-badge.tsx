@@ -1,8 +1,9 @@
-import React from "react";
-import "./label-badge.css";
-import type { Label } from "../../../generated/prisma";
 import { IssueLabelToken, LabelGroup } from "@primer/react";
+import React from "react";
+
+import type { Label } from "../../../generated/prisma";
 import { useFilterContext } from "../../hooks/use-filter";
+import "./label-badge.css";
 
 export interface LabelProps {
   label: Label;

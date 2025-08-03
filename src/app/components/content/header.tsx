@@ -1,5 +1,6 @@
-import React from "react";
 import { Button } from "@primer/react";
+import React from "react";
+
 import { useAppContext } from "../../hooks/use-app";
 
 export function Header({

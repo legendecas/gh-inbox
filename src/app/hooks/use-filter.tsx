@@ -1,4 +1,5 @@
 import React, { createContext, useContext } from "react";
+
 import { useQueryParam } from "./use-query-params";
 
 export const FilterContext = createContext({

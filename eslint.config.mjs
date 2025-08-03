@@ -1,7 +1,7 @@
 import eslint from "@eslint/js";
 import prettierConfig from "eslint-config-prettier";
-import tseslint from "typescript-eslint";
 import { globalIgnores } from "eslint/config";
+import tseslint from "typescript-eslint";
 
 export default tseslint.config(
   globalIgnores(["dist", "out", "src/generated"]),

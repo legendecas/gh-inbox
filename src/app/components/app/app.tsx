@@ -1,12 +1,11 @@
-import React from "react";
-
 import "@primer/primitives/dist/css/functional/themes/light.css";
 import { BaseStyles, ThemeProvider } from "@primer/react";
+import React from "react";
 
-import { FilterProvider } from "../../hooks/use-filter";
-import { Inbox } from "../inbox/inbox";
 import { AppContext, useApp } from "../../hooks/use-app";
+import { FilterProvider } from "../../hooks/use-filter";
 import { CreateEndpoint } from "../create-endpoint/create-endpoint";
+import { Inbox } from "../inbox/inbox";
 
 export function App() {
   const [endpoints, refreshEndpoints] = useApp();

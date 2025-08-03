@@ -1,13 +1,13 @@
-import type { Prisma } from "../database/prisma.ts";
-import type { IpcHandle, IService } from "../service-manager.ts";
 import type {
+  FilterListOptions,
+  PresetFilter,
+  PresetFilterEndpoint,
   RepoInfo,
   RepoNamespace,
-  PresetFilterEndpoint,
-  PresetFilter,
-  FilterListOptions,
 } from "../../common/ipc/preset-filter.ts";
 import { kPresetFilterQueries } from "../../common/presets.ts";
+import type { Prisma } from "../database/prisma.ts";
+import type { IService, IpcHandle } from "../service-manager.ts";
 
 export class PresetFilterService implements IService, PresetFilterEndpoint {
   namespace = "presetFilter";

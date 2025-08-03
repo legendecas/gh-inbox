@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+
 import type { Endpoint } from "../../generated/prisma/index.js";
 
 export function useApp() {

@@ -1,14 +1,15 @@
-import type { Endpoint } from "../../generated/prisma/index.js";
+import type { OctokitResponse } from "@octokit/types";
+
 import type {
   CreateEndpointData,
   EndpointEndpoint,
   TestResult,
 } from "../../common/ipc/endpoint.js";
+import type { Endpoint } from "../../generated/prisma/index.js";
+import type { Application } from "../application.ts";
 import type { Prisma } from "../database/prisma.ts";
 import { GitHubClient } from "../github/client.js";
-import type { OctokitResponse } from "@octokit/types";
-import type { IpcHandle, IService } from "../service-manager.ts";
-import type { Application } from "../application.ts";
+import type { IService, IpcHandle } from "../service-manager.ts";
 
 class ConnectionError extends Error {
   constructor(message: string, resp: OctokitResponse<unknown>) {

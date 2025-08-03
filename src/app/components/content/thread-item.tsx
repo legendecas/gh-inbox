@@ -1,19 +1,20 @@
-import React from "react";
 import {
-  IssueOpenedIcon,
-  IssueClosedIcon,
-  GitPullRequestIcon,
-  GitPullRequestClosedIcon,
-  GitPullRequestDraftIcon,
   CommentDiscussionIcon,
   DiscussionClosedIcon,
+  GitPullRequestClosedIcon,
+  GitPullRequestDraftIcon,
+  GitPullRequestIcon,
+  IssueClosedIcon,
+  IssueOpenedIcon,
 } from "@primer/octicons-react";
 import { RelativeTime, Tooltip } from "@primer/react";
-import { kSubjectType, type StateType } from "../../../common/github-constants";
+import React from "react";
+
+import { type StateType, kSubjectType } from "../../../common/github-constants";
 import type { ThreadItem } from "../../../common/ipc/threads";
 import { LabelBadgeGroup } from "./label-badge";
-import "./thread-item.css";
 import { ReasonLabelGroup } from "./reason-label";
+import "./thread-item.css";
 
 export interface ThreadItemProps {
   thread: ThreadItem;

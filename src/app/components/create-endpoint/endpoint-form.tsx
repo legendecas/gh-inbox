@@ -1,7 +1,8 @@
 import { Button, FormControl, Stack, TextInput } from "@primer/react";
-import React, { useRef, useState } from "react";
-import type { TestResult } from "../../../common/ipc/endpoint";
 import { InlineMessage } from "@primer/react/experimental";
+import React, { useRef, useState } from "react";
+
+import type { TestResult } from "../../../common/ipc/endpoint";
 import type { CreateEndpointProps } from "./create-endpoint";
 
 export function EndpointForm({ refreshEndpoints }: CreateEndpointProps) {

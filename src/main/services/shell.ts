@@ -1,6 +1,7 @@
-import type { IpcHandle, IService } from "../service-manager.ts";
-import type { ShellEndpoint } from "../../common/ipc/shell.ts";
 import { shell } from "electron";
+
+import type { ShellEndpoint } from "../../common/ipc/shell.ts";
+import type { IService, IpcHandle } from "../service-manager.ts";
 
 export class ShellService implements IService, ShellEndpoint {
   namespace = "shell";

@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
+
 import type { ThreadListResult } from "../../common/ipc/threads.js";
-import { useAppContext } from "./use-app.js";
-import { SearchParser } from "../../common/search-builder/search-parser.js";
 import { FilterBuilder } from "../../common/search-builder/filter-builder.js";
+import { SearchParser } from "../../common/search-builder/search-parser.js";
+import { useAppContext } from "./use-app.js";
 
 export function useThreads(filter: string, page: number, pageSize: number) {
   const ctx = useAppContext();

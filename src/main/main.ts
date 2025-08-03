@@ -1,4 +1,5 @@
-import { app, BrowserWindow } from "electron";
+import { BrowserWindow, app } from "electron";
+
 import { Application } from "./application.ts";
 
 const instance = new Application();

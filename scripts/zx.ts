@@ -1,5 +1,5 @@
-import { $, cd } from "zx";
 import { resolve } from "node:path";
+import { $, cd } from "zx";
 
 export const kProjectRoot = resolve(import.meta.dirname, "..");
 

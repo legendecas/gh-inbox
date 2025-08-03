@@ -1,5 +1,6 @@
+import { readFile, readdir } from "node:fs/promises";
 import { DatabaseSync } from "node:sqlite";
-import { readdir, readFile } from "node:fs/promises";
+
 import { kPrismaDir } from "../constants.js";
 import { logger } from "../utils/logger.ts";
 

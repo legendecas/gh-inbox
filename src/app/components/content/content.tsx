@@ -1,11 +1,12 @@
-import React, { useState } from "react";
-import { useThreads } from "../../hooks/use-threads";
-import { Header } from "./header";
-import { ThreadItem } from "./thread-item";
-import "./content.css";
 import { PageLayout, Pagination } from "@primer/react";
+import React, { useState } from "react";
+
 import { kPageSize } from "../../../common/presets";
 import { useFilterContext } from "../../hooks/use-filter";
+import { useThreads } from "../../hooks/use-threads";
+import "./content.css";
+import { Header } from "./header";
+import { ThreadItem } from "./thread-item";
 
 export function Content() {
   const { filter, currentPage, setCurrentPage } = useFilterContext();

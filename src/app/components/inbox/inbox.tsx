@@ -1,8 +1,9 @@
 import { SplitPageLayout } from "@primer/react";
 import React from "react";
+
+import { Content } from "../content/content";
 import { Navbar } from "../navbar/navbar";
 import { Sidebar } from "../sidebar/sidebar";
-import { Content } from "../content/content";
 
 export function Inbox() {
   return (

@@ -1,5 +1,6 @@
-import React from "react";
 import { Label } from "@primer/react";
+import React from "react";
+
 import { parseStringListStr } from "../../../common/string-list";
 
 const kReasonVariant = {

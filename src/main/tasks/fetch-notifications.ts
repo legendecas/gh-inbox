@@ -1,3 +1,8 @@
+import { kSubjectType } from "../../common/github-constants.ts";
+import {
+  formatStringList,
+  parseStringListStr,
+} from "../../common/string-list.ts";
 import type { Prisma } from "../database/prisma.ts";
 import { GitHubClient } from "../github/client.ts";
 import type {
@@ -15,11 +20,6 @@ import {
   resolveIfArchived,
   resolveIfRead,
 } from "../utils/thread.ts";
-import { kSubjectType } from "../../common/github-constants.ts";
-import {
-  formatStringList,
-  parseStringListStr,
-} from "../../common/string-list.ts";
 
 const kSupportedSubjectTypes: string[] = [
   kSubjectType.PullRequest,

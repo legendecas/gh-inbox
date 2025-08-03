@@ -1,5 +1,6 @@
+import { deepEqual, equal } from "node:assert/strict";
 import { test } from "node:test";
-import { equal, deepEqual } from "node:assert/strict";
+
 import { formatStringList, parseStringListStr } from "./string-list.ts";
 
 test("should format string list", (t) => {

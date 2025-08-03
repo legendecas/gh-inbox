@@ -1,5 +1,3 @@
-import React, { Fragment } from "react";
-import { Avatar, CounterLabel, ActionList, Truncate } from "@primer/react";
 import {
   CommentDiscussionIcon,
   GoalIcon,
@@ -8,13 +6,16 @@ import {
   LockIcon,
   RepoIcon,
 } from "@primer/octicons-react";
-import "./sidebar.css";
-import { usePresetFilter } from "../../hooks/use-preset-filter";
-import { useFilterContext } from "../../hooks/use-filter";
+import { ActionList, Avatar, CounterLabel, Truncate } from "@primer/react";
+import React, { Fragment } from "react";
+
 import {
   kPresetFilterSearches,
   type kPresetFilterType,
 } from "../../../common/presets";
+import { useFilterContext } from "../../hooks/use-filter";
+import { usePresetFilter } from "../../hooks/use-preset-filter";
+import "./sidebar.css";
 
 const kPresetFilterSettings: Record<
   kPresetFilterType,

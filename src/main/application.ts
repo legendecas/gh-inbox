@@ -1,14 +1,15 @@
-import { app, BrowserWindow, ipcMain, shell } from "electron";
+import { BrowserWindow, app, ipcMain, shell } from "electron";
 import path from "node:path";
+
+import { kAppDir, kPreloadDir } from "./constants.ts";
 import { Migrator } from "./database/migrator.ts";
 import { Prisma } from "./database/prisma.js";
 import { ServiceManager } from "./service-manager.ts";
-import { ThreadsService } from "./services/threads.ts";
-import { logger } from "./utils/logger.ts";
-import { kAppDir, kPreloadDir } from "./constants.ts";
-import { PresetFilterService } from "./services/preset-filter.ts";
-import { TaskRunner } from "./task-runner.ts";
 import { EndpointService } from "./services/endpoint.ts";
+import { PresetFilterService } from "./services/preset-filter.ts";
+import { ThreadsService } from "./services/threads.ts";
+import { TaskRunner } from "./task-runner.ts";
+import { logger } from "./utils/logger.ts";
 
 export class Application {
   #db!: Prisma;

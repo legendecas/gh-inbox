@@ -1,5 +1,5 @@
-import type { Thread } from "../github/types.ts";
 import type { Thread as PrismaThread } from "../../generated/prisma/index.js";
+import type { Thread } from "../github/types.ts";
 
 export function resolveIfRead(
   thread: Thread,

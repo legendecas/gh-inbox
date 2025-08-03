@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
 import { TextInput } from "@primer/react";
+import React, { useEffect, useState } from "react";
+
 import { useFilterContext } from "../../hooks/use-filter";
 
 let timer: ReturnType<typeof setTimeout>;

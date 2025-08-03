@@ -1,13 +1,13 @@
-import { kStateType, type StateType } from "../../common/github-constants.ts";
+import { type StateType, kStateType } from "../../common/github-constants.ts";
 import type {
   ThreadEndpoint,
   ThreadItem,
   ThreadListOptions,
 } from "../../common/ipc/threads.ts";
-import { kPageSize, type ThreadFilter } from "../../common/presets.ts";
+import { type ThreadFilter, kPageSize } from "../../common/presets.ts";
 import { parseStringListStr } from "../../common/string-list.ts";
 import type { Prisma } from "../database/prisma.ts";
-import type { IpcHandle, IService } from "../service-manager.ts";
+import type { IService, IpcHandle } from "../service-manager.ts";
 
 export class ThreadsService implements IService, ThreadEndpoint {
   namespace = "threads";

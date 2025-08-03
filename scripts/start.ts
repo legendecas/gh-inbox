@@ -1,5 +1,5 @@
-import { $ } from "./zx.ts";
 import { build, serveApp } from "./build-scripts.ts";
+import { $ } from "./zx.ts";
 
 const kPort = 4567;
 $.env.NODE_OPTIONS = "--enable-source-maps";
