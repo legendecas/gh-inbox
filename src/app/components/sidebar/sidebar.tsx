@@ -1,6 +1,13 @@
 import React, { Fragment } from "react";
 import { Avatar, CounterLabel, ActionList } from "@primer/react";
-import { LockIcon, RepoIcon, SearchIcon } from "@primer/octicons-react";
+import {
+  CommentDiscussionIcon,
+  GoalIcon,
+  type Icon,
+  InboxIcon,
+  LockIcon,
+  RepoIcon,
+} from "@primer/octicons-react";
 import "./sidebar.css";
 import { usePresetFilter } from "../../hooks/use-preset-filter";
 import { useFilterContext } from "../../hooks/use-filter";
@@ -10,29 +17,51 @@ import {
   type kPresetFilterType,
 } from "../../../common/presets";
 
+const kPresetFilterSettings: Record<
+  kPresetFilterType,
+  { name: string; icon: Icon }
+> = {
+  inbox: {
+    name: "Inbox",
+    icon: InboxIcon,
+  },
+  my_turn: {
+    name: "My Turn",
+    icon: GoalIcon,
+  },
+  involved: {
+    name: "Involved",
+    icon: CommentDiscussionIcon,
+  },
+};
+
 export function Sidebar() {
   const { setFilter } = useFilterContext();
   const { presetFilters, repoNamespaces } = usePresetFilter();
 
   return (
     <ActionList>
-      {presetFilters.map((filter) => (
-        <ActionList.Item
-          key={filter.type}
-          onSelect={() => {
-            console.log("Setting filter:", filter.type);
-            setFilter(kPresetFilterTypes[filter.type as kPresetFilterType]);
-          }}
-        >
-          <ActionList.LeadingVisual>
-            <SearchIcon />
-          </ActionList.LeadingVisual>
-          {filter.type}
-          <ActionList.TrailingVisual>
-            <CounterLabel>{filter.unread_count}</CounterLabel>
-          </ActionList.TrailingVisual>
-        </ActionList.Item>
-      ))}
+      {presetFilters.map((filter) => {
+        const Icon =
+          kPresetFilterSettings[filter.type as kPresetFilterType].icon;
+        return (
+          <ActionList.Item
+            key={filter.type}
+            onSelect={() => {
+              console.log("Setting filter:", filter.type);
+              setFilter(kPresetFilterTypes[filter.type as kPresetFilterType]);
+            }}
+          >
+            <ActionList.LeadingVisual>
+              <Icon />
+            </ActionList.LeadingVisual>
+            {kPresetFilterSettings[filter.type as kPresetFilterType].name}
+            <ActionList.TrailingVisual>
+              <CounterLabel>{filter.unread_count}</CounterLabel>
+            </ActionList.TrailingVisual>
+          </ActionList.Item>
+        );
+      })}
       <ActionList.Divider />
       {repoNamespaces.map((ns) => (
         <Fragment key={ns.owner}>
