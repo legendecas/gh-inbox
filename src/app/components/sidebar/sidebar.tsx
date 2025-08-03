@@ -64,7 +64,7 @@ export function Sidebar() {
       })}
       <ActionList.Divider />
       {repoNamespaces.map((ns) => {
-        const ownerFilter = `archived:false owner:${ns.owner}`;
+        const ownerFilter = `owner:${ns.owner}`;
         return (
           <Fragment key={ns.owner}>
             <ActionList.Item
@@ -86,7 +86,7 @@ export function Sidebar() {
 
             {ns.repos.map((repo) => {
               const repoName = repoNameFromFullName(repo.full_name);
-              const repoFilter = `archived:false repo_id:"${repo.id}"`;
+              const repoFilter = `repo:${repo.full_name}`;
               return (
                 <ActionList.Item
                   key={repo.id}

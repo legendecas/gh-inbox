@@ -2,6 +2,7 @@ import React from "react";
 import "./label-badge.css";
 import type { Label } from "../../../generated/prisma";
 import { IssueLabelToken, LabelGroup } from "@primer/react";
+import { useFilterContext } from "../../hooks/use-filter";
 
 export interface LabelProps {
   label: Label;
@@ -19,10 +20,17 @@ export function LabelBadge({ label }: LabelProps) {
 }
 
 export function LabelBadgeGroup({ labels }: { labels: Label[] }) {
+  const { filter, setFilter } = useFilterContext();
+
   return (
     <LabelGroup className="label-badge-group" as="span">
       {labels.map((label) => (
-        <LabelBadge key={label.id} label={label} />
+        <a
+          key={label.id}
+          onClick={() => setFilter(`${filter} labels:"${label.name}"`)}
+        >
+          <LabelBadge label={label} />
+        </a>
       ))}
     </LabelGroup>
   );

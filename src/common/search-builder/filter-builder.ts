@@ -1,6 +1,7 @@
 import type { ThreadFilter } from "../presets";
 
 export class FilterBuilder {
+  #archived = false;
   #filters: ThreadFilter[] = [];
 
   fromRecord(record: Record<string, string[]>): this {
@@ -25,7 +26,7 @@ export class FilterBuilder {
   }
 
   filterArchived(archived = false): this {
-    this.#filters.push({ archived });
+    this.#archived = archived;
     return this;
   }
 
@@ -44,7 +45,7 @@ export class FilterBuilder {
   filterRepoName(repoName: string): this {
     this.#filters.push({
       repository: {
-        name: repoName,
+        full_name: repoName,
       },
     });
     return this;
@@ -84,6 +85,7 @@ export class FilterBuilder {
   build(): ThreadFilter {
     return {
       AND: this.#filters,
+      archived: this.#archived,
     };
   }
 }

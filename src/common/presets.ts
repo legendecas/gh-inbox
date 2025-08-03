@@ -1,6 +1,5 @@
 import type { Prisma } from "../generated/prisma/index";
 
-export type kPresetFilterTypes = "inbox" | "my_turn" | "involved";
 export type ThreadFilter = Prisma.ThreadWhereInput;
 
 export const kPageSize = 20;
@@ -8,9 +7,9 @@ export const kPageSize = 20;
 export const kDefaultFilter: ThreadFilter = {
   archived: false,
 };
-export type kPresetFilter = Record<kPresetFilterTypes, ThreadFilter>;
-export type kPresetFilterType = keyof kPresetFilter;
-export const kPresetFilterTypes: kPresetFilter = {
+export type kPresetFilterType = "inbox" | "my_turn" | "involved";
+export type kPresetFilter = Record<kPresetFilterType, ThreadFilter>;
+export const kPresetFilterQueries: kPresetFilter = {
   inbox: kDefaultFilter,
   my_turn: {
     AND: [
@@ -41,9 +40,9 @@ export const kPresetFilterTypes: kPresetFilter = {
   },
 };
 export const kPresetFilterSearches: Record<kPresetFilterType, string> = {
-  inbox: "archived:false",
-  my_turn: "archived:false unread:true reasons:author,comment,manual,mention",
-  involved: "archived:false reasons:author,comment,manual,mention,team_mention",
+  inbox: "",
+  my_turn: "unread:true reasons:author,comment,manual,mention",
+  involved: "reasons:author,comment,manual,mention,team_mention",
 };
 
 export function repoFilter(repoId: string): ThreadFilter {

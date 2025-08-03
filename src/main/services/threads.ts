@@ -55,7 +55,7 @@ export class ThreadsService implements IService, ThreadEndpoint {
             : await this.#db.instance.label.findMany({
                 where: {
                   endpoint_id: options.endpointId,
-                  id: { in: parseStringListStr(subject.labels) },
+                  id: { in: parseStringListStr(subject.label_ids) },
                 },
               });
         const state = (

@@ -1,5 +1,6 @@
 .label-badge {
   margin-left: 4px;
+  cursor: pointer;
 }
 
 .label-badge-group {

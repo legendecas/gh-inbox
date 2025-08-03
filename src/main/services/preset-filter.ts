@@ -7,7 +7,7 @@ import type {
   PresetFilter,
   FilterListOptions,
 } from "../../common/ipc/preset-filter.ts";
-import { kPresetFilterTypes } from "../../common/presets.ts";
+import { kPresetFilterQueries } from "../../common/presets.ts";
 
 export class PresetFilterService implements IService, PresetFilterEndpoint {
   namespace = "presetFilter";
@@ -32,7 +32,7 @@ export class PresetFilterService implements IService, PresetFilterEndpoint {
     options: FilterListOptions,
   ): Promise<PresetFilter[]> {
     return Promise.all(
-      Object.entries(kPresetFilterTypes).map(async ([type, filter]) => ({
+      Object.entries(kPresetFilterQueries).map(async ([type, filter]) => ({
         type,
         unread_count: await this.#db.instance.thread.count({
           where: {
