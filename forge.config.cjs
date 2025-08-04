@@ -24,11 +24,14 @@ module.exports = {
           $.verbose = true;
           $.cwd = buildPath;
           await $`npm ci --omit=dev --omit=optional --omit=peer`;
-        })().then(() => {
-          callback();
-        }, err => {
-          callback(err);
-        });
+        })().then(
+          () => {
+            callback();
+          },
+          (err) => {
+            callback(err);
+          },
+        );
       },
     ],
     ignore: (filePath) => {

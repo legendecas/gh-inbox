@@ -61,9 +61,7 @@ export function EndpointForm({ refreshEndpoints }: CreateEndpointProps) {
         </FormControl>
 
         <Stack space={2} direction="horizontal">
-          <Button onClick={handleTestConnection}>
-            Test Connection
-          </Button>
+          <Button onClick={handleTestConnection}>Test Connection</Button>
           <Button variant="primary" onClick={handleCreateEndpoint}>
             Create Endpoint
           </Button>
