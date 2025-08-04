@@ -21,7 +21,9 @@ module.exports = {
     afterCopy: [
       (buildPath, _electronVersion, _platform, _arch, callback) => {
         (async () => {
-          await $({ cwd: buildPath })`npm ci --omit=dev`;
+          $.verbose = true;
+          $.cwd = buildPath;
+          await $`npm ci --omit=dev --omit=optional --omit=peer`;
         })().then(() => {
           callback();
         }, err => {

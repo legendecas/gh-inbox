@@ -8,10 +8,5 @@
   "devDependencies": {
     "@octokit/openapi-types": "^25.1.0",
     "@types/node": "^22.5.0"
-  },
-  "dependencies": {
-    "@octokit/core": "^7.0.3",
-    "@prisma/client": "^6.12.0",
-    "electron-squirrel-startup": "^1.0.1"
   }
 }
