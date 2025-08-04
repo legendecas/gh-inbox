@@ -1,11 +1,44 @@
 const { FusesPlugin } = require("@electron-forge/plugin-fuses");
 const { FuseV1Options, FuseVersion } = require("@electron/fuses");
+const { $ } = require("zx");
 
+const ignorePaths = [
+  /\.git/,
+  /^\/\./,
+  /^\/node_modules/,
+  /^\/scripts/,
+  /^\/src/,
+  /^\/eslint.config.mjs/,
+  /^\/forge.config.cjs/,
+  /^\/tsconfig/,
+];
 const enableAsar = !process.env.DEBUG;
 module.exports = {
   packagerConfig: {
     asar: enableAsar,
-    ignore: ["src", /^\..*/],
+    junk: true,
+    prune: false,
+    afterCopy: [
+      (buildPath, _electronVersion, _platform, _arch, callback) => {
+        (async () => {
+          await $({ cwd: buildPath })`npm ci --omit=dev`;
+        })().then(() => {
+          callback();
+        }, err => {
+          callback(err);
+        });
+      },
+    ],
+    ignore: (filePath) => {
+      return ignorePaths.some((pattern) => {
+        if (typeof pattern === "string") {
+          return filePath.includes(pattern);
+        } else if (pattern instanceof RegExp) {
+          return pattern.test(filePath);
+        }
+        return false;
+      });
+    },
     icon: "./src/static/icon",
   },
   rebuildConfig: {
