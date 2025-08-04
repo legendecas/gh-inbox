@@ -11,9 +11,10 @@ export function EndpointForm({ refreshEndpoints }: CreateEndpointProps) {
   >([null, null]);
   const endpointUrlRef = useRef<HTMLInputElement>(null);
   const tokenRef = useRef<HTMLInputElement>(null);
+  const proxyRef = useRef<HTMLInputElement>(null);
 
   const handleTestConnection = async () => {
-    if (!endpointUrlRef.current || !tokenRef.current) {
+    if (!endpointUrlRef.current || !tokenRef.current || !proxyRef.current) {
       return;
     }
     // Simulate a test connection
@@ -21,6 +22,7 @@ export function EndpointForm({ refreshEndpoints }: CreateEndpointProps) {
       const result = await window.ipc.invoke("endpoint", "test", {
         url: endpointUrlRef.current.value,
         token: tokenRef.current.value,
+        proxy_url: proxyRef.current.value,
       });
       setTestResult([result, null]);
     } catch (error) {
@@ -58,6 +60,11 @@ export function EndpointForm({ refreshEndpoints }: CreateEndpointProps) {
         <FormControl required>
           <FormControl.Label>Token</FormControl.Label>
           <TextInput block ref={tokenRef} />
+        </FormControl>
+
+        <FormControl>
+          <FormControl.Label>Proxy URL</FormControl.Label>
+          <TextInput block ref={proxyRef} />
         </FormControl>
 
         <Stack space={2} direction="horizontal">

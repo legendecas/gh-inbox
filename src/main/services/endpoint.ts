@@ -43,7 +43,7 @@ export class EndpointService implements IService, EndpointEndpoint {
   }
 
   async test(data: CreateEndpointData): Promise<TestResult> {
-    const gh = new GitHubClient(data.url, data.token);
+    const gh = new GitHubClient(data.url, data.token, data.proxy_url);
     const resp = await gh.instance.request("GET /user");
     if (resp.status !== 200) {
       throw new ConnectionError(`Failed to connect to GitHub`, resp);
@@ -72,6 +72,7 @@ export class EndpointService implements IService, EndpointEndpoint {
       data: {
         url: data.url,
         token: data.token,
+        proxy_url: data.proxy_url,
         username: result.username,
         expires_at: result.expiresAt,
       },

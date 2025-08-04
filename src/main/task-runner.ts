@@ -96,7 +96,11 @@ export class TaskRunner {
       return;
     }
     logger.log(`Running tasks for endpoint ${endpointId}...`);
-    const gh = new GitHubClient(endpoint.url, endpoint.token);
+    const gh = new GitHubClient(
+      endpoint.url,
+      endpoint.token,
+      endpoint.proxy_url,
+    );
 
     try {
       const task = new FetchNotificationsTask(

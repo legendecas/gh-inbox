@@ -3,6 +3,7 @@ import type { Endpoint } from "../../generated/prisma";
 export interface CreateEndpointData {
   url: string;
   token: string;
+  proxy_url?: string;
 }
 
 export interface TestResult {

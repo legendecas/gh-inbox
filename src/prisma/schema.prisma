@@ -137,8 +137,9 @@ model Endpoint {
   id  Int    @id @default(autoincrement())
   url String
 
-  username String
-  token    String
+  username  String
+  token     String
+  proxy_url String?
 
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
