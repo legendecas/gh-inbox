@@ -12,24 +12,32 @@ const LocationContext = createContext({
   },
 });
 
+function fromUrlSearchParams(params: URLSearchParams): Record<string, string> {
+  const paramsObject: Record<string, string> = {};
+  params.forEach((value, key) => {
+    paramsObject[key] = value;
+  });
+  return paramsObject;
+}
+
 export function LocationProvider({ children }: { children: React.ReactNode }) {
   const [queryParams, setQueryParams] = useState<Record<string, string>>({});
   const [pathname, setPathname] = useState<string>("");
 
   useEffect(() => {
     console.log("Initializing location from URL", window.location.href);
-    const params = new URLSearchParams(window.location.search);
-    const paramsObject: Record<string, string> = Object.fromEntries(
-      params.entries(),
+    setQueryParams(
+      fromUrlSearchParams(new URLSearchParams(window.location.search)),
     );
-    setQueryParams(paramsObject);
     setPathname(window.location.pathname);
   }, []);
 
   function updatePathname(newPathname: string) {
-    console.log("Updating pathname:", newPathname);
+    const url = new URL(newPathname, window.location.href);
+    console.log("Updating pathname:", url.href);
     window.history.pushState(null, "", newPathname);
-    setPathname(newPathname);
+    setQueryParams(fromUrlSearchParams(url.searchParams));
+    setPathname(url.pathname);
   }
 
   function updateQueryParams(newParams: Record<string, string>) {

@@ -10,6 +10,7 @@ import { Settings } from "../settings/settings";
 
 export function App() {
   const [pathname] = usePathname();
+  console.log("App pathname:", pathname);
 
   switch (pathname) {
     case "/create-endpoint":
