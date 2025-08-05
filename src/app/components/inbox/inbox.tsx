@@ -6,7 +6,7 @@ import {
   useEndpointsContext,
 } from "../../hooks/use-endpoints";
 import { FilterProvider } from "../../hooks/use-filter";
-import { usePathname } from "../../hooks/use-pathname";
+import { usePathname } from "../../hooks/use-location";
 import { Content } from "./content";
 import { Navbar } from "./navbar/navbar";
 import { Sidebar } from "./sidebar/sidebar";

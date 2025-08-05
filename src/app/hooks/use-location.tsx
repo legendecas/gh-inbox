@@ -1,16 +1,36 @@
-import { useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
-export function useQueryParams() {
+const LocationContext = createContext({
+  pathname: "",
+  updatePathname: (_pathname: string) => {
+    /* no-op */
+  },
+
+  queryParams: {} as Record<string, string>,
+  updateQueryParams: (_params: Record<string, string>) => {
+    /* no-op */
+  },
+});
+
+export function LocationProvider({ children }: { children: React.ReactNode }) {
   const [queryParams, setQueryParams] = useState<Record<string, string>>({});
+  const [pathname, setPathname] = useState<string>("");
 
   useEffect(() => {
-    console.log("Initializing query params from URL", window.location.search);
+    console.log("Initializing location from URL", window.location.href);
     const params = new URLSearchParams(window.location.search);
     const paramsObject: Record<string, string> = Object.fromEntries(
       params.entries(),
     );
     setQueryParams(paramsObject);
+    setPathname(window.location.pathname);
   }, []);
+
+  function updatePathname(newPathname: string) {
+    console.log("Updating pathname:", newPathname);
+    window.history.pushState(null, "", newPathname);
+    setPathname(newPathname);
+  }
 
   function updateQueryParams(newParams: Record<string, string>) {
     console.log("Updating query params:", newParams, window.location.search);
@@ -29,6 +49,22 @@ export function useQueryParams() {
     setQueryParams(paramsObject);
   }
 
+  return (
+    <LocationContext.Provider
+      value={{ pathname, updatePathname, queryParams, updateQueryParams }}
+    >
+      {children}
+    </LocationContext.Provider>
+  );
+}
+
+export function usePathname() {
+  const { pathname, updatePathname } = useContext(LocationContext);
+  return [pathname, updatePathname] as const;
+}
+
+export function useQueryParams() {
+  const { queryParams, updateQueryParams } = useContext(LocationContext);
   return [queryParams, updateQueryParams] as const;
 }
 

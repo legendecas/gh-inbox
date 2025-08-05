@@ -2,7 +2,7 @@ import { GearIcon } from "@primer/octicons-react";
 import { IconButton } from "@primer/react";
 import React from "react";
 
-import { usePathname } from "../../../hooks/use-pathname";
+import { usePathname } from "../../../hooks/use-location";
 import "./navbar.css";
 import { SearchBox } from "./search-box";
 

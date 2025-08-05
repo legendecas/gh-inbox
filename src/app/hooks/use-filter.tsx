@@ -1,6 +1,6 @@
 import React, { createContext, useContext } from "react";
 
-import { useQueryParam } from "./use-query-params";
+import { useQueryParam } from "./use-location";
 
 export const FilterContext = createContext({
   filter: "",

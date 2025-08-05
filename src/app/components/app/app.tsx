@@ -3,7 +3,7 @@ import { BaseStyles, ThemeProvider } from "@primer/react";
 import React from "react";
 
 import { EndpointsProvider } from "../../hooks/use-endpoints";
-import { usePathname } from "../../hooks/use-pathname";
+import { LocationProvider, usePathname } from "../../hooks/use-location";
 import { CreateEndpoint } from "../create-endpoint/create-endpoint";
 import { Inbox } from "../inbox/inbox";
 import { Settings } from "../settings/settings";
@@ -25,9 +25,11 @@ export function AppContainer() {
   return (
     <ThemeProvider>
       <BaseStyles>
-        <EndpointsProvider>
-          <App />
-        </EndpointsProvider>
+        <LocationProvider>
+          <EndpointsProvider>
+            <App />
+          </EndpointsProvider>
+        </LocationProvider>
       </BaseStyles>
     </ThemeProvider>
   );
