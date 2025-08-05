@@ -1,5 +1,5 @@
 import { ArchiveIcon, CheckboxIcon, SyncIcon } from "@primer/octicons-react";
-import { Button, ButtonGroup, IconButton } from "@primer/react";
+import { Button, ButtonGroup, IconButton, PageHeader } from "@primer/react";
 import React from "react";
 
 import { useCurrentEndpointContext } from "../../hooks/use-endpoints";
@@ -25,27 +25,39 @@ export function Header({
   }
 
   return (
-    <div className="header flex flex-row items-start">
-      <ButtonGroup className="mr-[8px]">
-        <Button
-          onClick={archiveThreads}
-          leadingVisual={<ArchiveIcon size={16} />}
-        >
-          Archive
-        </Button>
+    <PageHeader role="banner" aria-label="Banner" className="w-full">
+      <PageHeader.TitleArea>
+        <PageHeader.Title>
+          <div className="flex flex-row items-center gap-x-[8px]">
+            <ButtonGroup>
+              <IconButton
+                icon={CheckboxIcon}
+                aria-label="Select closed threads"
+                onClick={selectClosedThreads}
+              />
 
+              <Button
+                onClick={archiveThreads}
+                leadingVisual={<ArchiveIcon size={16} />}
+              >
+                Archive
+              </Button>
+            </ButtonGroup>
+          </div>
+        </PageHeader.Title>
+      </PageHeader.TitleArea>
+
+      <PageHeader.LeadingAction></PageHeader.LeadingAction>
+
+      <PageHeader.TrailingAction>
         <IconButton
-          icon={CheckboxIcon}
-          aria-label="Select closed threads"
-          onClick={selectClosedThreads}
+          icon={SyncIcon}
+          aria-label="Refresh"
+          onClick={refreshThreads}
         />
-      </ButtonGroup>
-      <IconButton
-        icon={SyncIcon}
-        aria-label="Refresh"
-        onClick={refreshThreads}
-        className="mr-[8px]"
-      />
-    </div>
+      </PageHeader.TrailingAction>
+
+      <PageHeader.Actions></PageHeader.Actions>
+    </PageHeader>
   );
 }
