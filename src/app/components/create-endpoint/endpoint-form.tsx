@@ -31,13 +31,14 @@ export function EndpointForm({ refreshEndpoints }: CreateEndpointProps) {
   };
 
   const handleCreateEndpoint = async () => {
-    if (!endpointUrlRef.current || !tokenRef.current) {
+    if (!endpointUrlRef.current || !tokenRef.current || !proxyRef.current) {
       return;
     }
     try {
       await window.ipc.invoke("endpoint", "create", {
         url: endpointUrlRef.current.value,
         token: tokenRef.current.value,
+        proxy_url: proxyRef.current.value,
       });
       refreshEndpoints();
     } catch (error) {
