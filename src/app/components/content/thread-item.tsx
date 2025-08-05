@@ -18,8 +18,8 @@ import "./thread-item.css";
 
 export interface ThreadItemProps {
   thread: ThreadItem;
-  checked: boolean;
-  setChecked: (threadId: string, checked: boolean) => void;
+  selected: boolean;
+  setSelected: (threadId: string, checked: boolean) => void;
 }
 
 function ThreadIcon({
@@ -53,7 +53,7 @@ function ThreadIcon({
   }
 }
 
-export function ThreadItem({ thread, checked, setChecked }: ThreadItemProps) {
+export function ThreadItem({ thread, selected, setSelected }: ThreadItemProps) {
   function onClick() {
     window.ipc.invoke("threads", "markAsRead", thread.endpoint_id, [thread.id]);
   }
@@ -64,9 +64,9 @@ export function ThreadItem({ thread, checked, setChecked }: ThreadItemProps) {
         <input
           className="thread-checkbox"
           type="checkbox"
-          checked={checked}
+          checked={selected}
           onChange={(e) => {
-            setChecked(thread.id, e.target.checked);
+            setSelected(thread.id, e.target.checked);
           }}
         ></input>
       </td>

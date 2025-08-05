@@ -1,5 +1,5 @@
 import { PageLayout, Pagination } from "@primer/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { kPageSize } from "../../../common/presets";
 import { useFilterContext } from "../../hooks/use-filter";
@@ -15,16 +15,28 @@ export function Content() {
     currentPage,
     kPageSize,
   );
-  const [checkedSet, setChecked] = useState<Set<string>>(new Set());
+  const [selectedSet, setSelected] = useState<Set<string>>(new Set());
 
-  const onChecked = (threadId: string, checked: boolean) => {
+  const onThreadSelected = (threadId: string, checked: boolean) => {
     if (checked) {
-      checkedSet.add(threadId);
+      selectedSet.add(threadId);
     } else {
-      checkedSet.delete(threadId);
+      selectedSet.delete(threadId);
     }
-    setChecked(new Set(checkedSet));
+    setSelected(new Set(selectedSet));
   };
+
+  const selectClosedThreads = () => {
+    const closedThreads = threads.filter((thread) => thread.state !== "open");
+    closedThreads.forEach((thread) => {
+      selectedSet.add(thread.id);
+    });
+    setSelected(new Set(selectedSet));
+  };
+
+  useEffect(() => {
+    setSelected(new Set());
+  }, [threads]);
 
   return (
     <PageLayout
@@ -34,7 +46,11 @@ export function Content() {
       rowGap="condensed"
     >
       <PageLayout.Header>
-        <Header checkedThreads={checkedSet} refreshThreads={refreshThreads} />
+        <Header
+          selectedThreads={selectedSet}
+          selectClosedThreads={selectClosedThreads}
+          refreshThreads={refreshThreads}
+        />
       </PageLayout.Header>
       <PageLayout.Content>
         <table className="threads-table w-full">
@@ -43,8 +59,8 @@ export function Content() {
               <ThreadItem
                 key={thread.id}
                 thread={thread}
-                checked={checkedSet.has(thread.id)}
-                setChecked={onChecked}
+                selected={selectedSet.has(thread.id)}
+                setSelected={onThreadSelected}
               />
             ))}
           </tbody>
