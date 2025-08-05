@@ -163,11 +163,6 @@ export class FetchNotificationsTask {
     });
 
     if (found) {
-      if (found.updated_at.getTime() >= new Date(updated_at).getTime()) {
-        logger.info(`Skip up to date thread: ${subjectUrl}`);
-        return; // Skip if the thread is already up-to-date
-      }
-
       const reasons = new Set(parseStringListStr(found.reasons));
       reasons.add(reason);
       const reasonsStr = formatStringList(Array.from(reasons));
@@ -175,7 +170,10 @@ export class FetchNotificationsTask {
       const { 0: isUnread, 1: lastReadAt } = resolveIfRead(thread, found);
       const isArchived = resolveIfArchived(thread, found);
 
-      await this.updateSubject(subject, repository, labels);
+      if (found.updated_at.getTime() < new Date(updated_at).getTime()) {
+        logger.info(`Update subject: ${subjectUrl}`);
+        await this.updateSubject(subject, repository, labels);
+      }
 
       await this.#db.instance.thread.update({
         where: { id },

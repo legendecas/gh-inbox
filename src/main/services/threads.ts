@@ -90,7 +90,7 @@ export class ThreadsService implements IService, ThreadEndpoint {
   async markAsRead(endpointId: number, threads: string[]) {
     await this.#db.instance.thread.updateMany({
       where: { endpoint_id: endpointId, id: { in: threads } },
-      data: { unread: false },
+      data: { unread: false, last_read_at: new Date() },
     });
   }
 }
