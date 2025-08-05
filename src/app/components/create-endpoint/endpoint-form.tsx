@@ -3,9 +3,11 @@ import { InlineMessage } from "@primer/react/experimental";
 import React, { useRef, useState } from "react";
 
 import type { TestResult } from "../../../common/ipc/endpoint";
-import type { CreateEndpointProps } from "./create-endpoint";
+import { useEndpointsContext } from "../../hooks/use-endpoints";
 
-export function EndpointForm({ refreshEndpoints }: CreateEndpointProps) {
+export function EndpointForm() {
+  const { refreshEndpoints } = useEndpointsContext();
+
   const [testResult, setTestResult] = useState<
     [TestResult | null, unknown | null]
   >([null, null]);

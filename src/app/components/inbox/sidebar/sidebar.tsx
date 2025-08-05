@@ -12,9 +12,9 @@ import React, { Fragment } from "react";
 import {
   kPresetFilterSearches,
   type kPresetFilterType,
-} from "../../../common/presets";
-import { useFilterContext } from "../../hooks/use-filter";
-import { usePresetFilter } from "../../hooks/use-preset-filter";
+} from "../../../../common/presets";
+import { useFilterContext } from "../../../hooks/use-filter";
+import { usePresetFilter } from "../../../hooks/use-preset-filter";
 import "./sidebar.css";
 
 const kPresetFilterSettings: Record<

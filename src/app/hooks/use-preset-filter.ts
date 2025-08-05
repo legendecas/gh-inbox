@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 
 import type { ListResult } from "../../common/ipc/preset-filter.js";
-import { useAppContext } from "./use-app.js";
+import { useCurrentEndpointContext } from "./use-endpoints.js";
 
 export function usePresetFilter() {
-  const ctx = useAppContext();
+  const ctx = useCurrentEndpointContext();
   const [presetFilters, setPresetFilters] = useState<ListResult>({
     presetFilters: [],
     repoNamespaces: [],

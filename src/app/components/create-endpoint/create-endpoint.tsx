@@ -3,11 +3,7 @@ import React from "react";
 
 import { EndpointForm } from "./endpoint-form";
 
-export interface CreateEndpointProps {
-  refreshEndpoints: () => void;
-}
-
-export function CreateEndpoint({ refreshEndpoints }: CreateEndpointProps) {
+export function CreateEndpoint() {
   return (
     <PageLayout>
       <PageLayout.Header>
@@ -18,7 +14,7 @@ export function CreateEndpoint({ refreshEndpoints }: CreateEndpointProps) {
         </PageHeader>
       </PageLayout.Header>
       <PageLayout.Content>
-        <EndpointForm refreshEndpoints={refreshEndpoints} />
+        <EndpointForm />
       </PageLayout.Content>
     </PageLayout>
   );

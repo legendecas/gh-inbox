@@ -1,8 +1,8 @@
 import { ArchiveIcon, CheckboxIcon, SyncIcon } from "@primer/octicons-react";
-import { Button, ButtonGroup } from "@primer/react";
+import { Button, ButtonGroup, IconButton } from "@primer/react";
 import React from "react";
 
-import { useAppContext } from "../../hooks/use-app";
+import { useCurrentEndpointContext } from "../../hooks/use-endpoints";
 
 export function Header({
   selectedThreads,
@@ -13,7 +13,7 @@ export function Header({
   selectClosedThreads: () => void;
   refreshThreads: () => void;
 }) {
-  const ctx = useAppContext();
+  const ctx = useCurrentEndpointContext();
   async function archiveThreads() {
     await window.ipc.invoke(
       "threads",
@@ -33,16 +33,19 @@ export function Header({
         >
           Archive
         </Button>
-        <Button
+
+        <IconButton
+          icon={CheckboxIcon}
+          aria-label="Select closed threads"
           onClick={selectClosedThreads}
-          leadingVisual={<CheckboxIcon size={16} />}
-        >
-          Closed
-        </Button>
+        />
       </ButtonGroup>
-      <Button onClick={refreshThreads} className="mr-[8px]">
-        <SyncIcon size={16} />
-      </Button>
+      <IconButton
+        icon={SyncIcon}
+        aria-label="Refresh"
+        onClick={refreshThreads}
+        className="mr-[8px]"
+      />
     </div>
   );
 }

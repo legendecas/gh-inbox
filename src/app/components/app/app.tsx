@@ -2,31 +2,32 @@ import "@primer/primitives/dist/css/functional/themes/light.css";
 import { BaseStyles, ThemeProvider } from "@primer/react";
 import React from "react";
 
-import { AppContext, useApp } from "../../hooks/use-app";
-import { FilterProvider } from "../../hooks/use-filter";
+import { EndpointsProvider } from "../../hooks/use-endpoints";
+import { usePathname } from "../../hooks/use-pathname";
 import { CreateEndpoint } from "../create-endpoint/create-endpoint";
 import { Inbox } from "../inbox/inbox";
+import { Settings } from "../settings/settings";
 
 export function App() {
-  const [endpoints, refreshEndpoints] = useApp();
+  const [pathname] = usePathname();
 
-  if (endpoints.length === 0) {
-    return <CreateEndpoint refreshEndpoints={refreshEndpoints} />;
+  switch (pathname) {
+    case "/create-endpoint":
+      return <CreateEndpoint />;
+    case "/settings":
+      return <Settings />;
+    default:
+      return <Inbox />;
   }
-  return (
-    <AppContext.Provider value={{ endpointId: endpoints[0].id }}>
-      <Inbox />
-    </AppContext.Provider>
-  );
 }
 
 export function AppContainer() {
   return (
     <ThemeProvider>
       <BaseStyles>
-        <FilterProvider>
+        <EndpointsProvider>
           <App />
-        </FilterProvider>
+        </EndpointsProvider>
       </BaseStyles>
     </ThemeProvider>
   );
