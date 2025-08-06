@@ -208,13 +208,6 @@ export default function SavedSearchesTable() {
               field: "query",
             },
             {
-              header: "Created",
-              field: "created_at",
-              renderCell: (row) => {
-                return <RelativeTime date={new Date(row.created_at)} />;
-              },
-            },
-            {
               header: "Updated",
               field: "updated_at",
               renderCell: (row) => {

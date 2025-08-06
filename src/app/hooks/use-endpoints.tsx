@@ -1,10 +1,10 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-import type { Endpoint } from "../../generated/prisma/index.js";
+import type { EndpointData } from "../../common/ipc/endpoint.js";
 
 export function useEndpoints() {
   const [updateTime, setUpdateTime] = useState(Date.now());
-  const [endpoints, setEndpoints] = useState<Endpoint[]>([]);
+  const [endpoints, setEndpoints] = useState<EndpointData[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -26,7 +26,7 @@ export function useEndpoints() {
 
 export const EndpointsContext = createContext({
   loading: true,
-  endpoints: [] as Endpoint[],
+  endpoints: [] as EndpointData[],
   refreshEndpoints: () => {
     /* no-op */
   },

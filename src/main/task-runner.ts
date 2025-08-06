@@ -1,9 +1,12 @@
+import type { Endpoint } from "../generated/prisma/index.js";
 import type { Prisma } from "./database/prisma.ts";
 import { GitHubClient } from "./github/client.js";
 import { FetchNotificationsTask } from "./tasks/fetch-notifications.ts";
 import { logger } from "./utils/logger.ts";
 
 const kTaskRunnerInterval = 3 * 60 * 1000; // 3 minutes
+
+export const kTaskRunnerType = "task-runner";
 
 export class TaskRunner {
   #db: Prisma;
@@ -20,60 +23,101 @@ export class TaskRunner {
     }
 
     const endpoints = await this.#db.instance.endpoint.findMany();
+    const lastRuns = await Promise.all(
+      endpoints.map(async (endpoint) => {
+        const lastRun = await this.#db.instance.task.findFirst({
+          where: { type: kTaskRunnerType, endpoint_id: endpoint.id },
+          orderBy: { last_run: "desc" },
+        });
+        return lastRun?.last_run.getTime() ?? 0;
+      }),
+    );
+    const minLastRun = Math.min(...lastRuns);
+    const nextRunDelay = Math.max(
+      kTaskRunnerInterval - (Date.now() - minLastRun),
+      0,
+    );
 
-    for (const endpoint of endpoints) {
-      await this.scheduleForEndpoint(endpoint.id);
-    }
+    this.#timer = setTimeout(() => {
+      this.run();
+    }, nextRunDelay);
+    logger.log(`TaskRunner scheduled to run in ${nextRunDelay} ms.`);
   }
 
-  async scheduleForEndpoint(endpointId: number) {
-    const task = await this.#db.instance.task.findFirst({
-      where: { type: "task-runner", endpoint_id: endpointId },
-    });
-    if (task == null) {
-      logger.log("No task found, starting TaskRunner.");
-      this.scheduleNextRun(endpointId, 0);
+  private reschedule() {
+    if (this.#timer) {
+      clearTimeout(this.#timer);
+      this.#timer = null;
+    }
+
+    this.#timer = setTimeout(() => {
+      this.run();
+    }, kTaskRunnerInterval);
+    logger.log(`TaskRunner scheduled next run in ${kTaskRunnerInterval} ms.`);
+  }
+
+  private async run() {
+    logger.log("TaskRunner started.");
+    const outdatedEndpoints = await this.findOutdatedEndpoints();
+    if (outdatedEndpoints.length === 0) {
+      logger.log("No outdated endpoints found. TaskRunner will not run.");
       return;
     }
-    const nextRunDelay =
-      kTaskRunnerInterval + task.last_run.getTime() - Date.now();
-    this.scheduleNextRun(endpointId, nextRunDelay);
-  }
-
-  private scheduleNextRun(endpointId: number, delay: number) {
-    if (delay < 0) {
-      logger.log(
-        `Scheduling TaskRunner for endpoint ${endpointId} immediately.`,
-      );
-      delay = 0;
-    } else {
-      logger.log(
-        `Scheduling TaskRunner for endpoint ${endpointId} in ${delay} ms.`,
-      );
+    for (const endpoint of outdatedEndpoints) {
+      try {
+        await this.runForEndpoint(endpoint);
+      } catch (error) {
+        logger.error(
+          `Error running TaskRunner for endpoint ${endpoint.id}:`,
+          error,
+        );
+      }
     }
-    this.#timer = setTimeout(() => {
-      this.run(endpointId).catch((error) => {
-        logger.error("Error running TaskRunner:", error);
-      });
-    }, delay);
+    logger.log("TaskRunner completed.");
+    this.reschedule(); // Reschedule after running
   }
 
-  private async run(endpointId: number) {
+  private async findOutdatedEndpoints(): Promise<Endpoint[]> {
+    const endpoints = await this.#db.instance.endpoint.findMany();
+    const outdatedEndpoints: Endpoint[] = [];
+    for (const endpoint of endpoints) {
+      const lastRun = await this.#db.instance.task.findFirst({
+        where: { type: kTaskRunnerType, endpoint_id: endpoint.id },
+        orderBy: { last_run: "desc" },
+      });
+      if (
+        !lastRun ||
+        Date.now() - lastRun.last_run.getTime() > kTaskRunnerInterval
+      ) {
+        outdatedEndpoints.push(endpoint);
+      }
+    }
+    return outdatedEndpoints;
+  }
+
+  async runForEndpoint(endpoint: Endpoint, since?: Date) {
     logger.log("Running TaskRunner...");
-    const task = await this.#db.instance.task.findFirst({
-      where: { type: "task-runner", endpoint_id: endpointId },
-    });
-    const lastRun = task?.last_run;
+    // TODO: optimize last run info.
+    if (since == null) {
+      const task = await this.#db.instance.task.findFirst({
+        where: { type: kTaskRunnerType, endpoint_id: endpoint.id },
+      });
+      since = task?.last_run;
+    }
 
-    await this.runTasksForEndpoint(endpointId, lastRun);
-    logger.log(`TaskRunner completed for endpoint ${endpointId}.`);
+    await this.runTasksForEndpoint(endpoint, since);
+    logger.log(`TaskRunner completed for endpoint ${endpoint.id}.`);
 
+    // TODO: optimize task info.
     const now = new Date();
+    const task = await this.#db.instance.task.findFirst({
+      where: { type: kTaskRunnerType, endpoint_id: endpoint.id },
+    });
     if (task == null) {
       await this.#db.instance.task.create({
         data: {
-          type: "task-runner",
-          endpoint_id: endpointId,
+          type: kTaskRunnerType,
+          endpoint_id: endpoint.id,
           data: "",
           last_run: now,
         },
@@ -84,18 +128,10 @@ export class TaskRunner {
         data: { last_run: now },
       });
     }
-    this.scheduleNextRun(endpointId, kTaskRunnerInterval);
   }
 
-  private async runTasksForEndpoint(endpointId: number, lastRun?: Date) {
-    const endpoint = await this.#db.instance.endpoint.findUnique({
-      where: { id: endpointId },
-    });
-    if (!endpoint) {
-      logger.error(`Endpoint with ID ${endpointId} not found.`);
-      return;
-    }
-    logger.log(`Running tasks for endpoint ${endpointId}...`);
+  private async runTasksForEndpoint(endpoint: Endpoint, since?: Date) {
+    logger.log(`Running tasks for endpoint ${endpoint.id}...`);
     const gh = new GitHubClient(
       endpoint.url,
       endpoint.token,
@@ -103,15 +139,10 @@ export class TaskRunner {
     );
 
     try {
-      const task = new FetchNotificationsTask(
-        this.#db,
-        gh,
-        endpointId,
-        lastRun,
-      );
+      const task = new FetchNotificationsTask(this.#db, gh, endpoint.id, since);
       await task.run();
     } catch (error) {
-      logger.error(`Error running task for endpoint ${endpointId}:`, error);
+      logger.error(`Error running task for endpoint ${endpoint.id}:`, error);
     }
   }
 }

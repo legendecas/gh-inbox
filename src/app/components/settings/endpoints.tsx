@@ -1,4 +1,4 @@
-import { PencilIcon, PlusIcon } from "@primer/octicons-react";
+import { PencilIcon, PlusIcon, SyncIcon } from "@primer/octicons-react";
 import { Button, IconButton, PageLayout, RelativeTime } from "@primer/react";
 import { DataTable, Table } from "@primer/react/experimental";
 import React from "react";
@@ -68,21 +68,48 @@ export default function EndpointTable() {
             },
           },
           {
+            header: "Last Run",
+            field: "last_run",
+            renderCell: (row) => {
+              if (!row.last_run) {
+                return "Never";
+              }
+              return <RelativeTime date={new Date(row.last_run)} />;
+            },
+          },
+          {
             id: "actions",
             header: () => <span>Actions</span>,
             renderCell: (row) => {
               return (
-                <IconButton
-                  aria-label={`Edit: ${row.url}`}
-                  title={`Edit: ${row.url}`}
-                  icon={PencilIcon}
-                  variant="invisible"
-                  onClick={() => {
-                    setPathname(
-                      `/create-endpoint?back=${encodeURIComponent("/settings")}&endpointId=${row.id}`,
-                    );
-                  }}
-                />
+                <>
+                  <IconButton
+                    aria-label={`Edit: ${row.url}`}
+                    title={`Edit: ${row.url}`}
+                    icon={PencilIcon}
+                    variant="invisible"
+                    onClick={() => {
+                      setPathname(
+                        `/create-endpoint?back=${encodeURIComponent("/settings")}&endpointId=${row.id}`,
+                      );
+                    }}
+                  />
+                  <IconButton
+                    aria-label={`Sync: ${row.url}`}
+                    title={`Sync: ${row.url}`}
+                    icon={SyncIcon}
+                    variant="invisible"
+                    onClick={() => {
+                      // Trigger a sync for the endpoint
+                      window.ipc.invoke(
+                        "endpoint",
+                        "forceSync",
+                        row.id,
+                        24 * 60 * 60 * 1000,
+                      );
+                    }}
+                  />
+                </>
               );
             },
           },

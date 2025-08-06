@@ -34,23 +34,18 @@ export class FetchNotificationsTask {
   #db: Prisma;
   #gh: GitHubClient;
   #endpointId: number;
-  #lastRun?: Date;
+  #since?: Date;
 
-  constructor(
-    db: Prisma,
-    gh: GitHubClient,
-    endpointId: number,
-    lastRun?: Date,
-  ) {
+  constructor(db: Prisma, gh: GitHubClient, endpointId: number, since?: Date) {
     this.#db = db;
     this.#gh = gh;
     this.#endpointId = endpointId;
-    this.#lastRun = lastRun;
+    this.#since = since;
   }
 
   async run() {
     const since =
-      this.#lastRun?.toISOString() ??
+      this.#since?.toISOString() ??
       new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(); // Fetch notifications from the last 24 hours
     const before = new Date().toISOString();
     logger.log(

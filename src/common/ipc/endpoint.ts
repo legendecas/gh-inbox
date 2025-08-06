@@ -1,5 +1,9 @@
 import type { Endpoint } from "../../generated/prisma";
 
+export interface EndpointData extends Endpoint {
+  last_run?: Date | null;
+}
+
 export interface CreateEndpointData {
   url: string;
   token: string;
@@ -17,4 +21,6 @@ export interface EndpointEndpoint {
   create: (data: CreateEndpointData) => Promise<Endpoint>;
   update: (id: number, data: CreateEndpointData) => Promise<Endpoint>;
   test: (data: CreateEndpointData) => Promise<TestResult>;
+
+  forceSync: (id: number, duration: number) => Promise<void>;
 }

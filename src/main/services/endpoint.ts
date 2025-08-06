@@ -2,6 +2,7 @@ import type { OctokitResponse } from "@octokit/types";
 
 import type {
   CreateEndpointData,
+  EndpointData,
   EndpointEndpoint,
   TestResult,
 } from "../../common/ipc/endpoint.js";
@@ -10,6 +11,7 @@ import type { Application } from "../application.ts";
 import type { Prisma } from "../database/prisma.ts";
 import { GitHubClient } from "../github/client.js";
 import type { IService, IpcHandle } from "../service-manager.ts";
+import { kTaskRunnerType } from "../task-runner.ts";
 
 class ConnectionError extends Error {
   constructor(message: string, resp: OctokitResponse<unknown>) {
@@ -37,10 +39,26 @@ export class EndpointService implements IService, EndpointEndpoint {
     ipcHandle.wire("test", this.test);
     ipcHandle.wire("create", this.create);
     ipcHandle.wire("update", this.update);
+    ipcHandle.wire("forceSync", this.forceSync);
   }
 
-  async list(): Promise<Endpoint[]> {
-    return this.#db.instance.endpoint.findMany();
+  async list(): Promise<EndpointData[]> {
+    const endpoints = await this.#db.instance.endpoint.findMany();
+
+    const endpointData = await Promise.all(
+      endpoints.map(async (endpoint) => {
+        const lastRun = await this.#db.instance.task.findFirst({
+          where: { type: kTaskRunnerType, endpoint_id: endpoint.id },
+          orderBy: { last_run: "desc" },
+        });
+        return {
+          ...endpoint,
+          last_run: lastRun?.last_run ?? null,
+        };
+      }),
+    );
+
+    return endpointData;
   }
 
   async test(data: CreateEndpointData): Promise<TestResult> {
@@ -105,6 +123,19 @@ export class EndpointService implements IService, EndpointEndpoint {
     this.#app.taskRunner.schedule();
 
     return endpoint;
+  }
+
+  async forceSync(id: number, duration: number): Promise<void> {
+    const endpoint = await this.#db.instance.endpoint.findUnique({
+      where: { id },
+    });
+    if (!endpoint) {
+      throw new Error(`Endpoint with id ${id} not found`);
+    }
+    this.#app.taskRunner.runForEndpoint(
+      endpoint,
+      new Date(Date.now() - duration),
+    );
   }
 
   checkScopes(scopes: readonly string[]): boolean {
