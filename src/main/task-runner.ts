@@ -2,7 +2,7 @@ import type { Endpoint } from "../generated/prisma/index.js";
 import type { Prisma } from "./database/prisma.ts";
 import { GitHubClient } from "./github/client.js";
 import { FetchNotificationsTask } from "./tasks/fetch-notifications.ts";
-import { logger } from "./utils/logger.ts";
+import { type Logger } from "./utils/logger.ts";
 
 const kTaskRunnerInterval = 3 * 60 * 1000; // 3 minutes
 
@@ -11,9 +11,18 @@ export const kTaskRunnerType = "task-runner";
 export class TaskRunner {
   #db: Prisma;
   #timer: NodeJS.Timeout | null = null;
+  #logger: Logger;
 
-  constructor(db: Prisma) {
+  constructor(db: Prisma, logger: Logger) {
     this.#db = db;
+    this.#logger = logger.child({ name: "task-runner" });
+  }
+
+  close() {
+    if (this.#timer) {
+      clearTimeout(this.#timer);
+      this.#timer = null;
+    }
   }
 
   async schedule() {
@@ -41,7 +50,7 @@ export class TaskRunner {
     this.#timer = setTimeout(() => {
       this.run();
     }, nextRunDelay);
-    logger.log(`TaskRunner scheduled to run in ${nextRunDelay} ms.`);
+    this.#logger.info(`TaskRunner scheduled to run in ${nextRunDelay} ms.`);
   }
 
   private reschedule() {
@@ -53,27 +62,31 @@ export class TaskRunner {
     this.#timer = setTimeout(() => {
       this.run();
     }, kTaskRunnerInterval);
-    logger.log(`TaskRunner scheduled next run in ${kTaskRunnerInterval} ms.`);
+    this.#logger.info(
+      `TaskRunner scheduled next run in ${kTaskRunnerInterval} ms.`,
+    );
   }
 
   private async run() {
-    logger.log("TaskRunner started.");
+    this.#logger.info("TaskRunner started.");
     const outdatedEndpoints = await this.findOutdatedEndpoints();
     if (outdatedEndpoints.length === 0) {
-      logger.log("No outdated endpoints found. TaskRunner will not run.");
+      this.#logger.info(
+        "No outdated endpoints found. TaskRunner will not run.",
+      );
       return;
     }
     for (const endpoint of outdatedEndpoints) {
       try {
         await this.runForEndpoint(endpoint);
       } catch (error) {
-        logger.error(
+        this.#logger.error(
           `Error running TaskRunner for endpoint ${endpoint.id}:`,
           error,
         );
       }
     }
-    logger.log("TaskRunner completed.");
+    this.#logger.info("TaskRunner completed.");
     this.reschedule(); // Reschedule after running
   }
 
@@ -96,7 +109,7 @@ export class TaskRunner {
   }
 
   async runForEndpoint(endpoint: Endpoint, since?: Date) {
-    logger.log("Running TaskRunner...");
+    this.#logger.info("Running for endpoint %s since %s", endpoint.id, since);
     // TODO: optimize last run info.
     if (since == null) {
       const task = await this.#db.instance.task.findFirst({
@@ -106,7 +119,7 @@ export class TaskRunner {
     }
 
     await this.runTasksForEndpoint(endpoint, since);
-    logger.log(`TaskRunner completed for endpoint ${endpoint.id}.`);
+    this.#logger.info(`TaskRunner completed for endpoint ${endpoint.id}.`);
 
     // TODO: optimize task info.
     const now = new Date();
@@ -131,7 +144,7 @@ export class TaskRunner {
   }
 
   private async runTasksForEndpoint(endpoint: Endpoint, since?: Date) {
-    logger.log(`Running tasks for endpoint ${endpoint.id}...`);
+    this.#logger.info(`Running tasks for endpoint ${endpoint.id}...`);
     const gh = new GitHubClient(
       endpoint.url,
       endpoint.token,
@@ -139,10 +152,19 @@ export class TaskRunner {
     );
 
     try {
-      const task = new FetchNotificationsTask(this.#db, gh, endpoint.id, since);
+      const task = new FetchNotificationsTask(
+        this.#db,
+        gh,
+        endpoint.id,
+        this.#logger,
+        since,
+      );
       await task.run();
     } catch (error) {
-      logger.error(`Error running task for endpoint ${endpoint.id}:`, error);
+      this.#logger.error(
+        `Error running task for endpoint ${endpoint.id}:`,
+        error,
+      );
     }
   }
 }

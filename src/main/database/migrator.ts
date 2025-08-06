@@ -2,7 +2,7 @@ import { readFile, readdir } from "node:fs/promises";
 import { DatabaseSync } from "node:sqlite";
 
 import { kPrismaDir } from "../constants.js";
-import { logger } from "../utils/logger.ts";
+import { type Logger } from "../utils/logger.ts";
 
 const kMigrationsDir = `${kPrismaDir}/migrations`;
 const kMigrationTableName = "_migrations";
@@ -24,9 +24,11 @@ const kIgnoredNames = ["migration_lock.toml", ".DS_Store"];
 
 export class Migrator {
   #db: DatabaseSync;
+  #logger: Logger;
 
-  constructor(databasePath: string) {
+  constructor(databasePath: string, logger: Logger) {
     this.#db = new DatabaseSync(databasePath);
+    this.#logger = logger.child({ name: "migrator" });
   }
 
   async runMigrations() {
@@ -44,7 +46,7 @@ export class Migrator {
     const insert = this.#db.prepare(kCreateMigration);
     for (const migration of migrations) {
       if (existingMigrations.includes(migration)) {
-        logger.log(`Skipping migration ${migration}, already applied.`);
+        this.#logger.info(`Skipping migration ${migration}, already applied.`);
         continue;
       }
       const startedAt = Date.now();
@@ -69,7 +71,7 @@ export class Migrator {
   }
 
   [Symbol.dispose]() {
-    logger.log("Closing database connection");
+    this.#logger.info("Closing database connection");
     this.#db.close();
   }
 }

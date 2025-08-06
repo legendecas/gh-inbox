@@ -39,7 +39,11 @@ export function Settings() {
         <SplitPageLayout.Header padding="none">
           <Navbar />
         </SplitPageLayout.Header>
-        <SplitPageLayout.Pane position="start" padding="none">
+        <SplitPageLayout.Pane
+          position="start"
+          padding="none"
+          aria-label="Navigation"
+        >
           <NavList.Group title="Endpoint Settings">
             <NavList aria-label="Navigation">
               <NavList.Item

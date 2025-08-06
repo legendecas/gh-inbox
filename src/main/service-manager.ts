@@ -1,10 +1,12 @@
-import { logger } from "./utils/logger.ts";
+import { type Logger } from "./utils/logger.ts";
 
 export class ServiceManager {
   #services: Map<string, IService>;
+  #logger: Logger;
 
-  constructor() {
+  constructor(logger: Logger) {
     this.#services = new Map();
+    this.#logger = logger;
   }
 
   registerService(service: IService) {
@@ -17,7 +19,7 @@ export class ServiceManager {
 
   wireAll(ipcMain: Electron.IpcMain) {
     for (const service of this.#services.values()) {
-      const ipcHandle = new IpcHandle(ipcMain, service);
+      const ipcHandle = new IpcHandle(ipcMain, service, this.#logger);
       service.wire(ipcHandle);
     }
   }
@@ -31,10 +33,15 @@ export interface IService {
 export class IpcHandle {
   #ipcMain: Electron.IpcMain;
   #service: IService;
+  #logger: Logger;
 
-  constructor(ipcMain: Electron.IpcMain, service: IService) {
+  constructor(ipcMain: Electron.IpcMain, service: IService, logger: Logger) {
     this.#ipcMain = ipcMain;
     this.#service = service;
+    this.#logger = logger.child({
+      name: `ipc-handle`,
+      service: service.namespace,
+    });
   }
 
   wire(channel: string, listener: (...args: any[]) => Promise<unknown>) {
@@ -44,7 +51,10 @@ export class IpcHandle {
         try {
           return await listener.apply(this.#service, args);
         } catch (error) {
-          logger.error(`Error handling IPC message ${channel}:`, error);
+          this.#logger.error(
+            `Error handling IPC message ${channel}: %s`,
+            error,
+          );
           throw error;
         }
       },

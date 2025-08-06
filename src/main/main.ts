@@ -26,3 +26,8 @@ app.on("window-all-closed", () => {
 app.on("before-quit", async () => {
   await instance.onQuit();
 });
+
+process.on("uncaughtException", (error) => {
+  console.error("Uncaught Exception: %s", error);
+  instance.logger.error("Uncaught Exception: %s", error);
+});

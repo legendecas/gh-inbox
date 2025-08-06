@@ -33,7 +33,11 @@ export function Inbox() {
           <SplitPageLayout.Header padding="none">
             <Navbar />
           </SplitPageLayout.Header>
-          <SplitPageLayout.Pane position="start" padding="none">
+          <SplitPageLayout.Pane
+            position="start"
+            padding="none"
+            aria-label="Sidebar"
+          >
             <Sidebar />
           </SplitPageLayout.Pane>
           <SplitPageLayout.Content padding="condensed" width="full">

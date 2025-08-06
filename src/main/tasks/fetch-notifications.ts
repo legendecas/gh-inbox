@@ -14,7 +14,7 @@ import type {
   Thread,
   ThreadRepository,
 } from "../github/types.ts";
-import { logger } from "../utils/logger.ts";
+import { type Logger } from "../utils/logger.ts";
 import {
   parseHeaderLink,
   resolveIfArchived,
@@ -34,12 +34,20 @@ export class FetchNotificationsTask {
   #db: Prisma;
   #gh: GitHubClient;
   #endpointId: number;
+  #logger: Logger;
   #since?: Date;
 
-  constructor(db: Prisma, gh: GitHubClient, endpointId: number, since?: Date) {
+  constructor(
+    db: Prisma,
+    gh: GitHubClient,
+    endpointId: number,
+    logger: Logger,
+    since?: Date,
+  ) {
     this.#db = db;
     this.#gh = gh;
     this.#endpointId = endpointId;
+    this.#logger = logger.child({ name: "fetch-notifications" });
     this.#since = since;
   }
 
@@ -48,21 +56,21 @@ export class FetchNotificationsTask {
       this.#since?.toISOString() ??
       new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(); // Fetch notifications from the last 24 hours
     const before = new Date().toISOString();
-    logger.log(
+    this.#logger.info(
       `Fetching notifications for endpoint ${this.#endpointId} since ${since} until ${before}`,
     );
 
     let page: number | undefined = 1;
     while (true) {
       try {
-        logger.log(`Fetching page: ${page}`);
+        this.#logger.info(`Fetching page: ${page}`);
         page = await this.runForPage(page, since, before);
         if (page === undefined) {
-          logger.log("All pages fetched");
+          this.#logger.info("All pages fetched");
           break; // No more pages to fetch
         }
       } catch (error) {
-        logger.error("Error fetching notifications:", error);
+        this.#logger.error("Error fetching notifications: %s", error);
         break; // Exit on error
       }
     }
@@ -91,10 +99,10 @@ export class FetchNotificationsTask {
       );
     }
     if (threads.length === 0) {
-      logger.log("No new notifications");
+      this.#logger.info("No new notifications");
       return;
     }
-    logger.log(`Fetched ${threads.length} notifications`);
+    this.#logger.info(`Fetched ${threads.length} notifications`);
 
     await this.saveNotifications(threads);
 
@@ -113,7 +121,7 @@ export class FetchNotificationsTask {
       try {
         await this.updateThread(thread, seenRepositories, labels);
       } catch (error) {
-        logger.error(`Error processing thread ${thread.url}:`, error);
+        this.#logger.error(`Error processing thread ${thread.url}: %s`, error);
       }
     }
 
@@ -136,9 +144,9 @@ export class FetchNotificationsTask {
       updated_at,
       repository,
     } = thread;
-    logger.info(`Processing thread: ${subjectUrl}`);
+    this.#logger.info(`Processing thread: ${subjectUrl}`);
     if (!kSupportedSubjectTypes.includes(subject.type)) {
-      logger.warn(`Unsupported subject type: ${subject.type}`);
+      this.#logger.warn(`Unsupported subject type: ${subject.type}`);
       return;
     }
 
@@ -149,7 +157,9 @@ export class FetchNotificationsTask {
 
     const subjectUrlInfo = getSubjectPathnameEssence(subjectUrl);
     if (subjectUrlInfo === null) {
-      logger.warn(`Skipping thread with invalid subject URL: ${subjectUrl}`);
+      this.#logger.warn(
+        `Skipping thread with invalid subject URL: ${subjectUrl}`,
+      );
       return; // Skip threads with invalid subject URLs
     }
     const { number: subjectNumber } = subjectUrlInfo;
@@ -167,7 +177,7 @@ export class FetchNotificationsTask {
       const isArchived = resolveIfArchived(thread, found);
 
       if (found.updated_at.getTime() < new Date(updated_at).getTime()) {
-        logger.info(`Update subject: ${subjectUrl}`);
+        this.#logger.info(`Update subject: ${subjectUrl}`);
         await this.updateSubject(subject, repository, labels);
       }
 
@@ -218,7 +228,7 @@ export class FetchNotificationsTask {
   ) {
     const subjectUrlInfo = getSubjectPathnameEssence(subject.url);
     if (subjectUrlInfo === null) {
-      logger.warn(`Skipping subject with invalid URL: ${subject.url}`);
+      this.#logger.warn(`Skipping subject with invalid URL: ${subject.url}`);
       return; // Skip subjects with invalid URLs
     }
     const { pathname } = subjectUrlInfo;
@@ -242,7 +252,7 @@ export class FetchNotificationsTask {
     } else if (subject.type === kSubjectType.Discussion) {
       await this.updateDiscussion(resp.data as Discussion, repository);
     } else {
-      logger.warn(`Unsupported subject type: ${subject.type}`);
+      this.#logger.warn(`Unsupported subject type: ${subject.type}`);
       return;
     }
   }
