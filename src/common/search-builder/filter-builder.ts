@@ -16,7 +16,7 @@ export class FilterBuilder {
         this.filterArchived(values[0] === "true");
       } else if (key === "unread") {
         this.filterUnread(values[0] === "true");
-      } else if (key === "labels") {
+      } else if (key === "labels" || key === "label") {
         this.filterLabels(values);
       } else if (key === "reasons") {
         this.filterReasons(values);
