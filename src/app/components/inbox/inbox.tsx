@@ -1,10 +1,8 @@
 import { Spinner, SplitPageLayout } from "@primer/react";
 import React, { useEffect } from "react";
 
-import {
-  CurrentEndpointProvider,
-  useEndpointsContext,
-} from "../../hooks/use-endpoints";
+import { CurrentEndpointProvider } from "../../hooks/use-current-endpoint";
+import { useEndpointsContext } from "../../hooks/use-endpoints";
 import { FilterProvider } from "../../hooks/use-filter";
 import { usePathname } from "../../hooks/use-location";
 import { Content } from "./content";

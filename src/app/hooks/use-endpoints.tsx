@@ -44,36 +44,3 @@ export function EndpointsProvider({ children }: { children: React.ReactNode }) {
     </EndpointsContext.Provider>
   );
 }
-
-export const CurrentEndpointContext = createContext({
-  endpointId: 0,
-  setEndpointId: (_id: number) => {
-    /* no-op */
-  },
-});
-
-export function useCurrentEndpointContext() {
-  return useContext(CurrentEndpointContext);
-}
-
-export function CurrentEndpointProvider({ children }: React.PropsWithChildren) {
-  const { endpoints } = useEndpointsContext();
-  const [currentEndpointId, setCurrentEndpointId] = useState(-1);
-
-  useEffect(() => {
-    if (endpoints.length > 0 && currentEndpointId === -1) {
-      setCurrentEndpointId(endpoints[0].id);
-    }
-  }, [endpoints, currentEndpointId]);
-
-  return (
-    <CurrentEndpointContext.Provider
-      value={{
-        endpointId: currentEndpointId,
-        setEndpointId: setCurrentEndpointId,
-      }}
-    >
-      {children}
-    </CurrentEndpointContext.Provider>
-  );
-}

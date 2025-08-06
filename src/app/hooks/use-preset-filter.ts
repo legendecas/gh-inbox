@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import type { ListResult } from "../../common/ipc/preset-filter.js";
-import { useCurrentEndpointContext } from "./use-endpoints.js";
+import { useCurrentEndpointContext } from "./use-current-endpoint.js";
 
 export function usePresetFilter() {
   const ctx = useCurrentEndpointContext();
@@ -24,7 +24,7 @@ export function usePresetFilter() {
     };
 
     fetch();
-  }, [ctx.endpointId]);
+  }, [ctx.updateTime, ctx.endpointId]);
 
   return listResult;
 }

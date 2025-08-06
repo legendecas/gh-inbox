@@ -2,10 +2,8 @@ import { GearIcon } from "@primer/octicons-react";
 import { ActionList, ActionMenu, IconButton } from "@primer/react";
 import React from "react";
 
-import {
-  useCurrentEndpointContext,
-  useEndpointsContext,
-} from "../../../hooks/use-endpoints";
+import { useCurrentEndpointContext } from "../../../hooks/use-current-endpoint";
+import { useEndpointsContext } from "../../../hooks/use-endpoints";
 import { usePathname } from "../../../hooks/use-location";
 import "./navbar.css";
 import { SearchBox } from "./search-box";

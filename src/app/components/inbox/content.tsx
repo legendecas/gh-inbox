@@ -10,11 +10,7 @@ import { ThreadItem } from "./thread-item";
 
 export function Content() {
   const { filter, currentPage, setCurrentPage } = useFilterContext();
-  const [threads, totalCount, refreshThreads] = useThreads(
-    filter,
-    currentPage,
-    kPageSize,
-  );
+  const [threads, totalCount] = useThreads(filter, currentPage, kPageSize);
   const [selectedSet, setSelected] = useState<Set<string>>(new Set());
 
   const onThreadSelected = (threadId: string, checked: boolean) => {
@@ -49,7 +45,6 @@ export function Content() {
         <Header
           selectedThreads={selectedSet}
           selectClosedThreads={selectClosedThreads}
-          refreshThreads={refreshThreads}
         />
       </PageLayout.Header>
       <PageLayout.Content>

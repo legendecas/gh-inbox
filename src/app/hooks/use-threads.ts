@@ -3,11 +3,10 @@ import { useEffect, useState } from "react";
 import type { ThreadListResult } from "../../common/ipc/threads.js";
 import { FilterBuilder } from "../../common/search-builder/filter-builder.js";
 import { SearchParser } from "../../common/search-builder/search-parser.js";
-import { useCurrentEndpointContext } from "./use-endpoints.js";
+import { useCurrentEndpointContext } from "./use-current-endpoint.js";
 
 export function useThreads(filter: string, page: number, pageSize: number) {
   const ctx = useCurrentEndpointContext();
-  const [updateTime, setUpdateTime] = useState(Date.now());
   const [result, setResult] = useState<ThreadListResult>({
     totalCount: 0,
     threads: [],
@@ -41,11 +40,7 @@ export function useThreads(filter: string, page: number, pageSize: number) {
     };
 
     fetch();
-  }, [updateTime, ctx.endpointId, filter, page, pageSize]);
+  }, [ctx.updateTime, ctx.endpointId, filter, page, pageSize]);
 
-  return [
-    result.threads,
-    result.totalCount,
-    () => setUpdateTime(Date.now()),
-  ] as const;
+  return [result.threads, result.totalCount] as const;
 }
