@@ -15,5 +15,6 @@ export interface TestResult {
 export interface EndpointEndpoint {
   list: () => Promise<Endpoint[]>;
   create: (data: CreateEndpointData) => Promise<Endpoint>;
+  update: (id: number, data: CreateEndpointData) => Promise<Endpoint>;
   test: (data: CreateEndpointData) => Promise<TestResult>;
 }

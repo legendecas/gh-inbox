@@ -7,9 +7,14 @@ import { EndpointForm } from "./endpoint-form";
 
 export function CreateEndpoint() {
   const [_pathname, setPathname] = usePathname();
-  const [backPathname] = useQueryParam("back", "");
+  const [backPathname] = useQueryParam("back", undefined);
+  const [endpointId] = useQueryParam("endpointId", undefined);
 
   const handleBack = () => {
+    if (!backPathname) {
+      console.warn("No back path provided, cannot navigate back.");
+      return;
+    }
     setPathname(backPathname);
   };
 
@@ -18,7 +23,9 @@ export function CreateEndpoint() {
       <PageLayout.Header>
         <PageHeader role="banner" aria-label="Title">
           <PageHeader.TitleArea>
-            <PageHeader.Title>Connect to GitHub</PageHeader.Title>
+            <PageHeader.Title>
+              {endpointId ? "Edit GitHub Connection" : "Connect to GitHub"}
+            </PageHeader.Title>
           </PageHeader.TitleArea>
 
           {backPathname ? (
@@ -34,7 +41,7 @@ export function CreateEndpoint() {
         </PageHeader>
       </PageLayout.Header>
       <PageLayout.Content>
-        <EndpointForm />
+        <EndpointForm endpointId={endpointId} />
       </PageLayout.Content>
     </PageLayout>
   );

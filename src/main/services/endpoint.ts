@@ -36,6 +36,7 @@ export class EndpointService implements IService, EndpointEndpoint {
     ipcHandle.wire("list", this.list);
     ipcHandle.wire("test", this.test);
     ipcHandle.wire("create", this.create);
+    ipcHandle.wire("update", this.update);
   }
 
   async list(): Promise<Endpoint[]> {
@@ -69,6 +70,29 @@ export class EndpointService implements IService, EndpointEndpoint {
   async create(data: CreateEndpointData): Promise<Endpoint> {
     const result = await this.test(data);
     const endpoint = await this.#db.instance.endpoint.create({
+      data: {
+        url: data.url,
+        token: data.token,
+        proxy_url: data.proxy_url,
+        username: result.username,
+        expires_at: result.expiresAt,
+      },
+    });
+
+    this.#app.taskRunner.schedule();
+
+    return endpoint;
+  }
+
+  async update(id: number, data: CreateEndpointData): Promise<Endpoint> {
+    const result = await this.test({
+      url: data.url,
+      token: data.token,
+      proxy_url: data.proxy_url,
+    });
+
+    const endpoint = await this.#db.instance.endpoint.update({
+      where: { id },
       data: {
         url: data.url,
         token: data.token,

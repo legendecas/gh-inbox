@@ -78,7 +78,9 @@ export default function EndpointTable() {
                   icon={PencilIcon}
                   variant="invisible"
                   onClick={() => {
-                    alert(`Fake editing ${row.url}`);
+                    setPathname(
+                      `/create-endpoint?back=${encodeURIComponent("/settings")}&endpointId=${row.id}`,
+                    );
                   }}
                 />
               );
