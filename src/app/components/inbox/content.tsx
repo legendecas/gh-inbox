@@ -8,6 +8,8 @@ import "./content.css";
 import { Header } from "./header";
 import { ThreadItem } from "./thread-item";
 
+const kOpenStates = ["open", "draft"];
+
 export function Content() {
   const { filter, currentPage, setCurrentPage } = useFilterContext();
   const [threads, totalCount] = useThreads(filter, currentPage, kPageSize);
@@ -23,7 +25,9 @@ export function Content() {
   };
 
   const selectClosedThreads = () => {
-    const closedThreads = threads.filter((thread) => thread.state !== "open");
+    const closedThreads = threads.filter(
+      (thread) => !kOpenStates.includes(thread.state),
+    );
     closedThreads.forEach((thread) => {
       selectedSet.add(thread.id);
     });

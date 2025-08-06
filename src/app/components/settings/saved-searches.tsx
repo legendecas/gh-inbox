@@ -1,8 +1,9 @@
-import { PencilIcon, PlusIcon } from "@primer/octicons-react";
+import { PencilIcon, PlusIcon, TrashIcon } from "@primer/octicons-react";
 import {
   ActionList,
   ActionMenu,
   Button,
+  ButtonGroup,
   Dialog,
   FormControl,
   IconButton,
@@ -219,16 +220,33 @@ export default function SavedSearchesTable() {
               header: () => <span>Actions</span>,
               renderCell: (row) => {
                 return (
-                  <IconButton
-                    aria-label={`Edit: ${row.name}`}
-                    title={`Edit: ${row.name}`}
-                    icon={PencilIcon}
-                    variant="invisible"
-                    onClick={() => {
-                      setEditingItem(row);
-                      setIsOpen(true);
-                    }}
-                  />
+                  <ButtonGroup>
+                    <IconButton
+                      aria-label={`Edit: ${row.name}`}
+                      title={`Edit: ${row.name}`}
+                      icon={PencilIcon}
+                      variant="default"
+                      onClick={() => {
+                        setEditingItem(row);
+                        setIsOpen(true);
+                      }}
+                    />
+
+                    <IconButton
+                      aria-label={`Delete: ${row.name}`}
+                      title={`Delete: ${row.name}`}
+                      icon={TrashIcon}
+                      variant="danger"
+                      onClick={async () => {
+                        await window.ipc.invoke(
+                          "presetFilter",
+                          "deleteSearch",
+                          row.id,
+                        );
+                        setReloadSearches(Date.now());
+                      }}
+                    />
+                  </ButtonGroup>
                 );
               },
             },
