@@ -152,11 +152,12 @@ export class FetchNotificationsTask {
       seenRepositories.set(`${repository.id}`, repository);
     }
 
-    const subjectNumber = getSubjectNumberFromUrl(subjectUrl);
-    if (subjectNumber === null) {
+    const subjectUrlInfo = getSubjectPathnameEssence(subjectUrl);
+    if (subjectUrlInfo === null) {
       logger.warn(`Skipping thread with invalid subject URL: ${subjectUrl}`);
       return; // Skip threads with invalid subject URLs
     }
+    const { number: subjectNumber } = subjectUrlInfo;
 
     const found = await this.#db.instance.thread.findUnique({
       where: { id },
@@ -220,9 +221,15 @@ export class FetchNotificationsTask {
     repository: ThreadRepository,
     labels: LabelMap,
   ) {
+    const subjectUrlInfo = getSubjectPathnameEssence(subject.url);
+    if (subjectUrlInfo === null) {
+      logger.warn(`Skipping subject with invalid URL: ${subject.url}`);
+      return; // Skip subjects with invalid URLs
+    }
+    const { pathname } = subjectUrlInfo;
     const resp = await this.#gh.instance.request<
       Issue | PullRequest | Discussion
-    >(`GET ${new URL(subject.url).pathname}` as any);
+    >(`GET ${pathname}` as any);
     if (resp.status !== 200) {
       throw new Error(`Failed to fetch subject: ${resp.data}`);
     }
@@ -563,11 +570,25 @@ export class FetchNotificationsTask {
 }
 
 // Urls like https://api.github.com/repos/nodejs/node-gyp/issues/3095
-function getSubjectNumberFromUrl(url: string): number | null {
-  const match = new URL(url).pathname.split("/");
-  if (match.length < 6) {
-    return null; // Not a valid issue or PR URL
-  }
+// and enterprise url like https://github.mycompany.com/api/v3/repos/nodejs/node-gyp/issues/3095
+export function getSubjectPathnameEssence(url: string): {
+  pathname: string;
+  owner: string;
+  repoName: string;
+  type: string;
+  number: number;
+} | null {
+  const match = new URL(url).pathname.match(
+    /\/repos\/([^/]+)\/([^/]+)\/([^/]+)\/(\d+)/,
+  );
+  if (match == null) return null;
 
-  return parseInt(match[5], 10);
+  const [pathname, owner, repoName, type, number] = match;
+  return {
+    pathname,
+    owner,
+    repoName,
+    type,
+    number: parseInt(number, 10),
+  };
 }
