@@ -4,11 +4,14 @@ import React, { useEffect, useState } from "react";
 import { About } from "./about";
 import { Endpoints } from "./endpoints";
 import { Navbar } from "./navbar/navbar";
+import { SavedSearches } from "./saved-searches";
 
 function Content({ currentHash }: { currentHash: string }) {
   switch (currentHash) {
     case "#about":
       return <About />;
+    case "#saved-searches":
+      return <SavedSearches />;
     default:
       return <Endpoints />;
   }
@@ -37,17 +40,32 @@ export function Settings() {
           <Navbar />
         </SplitPageLayout.Header>
         <SplitPageLayout.Pane position="start" padding="none">
-          <NavList aria-label="Navigation">
-            <NavList.Item
-              href="#endpoints"
-              aria-current={currentHash === "#endpoints"}
-            >
-              Endpoints
-            </NavList.Item>
-            <NavList.Item href="#about" aria-current={currentHash === "#about"}>
-              About
-            </NavList.Item>
-          </NavList>
+          <NavList.Group title="Endpoint Settings">
+            <NavList aria-label="Navigation">
+              <NavList.Item
+                href="#saved-searches"
+                aria-current={currentHash === "#saved-searches"}
+              >
+                Saved Searches
+              </NavList.Item>
+            </NavList>
+          </NavList.Group>
+          <NavList.Group title="General Settings">
+            <NavList aria-label="Navigation">
+              <NavList.Item
+                href="#endpoints"
+                aria-current={currentHash === "#endpoints"}
+              >
+                Endpoints
+              </NavList.Item>
+              <NavList.Item
+                href="#about"
+                aria-current={currentHash === "#about"}
+              >
+                About
+              </NavList.Item>
+            </NavList>
+          </NavList.Group>
         </SplitPageLayout.Pane>
         <SplitPageLayout.Content padding="condensed" width="full">
           <Content currentHash={currentHash} />

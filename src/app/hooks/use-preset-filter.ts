@@ -5,8 +5,9 @@ import { useCurrentEndpointContext } from "./use-endpoints.js";
 
 export function usePresetFilter() {
   const ctx = useCurrentEndpointContext();
-  const [presetFilters, setPresetFilters] = useState<ListResult>({
+  const [listResult, setListResult] = useState<ListResult>({
     presetFilters: [],
+    searches: [],
     repoNamespaces: [],
   });
 
@@ -16,7 +17,7 @@ export function usePresetFilter() {
         const data = await window.ipc.invoke("presetFilter", "list", {
           endpointId: ctx.endpointId,
         });
-        setPresetFilters(data);
+        setListResult(data);
       } catch (error) {
         console.error("Error fetching preset filters:", error);
       }
@@ -25,5 +26,5 @@ export function usePresetFilter() {
     fetch();
   }, [ctx.endpointId]);
 
-  return presetFilters;
+  return listResult;
 }

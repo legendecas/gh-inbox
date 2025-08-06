@@ -5,6 +5,7 @@ import {
   InboxIcon,
   LockIcon,
   RepoIcon,
+  SearchIcon,
 } from "@primer/octicons-react";
 import { ActionList, Avatar, CounterLabel, Truncate } from "@primer/react";
 import React, { Fragment } from "react";
@@ -37,7 +38,7 @@ const kPresetFilterSettings: Record<
 
 export function Sidebar() {
   const { filter, setFilter } = useFilterContext();
-  const { presetFilters, repoNamespaces } = usePresetFilter();
+  const { presetFilters, searches, repoNamespaces } = usePresetFilter();
 
   return (
     <ActionList>
@@ -59,6 +60,27 @@ export function Sidebar() {
             {kPresetFilterSettings[pf.type as kPresetFilterType].name}
             <ActionList.TrailingVisual>
               <CounterLabel>{pf.unread_count}</CounterLabel>
+            </ActionList.TrailingVisual>
+          </ActionList.Item>
+        );
+      })}
+      <ActionList.Divider />
+
+      {searches.map((sp) => {
+        return (
+          <ActionList.Item
+            key={sp.id}
+            active={sp.query === filter}
+            onSelect={() => {
+              setFilter(sp.query);
+            }}
+          >
+            <ActionList.LeadingVisual>
+              <SearchIcon />
+            </ActionList.LeadingVisual>
+            {sp.name}
+            <ActionList.TrailingVisual>
+              <CounterLabel>{sp.count}</CounterLabel>
             </ActionList.TrailingVisual>
           </ActionList.Item>
         );

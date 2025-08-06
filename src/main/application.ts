@@ -85,6 +85,7 @@ export class Application {
 
   async loadDevTools() {
     if (process.env.NODE_ENV !== "development") {
+      logger.info("Skipping dev tools loading in production mode.");
       return;
     }
     const { default: installer } = await import("electron-devtools-installer");

@@ -1,11 +1,16 @@
 import type {
+  CreateSearchOptions,
   FilterListOptions,
   PresetFilter,
   PresetFilterEndpoint,
   RepoInfo,
   RepoNamespace,
+  SearchPreview,
 } from "../../common/ipc/preset-filter.ts";
 import { kPresetFilterQueries } from "../../common/presets.ts";
+import { FilterBuilder } from "../../common/search-builder/filter-builder.ts";
+import { SearchParser } from "../../common/search-builder/search-parser.ts";
+import type { SavedSearch } from "../../generated/prisma/index.js";
 import type { Prisma } from "../database/prisma.ts";
 import type { IService, IpcHandle } from "../service-manager.ts";
 
@@ -19,11 +24,16 @@ export class PresetFilterService implements IService, PresetFilterEndpoint {
 
   wire(ipcHandle: IpcHandle) {
     ipcHandle.wire("list", this.list);
+    ipcHandle.wire("listSearches", this.listSearches);
+    ipcHandle.wire("createSearch", this.createSearch);
+    ipcHandle.wire("updateSearch", this.updateSearch);
+    ipcHandle.wire("deleteSearch", this.deleteSearch);
   }
 
   async list(options: FilterListOptions) {
     return {
       presetFilters: await this.listPresetFilters(options),
+      searches: await this.listSearchPreviews(options),
       repoNamespaces: await this.listRepos(options),
     };
   }
@@ -41,6 +51,39 @@ export class PresetFilterService implements IService, PresetFilterEndpoint {
         }),
       })),
     );
+  }
+
+  private async listSearchPreviews(
+    options: FilterListOptions,
+  ): Promise<SearchPreview[]> {
+    const searches = await this.#db.instance.savedSearch.findMany({
+      where: { endpoint_id: options.endpointId },
+      orderBy: { sort_weight: "asc" },
+    });
+
+    const previews = await Promise.all(
+      searches.map(async (search) => {
+        const parsedSearch = new SearchParser().parse(search.query);
+        const filter = new FilterBuilder().fromRecord(parsedSearch).build();
+
+        const count = await this.#db.instance.thread.count({
+          where: {
+            AND: [{ endpoint_id: options.endpointId }, filter],
+          },
+        });
+
+        return {
+          id: search.id,
+          type: search.type,
+          leading_visual: search.leading_visual,
+          name: search.name,
+          query: search.query,
+          count,
+        };
+      }),
+    );
+
+    return previews;
   }
 
   private async listRepos(
@@ -89,6 +132,38 @@ export class PresetFilterService implements IService, PresetFilterEndpoint {
     }
 
     return Array.from(namespaces.values());
+  }
+
+  async listSearches(endpointId: number): Promise<SavedSearch[]> {
+    return this.#db.instance.savedSearch.findMany({
+      where: { endpoint_id: endpointId },
+      orderBy: { sort_weight: "asc" },
+    });
+  }
+
+  async createSearch(search: CreateSearchOptions): Promise<void> {
+    await this.#db.instance.savedSearch.create({
+      data: {
+        ...search,
+        endpoint_id: search.endpoint_id,
+      },
+    });
+  }
+
+  async updateSearch(id: number, search: CreateSearchOptions): Promise<void> {
+    await this.#db.instance.savedSearch.update({
+      where: { id },
+      data: {
+        ...search,
+        endpoint_id: search.endpoint_id,
+      },
+    });
+  }
+
+  async deleteSearch(id: number): Promise<void> {
+    await this.#db.instance.savedSearch.delete({
+      where: { id },
+    });
   }
 }
 

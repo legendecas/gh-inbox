@@ -124,6 +124,22 @@ model Subject {
   @@unique([endpoint_id, repository_id, number])
 }
 
+model SavedSearch {
+  id          Int @id @default(autoincrement())
+  sort_weight Int
+
+  type           String
+  leading_visual String
+  name           String
+  query          String
+  description    String?
+
+  endpoint_id Int
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
 model Task {
   id          Int    @id @default(autoincrement())
   type        String
@@ -137,7 +153,9 @@ model Endpoint {
   id  Int    @id @default(autoincrement())
   url String
 
-  username  String
+  username   String
+  avatar_url String?
+
   token     String
   proxy_url String?
 
