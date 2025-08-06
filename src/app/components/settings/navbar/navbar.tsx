@@ -14,14 +14,14 @@ export function Navbar() {
 
   return (
     <div className="navbar flex flex-row">
-      <div className="navbar-left flex flex-row grow">
+      <div className="navbar-left flex flex-row grow gap-x-[8px]">
         <IconButton
           aria-label="Back"
           icon={ArrowLeftIcon}
           onClick={handleBack}
         />
       </div>
-      <div className="navbar-right flex flex-row-reverse ml-[8px]"></div>
+      <div className="navbar-right flex flex-row-reverse gap-x-[8px] ml-[8px]"></div>
     </div>
   );
 }

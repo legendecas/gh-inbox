@@ -2,7 +2,7 @@ import { Spinner, SplitPageLayout } from "@primer/react";
 import React, { useEffect } from "react";
 
 import {
-  CurrentEndpointContext,
+  CurrentEndpointProvider,
   useEndpointsContext,
 } from "../../hooks/use-endpoints";
 import { FilterProvider } from "../../hooks/use-filter";
@@ -29,7 +29,7 @@ export function Inbox() {
   }
 
   return (
-    <CurrentEndpointContext.Provider value={{ endpointId: endpoints[0].id }}>
+    <CurrentEndpointProvider>
       <FilterProvider>
         <SplitPageLayout>
           <SplitPageLayout.Header padding="none">
@@ -43,6 +43,6 @@ export function Inbox() {
           </SplitPageLayout.Content>
         </SplitPageLayout>
       </FilterProvider>
-    </CurrentEndpointContext.Provider>
+    </CurrentEndpointProvider>
   );
 }
