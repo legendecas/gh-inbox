@@ -74,6 +74,7 @@ export class TaskRunner {
       this.#logger.info(
         "No outdated endpoints found. TaskRunner will not run.",
       );
+      this.reschedule(); // Reschedule
       return;
     }
     for (const endpoint of outdatedEndpoints) {
