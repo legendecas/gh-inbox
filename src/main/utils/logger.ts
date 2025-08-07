@@ -39,10 +39,10 @@ export function initializeLogger(logdir: string) {
       level: "info",
       dirname: logdir,
       filename: "gh-inbox-%DATE%.log",
-      datePattern: "YYYY-MM-DD-HH",
+      datePattern: "YYYY-MM-DD",
       zippedArchive: false,
       maxSize: "20m",
-      maxFiles: "3d",
+      maxFiles: 3,
       format: winston.format.json(),
     }),
   ];
