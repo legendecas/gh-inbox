@@ -1,85 +1,116 @@
 import type { ThreadFilter } from "../presets";
 
+const kTypeMap = {
+  issue: "Issue",
+  pull: "PullRequest",
+  discussion: "Discussion",
+} as Record<string, string>;
+
 export class FilterBuilder {
   #archived = false;
   #filters: ThreadFilter[] = [];
 
   fromRecord(record: Record<string, string[]>): this {
-    for (const [key, values] of Object.entries(record)) {
-      if (key === "repo") {
-        this.filterRepoName(values[0]);
-      } else if (key === "repo_id") {
-        this.filterRepo(values[0]);
-      } else if (key === "owner") {
-        this.filterOwnerName(values[0]);
-      } else if (key === "archived") {
+    // eslint-disable-next-line prefer-const
+    for (let [key, values] of Object.entries(record)) {
+      if (key === "archived") {
         this.filterArchived(values[0] === "true");
-      } else if (key === "unread") {
-        this.filterUnread(values[0] === "true");
-      } else if (key === "labels" || key === "label") {
-        this.filterLabels(values);
-      } else if (key === "reasons") {
-        this.filterReasons(values);
+        continue;
       }
+
+      const negative = key.at(0) === "-";
+      if (negative) {
+        key = key.slice(1);
+      }
+
+      let filter: ThreadFilter | undefined;
+      if (key === "repo") {
+        filter = this.filterRepoName(values[0]);
+      } else if (key === "repo_id") {
+        filter = this.filterRepo(values[0]);
+      } else if (key === "owner") {
+        filter = this.filterOwnerName(values[0]);
+      } else if (key === "unread") {
+        filter = this.filterUnread(values[0] === "true");
+      } else if (key === "types" || key === "type") {
+        filter = this.filterTypes(values);
+      } else if (key === "labels" || key === "label") {
+        filter = this.filterLabels(values);
+      } else if (key === "reasons" || key === "reason") {
+        filter = this.filterReasons(values);
+      }
+
+      if (filter == null) {
+        continue;
+      }
+
+      if (negative) {
+        filter = {
+          NOT: filter,
+        };
+      }
+      this.#filters.push(filter);
     }
     return this;
   }
 
-  filterArchived(archived = false): this {
+  private filterArchived(archived = false): this {
     this.#archived = archived;
     return this;
   }
 
-  filterUnread(unread = true): this {
-    this.#filters.push({ unread });
-    return this;
+  private filterUnread(unread = true): ThreadFilter {
+    return { unread };
   }
 
-  filterRepo(repoId: string): this {
-    this.#filters.push({
+  private filterRepo(repoId: string): ThreadFilter {
+    return {
       repository_id: repoId,
-    });
-    return this;
+    };
   }
 
-  filterRepoName(repoName: string): this {
-    this.#filters.push({
+  private filterRepoName(repoName: string): ThreadFilter {
+    return {
       repository: {
         full_name: repoName,
       },
-    });
-    return this;
+    };
   }
 
-  filterOwnerName(owner: string): this {
-    this.#filters.push({
+  private filterOwnerName(owner: string): ThreadFilter {
+    return {
       repository: {
         owner: {
           login: owner,
         },
       },
-    });
-    return this;
+    };
   }
 
-  filterLabels(labels: string[]): this {
-    this.#filters.push({
+  private filterTypes(types: string[]): ThreadFilter {
+    return {
+      OR: types.map((type) => ({
+        subject_type: kTypeMap[type] || type,
+      })),
+    };
+  }
+
+  private filterLabels(labels: string[]): ThreadFilter {
+    return {
       OR: labels.map((label) => ({
         subject: {
           labels: { contains: `|${label}|` },
         },
       })),
-    });
-    return this;
+    };
   }
 
-  filterReasons(reasons: string[]): this {
-    this.#filters.push({
+  private filterReasons(reasons: string[]): ThreadFilter {
+    return {
       OR: reasons.map((reason) => ({
         reasons: { contains: `|${reason}|` },
       })),
-    });
-    return this;
+    };
   }
 
   build(): ThreadFilter {

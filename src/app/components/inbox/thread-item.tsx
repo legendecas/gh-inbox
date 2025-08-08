@@ -94,6 +94,9 @@ export function ThreadItem({ thread, selected, setSelected }: ThreadItemProps) {
         </span>
       </td>
       <td>
+        <span className="thread-user text-sm">{thread.user_login}</span>
+      </td>
+      <td>
         <span className="thread-reason text-sm">
           <ReasonLabelGroup reasonsStr={thread.reasons} />
         </span>

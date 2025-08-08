@@ -71,6 +71,7 @@ export class ThreadsService implements IService, ThreadEndpoint {
           state,
           labels,
           html_url: subject?.html_url ?? "",
+          user_login: subject?.user_login ?? "",
         };
       }),
     );

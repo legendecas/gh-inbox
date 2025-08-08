@@ -7,7 +7,12 @@ export const kPageSize = 20;
 export const kDefaultFilter: ThreadFilter = {
   archived: false,
 };
-export type kPresetFilterType = "inbox" | "my_turn" | "involved";
+export type kPresetFilterType =
+  | "inbox"
+  | "my_turn"
+  | "involved"
+  | "review_requested"
+  | "assigned";
 export type kPresetFilter = Record<kPresetFilterType, ThreadFilter>;
 export const kPresetFilterQueries: kPresetFilter = {
   inbox: kDefaultFilter,
@@ -38,11 +43,19 @@ export const kPresetFilterQueries: kPresetFilter = {
       },
     ],
   },
+  review_requested: {
+    AND: [{ archived: false, reasons: { contains: "|review_requested|" } }],
+  },
+  assigned: {
+    AND: [{ archived: false, reasons: { contains: "|assigned|" } }],
+  },
 };
 export const kPresetFilterSearches: Record<kPresetFilterType, string> = {
   inbox: "",
   my_turn: "unread:true reasons:author,comment,manual,mention",
   involved: "reasons:author,comment,manual,mention,team_mention",
+  review_requested: "reasons:review_requested",
+  assigned: "reasons:assign",
 };
 
 export function repoFilter(repoId: string): ThreadFilter {

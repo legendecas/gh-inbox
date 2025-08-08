@@ -1,9 +1,11 @@
 import {
+  CodeReviewIcon,
   CommentDiscussionIcon,
   GoalIcon,
   type Icon,
   InboxIcon,
   LockIcon,
+  PersonIcon,
   RepoIcon,
   SearchIcon,
 } from "@primer/octicons-react";
@@ -34,32 +36,43 @@ const kPresetFilterSettings: Record<
     name: "Involved",
     icon: CommentDiscussionIcon,
   },
+  review_requested: {
+    name: "Review Requested",
+    icon: CodeReviewIcon,
+  },
+  assigned: {
+    name: "Assigned",
+    icon: PersonIcon,
+  },
 };
 
 export function Sidebar() {
   const { filter, setFilter } = useFilterContext();
   const { presetFilters, searches, repoNamespaces } = usePresetFilter();
 
+  const presetFilterMap = Object.fromEntries(
+    presetFilters.map((pf) => [pf.type, pf]),
+  );
+
   return (
     <ActionList>
-      {presetFilters.map((pf) => {
-        const Icon = kPresetFilterSettings[pf.type as kPresetFilterType].icon;
+      {(["inbox", "my_turn", "involved"] as const).map((type) => {
+        if (presetFilterMap[type] == null) return null;
+        const Icon = kPresetFilterSettings[type].icon;
         return (
           <ActionList.Item
-            key={pf.type}
-            active={
-              kPresetFilterSearches[pf.type as kPresetFilterType] === filter
-            }
+            key={type}
+            active={kPresetFilterSearches[type] === filter}
             onSelect={() => {
-              setFilter(kPresetFilterSearches[pf.type as kPresetFilterType]);
+              setFilter(kPresetFilterSearches[type]);
             }}
           >
             <ActionList.LeadingVisual>
               <Icon />
             </ActionList.LeadingVisual>
-            {kPresetFilterSettings[pf.type as kPresetFilterType].name}
+            {kPresetFilterSettings[type].name}
             <ActionList.TrailingVisual>
-              <CounterLabel>{pf.unread_count}</CounterLabel>
+              <CounterLabel>{presetFilterMap[type].unread_count}</CounterLabel>
             </ActionList.TrailingVisual>
           </ActionList.Item>
         );
@@ -86,6 +99,30 @@ export function Sidebar() {
         );
       })}
       <ActionList.Divider />
+
+      {(["assigned", "review_requested"] as const).map((type) => {
+        if (presetFilterMap[type] == null) return null;
+        const Icon = kPresetFilterSettings[type].icon;
+        return (
+          <ActionList.Item
+            key={type}
+            active={kPresetFilterSearches[type] === filter}
+            onSelect={() => {
+              setFilter(kPresetFilterSearches[type]);
+            }}
+          >
+            <ActionList.LeadingVisual>
+              <Icon />
+            </ActionList.LeadingVisual>
+            {kPresetFilterSettings[type].name}
+            <ActionList.TrailingVisual>
+              <CounterLabel>{presetFilterMap[type].unread_count}</CounterLabel>
+            </ActionList.TrailingVisual>
+          </ActionList.Item>
+        );
+      })}
+      <ActionList.Divider />
+
       {repoNamespaces.map((ns) => {
         const ownerFilter = `owner:${ns.owner}`;
         return (

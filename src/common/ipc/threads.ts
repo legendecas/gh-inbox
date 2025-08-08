@@ -6,6 +6,7 @@ export interface ThreadItem extends Thread {
   state: StateType;
   labels: Label[];
   html_url: string;
+  user_login: string;
 }
 
 export interface ThreadListOptions {

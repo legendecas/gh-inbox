@@ -1,4 +1,4 @@
-const kRegExp = /(\w+):(?:"([^"]*)"|([^"\s]+))/g;
+const kRegExp = /([-\w]+):(?:"([^"]*)"|([^"\s]+))/g;
 export class SearchParser {
   parse(search: string): Record<string, string[]> {
     const result: Record<string, string[]> = {};
