@@ -30,7 +30,11 @@ function EditSearchForm({
   function submit(formData: FormData) {
     const name = formData.get("name") as string;
     const query = formData.get("query") as string;
-    console.log("Submitting search form", formData, name, query);
+    let sortWeight = Number.parseInt(formData.get("sort_weight") as string);
+    if (!Number.isSafeInteger(sortWeight)) {
+      sortWeight = 0;
+    }
+    console.log("Submitting search form", formData, name, query, sortWeight);
 
     if (!name || !query) {
       alert("Name and query are required.");
@@ -45,7 +49,7 @@ function EditSearchForm({
         "updateSearch",
         search.id,
         {
-          sort_weight: search.sort_weight,
+          sort_weight: sortWeight,
           leading_visual: search.leading_visual,
           type: search.type,
           name,
@@ -56,7 +60,7 @@ function EditSearchForm({
     } else {
       // Create new search
       submitPromise = window.ipc.invoke("presetFilter", "createSearch", {
-        sort_weight: 0,
+        sort_weight: sortWeight,
         leading_visual: "default",
         type: "search",
         name,
@@ -94,6 +98,15 @@ function EditSearchForm({
               block
               name="query"
               defaultValue={search ? search.query : ""}
+            />
+          </FormControl>
+
+          <FormControl>
+            <FormControl.Label>Sort Weight</FormControl.Label>
+            <TextInput
+              block
+              name="sort_weight"
+              defaultValue={search ? search.sort_weight : "0"}
             />
           </FormControl>
 

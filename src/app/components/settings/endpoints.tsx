@@ -1,5 +1,17 @@
-import { PencilIcon, PlusIcon, SyncIcon } from "@primer/octicons-react";
-import { Button, IconButton, PageLayout, RelativeTime } from "@primer/react";
+import {
+  KebabHorizontalIcon,
+  PencilIcon,
+  PlusIcon,
+  SyncIcon,
+} from "@primer/octicons-react";
+import {
+  ActionList,
+  ActionMenu,
+  Button,
+  IconButton,
+  PageLayout,
+  RelativeTime,
+} from "@primer/react";
 import { DataTable, Table } from "@primer/react/experimental";
 import React from "react";
 
@@ -95,8 +107,8 @@ export default function EndpointTable() {
                     }}
                   />
                   <IconButton
-                    aria-label={`Sync: ${row.url}`}
-                    title={`Sync: ${row.url}`}
+                    aria-label={`Sync 1 day`}
+                    title={`Sync 1 day`}
                     icon={SyncIcon}
                     variant="invisible"
                     onClick={() => {
@@ -109,6 +121,53 @@ export default function EndpointTable() {
                       );
                     }}
                   />
+                  <ActionMenu>
+                    <ActionMenu.Anchor>
+                      <IconButton
+                        aria-label={`More actions`}
+                        title={`More actions`}
+                        icon={KebabHorizontalIcon}
+                        variant="invisible"
+                      />
+                    </ActionMenu.Anchor>
+                    <ActionMenu.Overlay>
+                      <ActionList>
+                        <ActionList.Item
+                          onSelect={() => {
+                            // Trigger a sync for the endpoint
+                            window.ipc.invoke(
+                              "endpoint",
+                              "forceSync",
+                              row.id,
+                              7 * 24 * 60 * 60 * 1000,
+                            );
+                          }}
+                        >
+                          Sync 7 days
+                        </ActionList.Item>
+                        <ActionList.Item
+                          onSelect={() => {
+                            // Trigger a sync for the endpoint
+                            window.ipc.invoke(
+                              "endpoint",
+                              "forceSync",
+                              row.id,
+                              14 * 24 * 60 * 60 * 1000,
+                            );
+                          }}
+                        >
+                          Sync 14 days
+                        </ActionList.Item>
+                        <ActionList.Divider />
+                        <ActionList.Item
+                          variant="danger"
+                          onSelect={() => alert("TODO")}
+                        >
+                          Delete Endpoint
+                        </ActionList.Item>
+                      </ActionList>
+                    </ActionMenu.Overlay>
+                  </ActionMenu>
                 </>
               );
             },
