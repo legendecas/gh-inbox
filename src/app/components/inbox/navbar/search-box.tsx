@@ -1,14 +1,15 @@
 import { TextInput } from "@primer/react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { useFilterContext } from "../../../hooks/use-filter";
 
-let timer: ReturnType<typeof setTimeout>;
 export function SearchBox() {
   const { filter, setFilter } = useFilterContext();
   const [inputValue, setInputValue] = useState(filter);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
+    if (timerRef.current) clearTimeout(timerRef.current);
     setInputValue(filter);
   }, [filter]);
 
@@ -16,15 +17,15 @@ export function SearchBox() {
     const value = event.target.value;
     setInputValue(value);
     // Debounce
-    clearTimeout(timer);
-    timer = setTimeout(() => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
       setFilter(value);
     }, 2000);
   }
 
   function onKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
     if (event.key === "Enter") {
-      clearTimeout(timer);
+      if (timerRef.current) clearTimeout(timerRef.current);
       setFilter(inputValue);
     }
   }
