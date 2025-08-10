@@ -13,6 +13,7 @@ import {
 import { ActionList, Avatar, CounterLabel, Truncate } from "@primer/react";
 import React, { Fragment } from "react";
 
+import { kGitHubAvatarFallback } from "../../../../common/github-constants";
 import {
   kPresetFilterSearches,
   type kPresetFilterType,
@@ -143,6 +144,10 @@ export function Sidebar() {
                 <Avatar
                   square
                   src={ns.avatar_url}
+                  onError={(event) => {
+                    (event.target as HTMLImageElement).src =
+                      kGitHubAvatarFallback;
+                  }}
                   alt={`${ns.owner}'s avatar`}
                 />
               </ActionList.LeadingVisual>

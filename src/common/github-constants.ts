@@ -47,3 +47,6 @@ export const kReasonType = {
   subscribed: "subscribed",
   team_mention: "team_mention",
 } as const;
+
+export const kGitHubAvatarFallback =
+  "https://avatars.githubusercontent.com/desktop";
