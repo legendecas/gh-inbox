@@ -32,6 +32,8 @@ export class FilterBuilder {
         filter = this.filterOwnerName(values[0]);
       } else if (key === "unread") {
         filter = this.filterUnread(values[0] === "true");
+      } else if (key === "bookmarked") {
+        filter = this.filterBookmarked(values[0] === "true");
       } else if (key === "types" || key === "type") {
         filter = this.filterTypes(values);
       } else if (key === "labels" || key === "label") {
@@ -61,6 +63,10 @@ export class FilterBuilder {
 
   private filterUnread(unread = true): ThreadFilter {
     return { unread };
+  }
+
+  private filterBookmarked(bookmarked = true): ThreadFilter {
+    return { bookmarked };
   }
 
   private filterRepo(repoId: string): ThreadFilter {

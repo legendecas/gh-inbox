@@ -1,10 +1,12 @@
 import React, { createContext, useContext } from "react";
 
+import { kPageSize } from "../../common/presets";
 import { useQueryParam } from "./use-location";
 
 export const FilterContext = createContext({
   filter: "",
   currentPage: 1,
+  pageSize: kPageSize,
   setCurrentPage: (_page: number) => {
     /* no-op */
   },
@@ -36,6 +38,7 @@ export function FilterProvider({ children }: React.PropsWithChildren) {
         setFilter: setFilterAndClearPage,
         currentPage,
         setCurrentPage,
+        pageSize: kPageSize,
       }}
     >
       {children}

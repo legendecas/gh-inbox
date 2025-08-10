@@ -1,4 +1,5 @@
 import {
+  BookmarkIcon,
   CodeReviewIcon,
   CommentDiscussionIcon,
   GoalIcon,
@@ -36,6 +37,10 @@ const kPresetFilterSettings: Record<
     name: "Involved",
     icon: CommentDiscussionIcon,
   },
+  bookmarked: {
+    name: "Bookmarked",
+    icon: BookmarkIcon,
+  },
   review_requested: {
     name: "Review Requested",
     icon: CodeReviewIcon,
@@ -56,7 +61,7 @@ export function Sidebar() {
 
   return (
     <ActionList>
-      {(["inbox", "my_turn", "involved"] as const).map((type) => {
+      {(["inbox", "my_turn", "involved", "bookmarked"] as const).map((type) => {
         if (presetFilterMap[type] == null) return null;
         const Icon = kPresetFilterSettings[type].icon;
         return (

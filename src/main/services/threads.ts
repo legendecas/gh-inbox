@@ -21,6 +21,7 @@ export class ThreadsService implements IService, ThreadEndpoint {
     ipcHandle.wire("list", this.list);
     ipcHandle.wire("archive", this.archive);
     ipcHandle.wire("markAsRead", this.markAsRead);
+    ipcHandle.wire("bookmark", this.bookmark);
   }
 
   async list(options: ThreadListOptions) {
@@ -92,6 +93,20 @@ export class ThreadsService implements IService, ThreadEndpoint {
     await this.#db.instance.thread.updateMany({
       where: { endpoint_id: endpointId, id: { in: threads } },
       data: { unread: false, last_read_at: new Date() },
+    });
+  }
+
+  async bookmark(
+    endpointId: number,
+    threads: string[],
+    markAsBookmark: boolean,
+  ) {
+    await this.#db.instance.thread.updateMany({
+      where: { endpoint_id: endpointId, id: { in: threads } },
+      data: {
+        bookmarked: markAsBookmark,
+        bookmarked_at: markAsBookmark ? new Date() : null,
+      },
     });
   }
 }

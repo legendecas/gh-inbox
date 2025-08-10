@@ -1,4 +1,4 @@
-import { Label } from "@primer/react";
+import { Label, Truncate } from "@primer/react";
 import React from "react";
 
 import { parseStringListStr } from "../../../common/string-list";
@@ -28,10 +28,10 @@ export function ReasonLabelGroup({ reasonsStr }: { reasonsStr: string }) {
   }
 
   return (
-    <div className="reason-label-group">
+    <Truncate className="reason-label-group text-sm" title={reasons.join(", ")}>
       {reasons.map((reason) => (
         <ReasonLabel key={reason} reason={reason} />
       ))}
-    </div>
+    </Truncate>
   );
 }

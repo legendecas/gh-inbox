@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 
 import { kPageSize } from "../../../common/presets";
 import { useFilterContext } from "../../hooks/use-filter";
-import { useThreads } from "../../hooks/use-threads";
+import { useThreadsContext } from "../../hooks/use-threads";
 import "./content.css";
 import { Header } from "./header";
 import { ThreadItem } from "./thread-item";
@@ -11,8 +11,8 @@ import { ThreadItem } from "./thread-item";
 const kOpenStates = ["open", "draft"];
 
 export function Content() {
-  const { filter, currentPage, setCurrentPage } = useFilterContext();
-  const [threads, totalCount] = useThreads(filter, currentPage, kPageSize);
+  const { currentPage, setCurrentPage } = useFilterContext();
+  const { threads, totalCount } = useThreadsContext();
   const [selectedSet, setSelected] = useState<Set<string>>(new Set());
 
   const onThreadSelected = (threadId: string, checked: boolean) => {

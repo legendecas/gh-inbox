@@ -5,6 +5,7 @@ import { CurrentEndpointProvider } from "../../hooks/use-current-endpoint";
 import { useEndpointsContext } from "../../hooks/use-endpoints";
 import { FilterProvider } from "../../hooks/use-filter";
 import { usePathname } from "../../hooks/use-location";
+import { ThreadsProvider } from "../../hooks/use-threads";
 import { Content } from "./content";
 import { Navbar } from "./navbar/navbar";
 import { Sidebar } from "./sidebar/sidebar";
@@ -29,21 +30,23 @@ export function Inbox() {
   return (
     <CurrentEndpointProvider>
       <FilterProvider>
-        <SplitPageLayout>
-          <SplitPageLayout.Header padding="none">
-            <Navbar />
-          </SplitPageLayout.Header>
-          <SplitPageLayout.Pane
-            position="start"
-            padding="none"
-            aria-label="Sidebar"
-          >
-            <Sidebar />
-          </SplitPageLayout.Pane>
-          <SplitPageLayout.Content padding="condensed" width="full">
-            <Content />
-          </SplitPageLayout.Content>
-        </SplitPageLayout>
+        <ThreadsProvider>
+          <SplitPageLayout>
+            <SplitPageLayout.Header padding="none">
+              <Navbar />
+            </SplitPageLayout.Header>
+            <SplitPageLayout.Pane
+              position="start"
+              padding="none"
+              aria-label="Sidebar"
+            >
+              <Sidebar />
+            </SplitPageLayout.Pane>
+            <SplitPageLayout.Content padding="condensed" width="full">
+              <Content />
+            </SplitPageLayout.Content>
+          </SplitPageLayout>
+        </ThreadsProvider>
       </FilterProvider>
     </CurrentEndpointProvider>
   );

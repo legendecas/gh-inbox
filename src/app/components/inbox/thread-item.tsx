@@ -1,4 +1,6 @@
 import {
+  BookmarkFillIcon,
+  BookmarkIcon,
   CommentDiscussionIcon,
   DiscussionClosedIcon,
   GitPullRequestClosedIcon,
@@ -7,11 +9,12 @@ import {
   IssueClosedIcon,
   IssueOpenedIcon,
 } from "@primer/octicons-react";
-import { RelativeTime, Tooltip } from "@primer/react";
+import { Button, RelativeTime, Truncate } from "@primer/react";
 import React from "react";
 
 import { type StateType, kSubjectType } from "../../../common/github-constants";
 import type { ThreadItem } from "../../../common/ipc/threads";
+import { useThreadsContext } from "../../hooks/use-threads";
 import { LabelBadgeGroup } from "./label-badge";
 import { ReasonLabelGroup } from "./reason-label";
 import "./thread-item.css";
@@ -53,14 +56,42 @@ function ThreadIcon({
   }
 }
 
+function BookmarkButton({ thread }: { thread: ThreadItem }) {
+  const { refreshThreads } = useThreadsContext();
+  async function onClick() {
+    await window.ipc.invoke(
+      "threads",
+      "bookmark",
+      thread.endpoint_id,
+      [thread.id],
+      !thread.bookmarked,
+    );
+    refreshThreads();
+  }
+
+  return thread.bookmarked ? (
+    <Button variant="invisible" onClick={onClick}>
+      <BookmarkFillIcon size={16} />
+    </Button>
+  ) : (
+    <Button variant="invisible" onClick={onClick}>
+      <BookmarkIcon size={16} />
+    </Button>
+  );
+}
+
 export function ThreadItem({ thread, selected, setSelected }: ThreadItemProps) {
-  function onClick() {
-    window.ipc.invoke("threads", "markAsRead", thread.endpoint_id, [thread.id]);
+  const { refreshThreads } = useThreadsContext();
+  async function onClick() {
+    await window.ipc.invoke("threads", "markAsRead", thread.endpoint_id, [
+      thread.id,
+    ]);
+    refreshThreads();
   }
 
   return (
     <tr className="thread-item" data-state={thread.unread ? "unread" : "read"}>
-      <td>
+      <td className="thread-checkbox-cell">
         <input
           className="thread-checkbox"
           type="checkbox"
@@ -70,12 +101,19 @@ export function ThreadItem({ thread, selected, setSelected }: ThreadItemProps) {
           }}
         ></input>
       </td>
-      <td>
-        <div className="thread-icon" data-state={thread.state}>
+      <td className="thread-bookmark-cell">
+        <BookmarkButton thread={thread} />
+      </td>
+      <td className="thread-icon-cell">
+        <div
+          className="thread-icon"
+          data-type={thread.subject_type}
+          data-state={thread.state}
+        >
           <ThreadIcon subjectType={thread.subject_type} state={thread.state} />
         </div>
       </td>
-      <td>
+      <td className="thread-title-cell">
         <div className="">
           <a
             className="title"
@@ -88,31 +126,29 @@ export function ThreadItem({ thread, selected, setSelected }: ThreadItemProps) {
           <LabelBadgeGroup labels={thread.labels} />
         </div>
       </td>
-      <td>
-        <span className="thread-repo text-sm">
+      <td className="thread-repo-cell">
+        <Truncate
+          className="thread-repo text-sm"
+          title={getRepoFromSubjectUrl(thread.subject_url)}
+        >
           {getRepoFromSubjectUrl(thread.subject_url)}
-        </span>
+        </Truncate>
       </td>
-      <td>
-        <span className="thread-user text-sm">{thread.user_login}</span>
+      <td className="thread-user-cell">
+        <Truncate className="thread-user text-sm" title={thread.user_login}>
+          {thread.user_login}
+        </Truncate>
       </td>
-      <td>
-        <span className="thread-reason text-sm">
-          <ReasonLabelGroup reasonsStr={thread.reasons} />
-        </span>
+      <td className="thread-reason-cell">
+        <ReasonLabelGroup reasonsStr={thread.reasons} />
       </td>
-      <td>
-        <Tooltip text={thread.updated_at.toLocaleString()}>
-          {/* Tooltip requires an interactive child node */}
-          <button>
-            <RelativeTime
-              className="text-sm"
-              format="micro"
-              prefix=""
-              date={thread.updated_at}
-            />
-          </button>
-        </Tooltip>
+      <td className="thread-updated-cell">
+        <RelativeTime
+          className="text-sm"
+          format="micro"
+          prefix=""
+          date={thread.updated_at}
+        />
       </td>
     </tr>
   );

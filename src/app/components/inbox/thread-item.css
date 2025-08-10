@@ -4,18 +4,6 @@
   margin-right: 0.5rem;
 }
 
-.status-open {
-  color: #28a745 !important;
-}
-
-.status-merged {
-  color: #a128ca !important;
-}
-
-.status-closed {
-  color: #dc3545 !important;
-}
-
 .thread-item {
   border-bottom: 1px solid rgba(128, 128, 128, 0.1);
 }
@@ -51,4 +39,36 @@
 
 .thread-icon[data-state="closed"] {
   color: #dc3545;
+}
+
+.thread-icon[data-state="closed"][data-type="Issue"] {
+  color: #000;
+}
+
+.thread-checkbox-cell {
+  width: 42px;
+}
+
+.thread-bookmark-cell {
+  width: 42px;
+}
+
+.thread-icon-cell {
+  width: 42px;
+}
+
+.thread-repo-cell {
+  width: 128px;
+}
+
+.thread-user-cell {
+  width: 128px;
+}
+
+.thread-reason-cell {
+  width: 128px;
+}
+
+.thread-updated-cell {
+  width: 64px;
 }

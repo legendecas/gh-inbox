@@ -1,16 +1,32 @@
-import { useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
-import type { ThreadListResult } from "../../common/ipc/threads.js";
+import type { ThreadItem, ThreadListResult } from "../../common/ipc/threads.js";
 import { FilterBuilder } from "../../common/search-builder/filter-builder.js";
 import { SearchParser } from "../../common/search-builder/search-parser.js";
 import { useCurrentEndpointContext } from "./use-current-endpoint.js";
+import { useFilterContext } from "./use-filter.js";
 
-export function useThreads(filter: string, page: number, pageSize: number) {
+export const ThreadsContext = createContext({
+  totalCount: 0,
+  threads: [] as ThreadItem[],
+  updateTime: Date.now(),
+  refreshThreads: () => {
+    /* no-op */
+  },
+});
+
+export function useThreadsContext() {
+  return useContext(ThreadsContext);
+}
+
+export function ThreadsProvider({ children }: React.PropsWithChildren) {
   const ctx = useCurrentEndpointContext();
+  const { filter, currentPage: page, pageSize } = useFilterContext();
   const [result, setResult] = useState<ThreadListResult>({
     totalCount: 0,
     threads: [],
   });
+  const [updateTime, setUpdateTime] = useState(Date.now());
 
   useEffect(() => {
     const searchParser = new SearchParser();
@@ -40,7 +56,18 @@ export function useThreads(filter: string, page: number, pageSize: number) {
     };
 
     fetch();
-  }, [ctx.updateTime, ctx.endpointId, filter, page, pageSize]);
+  }, [ctx.updateTime, ctx.endpointId, updateTime, filter, page, pageSize]);
 
-  return [result.threads, result.totalCount] as const;
+  return (
+    <ThreadsContext.Provider
+      value={{
+        threads: result.threads,
+        totalCount: result.totalCount,
+        updateTime,
+        refreshThreads: () => setUpdateTime(Date.now()),
+      }}
+    >
+      {children}
+    </ThreadsContext.Provider>
+  );
 }
