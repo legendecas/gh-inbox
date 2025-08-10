@@ -1,5 +1,5 @@
 import { ArrowLeftIcon } from "@primer/octicons-react";
-import { IconButton, PageHeader, PageLayout } from "@primer/react";
+import { IconButton, Link, PageHeader, PageLayout } from "@primer/react";
 import React from "react";
 
 import { usePathname, useQueryParam } from "../../hooks/use-location";
@@ -27,6 +27,25 @@ export function CreateEndpoint() {
               {endpointId ? "Edit GitHub Connection" : "Connect to GitHub"}
             </PageHeader.Title>
           </PageHeader.TitleArea>
+          <PageHeader.Description>
+            <div
+              className="flow flow-col"
+              style={{ color: "var(--fgColor-muted)" }}
+            >
+              <p>
+                Generate a personal access token at{" "}
+                <Link href="https://github.com/settings/tokens" target="_blank">
+                  GitHub Settings
+                </Link>{" "}
+                with at least the following scopes:
+              </p>
+              <ul>
+                <li>* repo (Read issues and pulls in private repos)</li>
+                <li>* notifications (Required to read notifications)</li>
+                <li>* user:email (Show user email as id)</li>
+              </ul>
+            </div>
+          </PageHeader.Description>
 
           {backPathname ? (
             <PageHeader.LeadingAction>
