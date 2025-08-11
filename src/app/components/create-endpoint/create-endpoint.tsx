@@ -7,14 +7,10 @@ import { EndpointForm } from "./endpoint-form";
 
 export function CreateEndpoint() {
   const [_pathname, setPathname] = usePathname();
-  const [backPathname] = useQueryParam("back", undefined);
+  const [backPathname] = useQueryParam("back", "/");
   const [endpointId] = useQueryParam("endpointId", undefined);
 
   const handleBack = () => {
-    if (!backPathname) {
-      console.warn("No back path provided, cannot navigate back.");
-      return;
-    }
     setPathname(backPathname);
   };
 
@@ -60,7 +56,7 @@ export function CreateEndpoint() {
         </PageHeader>
       </PageLayout.Header>
       <PageLayout.Content>
-        <EndpointForm endpointId={endpointId} />
+        <EndpointForm endpointId={endpointId} onBack={handleBack} />
       </PageLayout.Content>
     </PageLayout>
   );

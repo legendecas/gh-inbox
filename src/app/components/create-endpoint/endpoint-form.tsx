@@ -7,8 +7,9 @@ import { useEndpointsContext } from "../../hooks/use-endpoints";
 
 export interface EndpointFormProps {
   endpointId?: string | null;
+  onBack: () => void;
 }
-export function EndpointForm({ endpointId }: EndpointFormProps) {
+export function EndpointForm({ endpointId, onBack }: EndpointFormProps) {
   const { endpoints, refreshEndpoints } = useEndpointsContext();
   const endpoint = endpoints.find((e) => `${e.id}` === endpointId) || null;
 
@@ -77,6 +78,7 @@ export function EndpointForm({ endpointId }: EndpointFormProps) {
         });
       }
       refreshEndpoints();
+      onBack();
     } catch (error) {
       setTestResult([null, error]);
     } finally {
