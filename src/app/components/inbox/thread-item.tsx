@@ -14,6 +14,8 @@ import React from "react";
 
 import { type StateType, kSubjectType } from "../../../common/github-constants";
 import type { ThreadItem } from "../../../common/ipc/threads";
+import { kTypeReverseMap } from "../../../common/search-builder/filter-builder";
+import { useFilterContext } from "../../hooks/use-filter";
 import { useThreadsContext } from "../../hooks/use-threads";
 import { LabelBadgeGroup } from "./label-badge";
 import { ReasonLabelGroup } from "./reason-label";
@@ -82,12 +84,16 @@ function BookmarkButton({ thread }: { thread: ThreadItem }) {
 
 export function ThreadItem({ thread, selected, setSelected }: ThreadItemProps) {
   const { refreshThreads } = useThreadsContext();
+  const { appendFilter } = useFilterContext();
+
   async function onClick() {
     await window.ipc.invoke("threads", "markAsRead", thread.endpoint_id, [
       thread.id,
     ]);
     refreshThreads();
   }
+
+  const repo = getRepoFromSubjectUrl(thread.subject_url);
 
   return (
     <tr className="thread-item" data-state={thread.unread ? "unread" : "read"}>
@@ -105,13 +111,16 @@ export function ThreadItem({ thread, selected, setSelected }: ThreadItemProps) {
         <BookmarkButton thread={thread} />
       </td>
       <td className="thread-icon-cell">
-        <div
+        <a
           className="thread-icon"
           data-type={thread.subject_type}
           data-state={thread.state}
+          onClick={() =>
+            appendFilter(`type:${kTypeReverseMap[thread.subject_type]}`)
+          }
         >
           <ThreadIcon subjectType={thread.subject_type} state={thread.state} />
-        </div>
+        </a>
       </td>
       <td className="thread-title-cell">
         <div className="">
@@ -127,17 +136,24 @@ export function ThreadItem({ thread, selected, setSelected }: ThreadItemProps) {
         </div>
       </td>
       <td className="thread-repo-cell">
-        <Truncate
-          className="thread-repo text-sm"
-          title={getRepoFromSubjectUrl(thread.subject_url)}
+        <a
+          className="thread-text-link"
+          onClick={() => appendFilter(`repo:${repo}`)}
         >
-          {getRepoFromSubjectUrl(thread.subject_url)}
-        </Truncate>
+          <Truncate className="thread-repo text-sm" title={repo}>
+            {repo}
+          </Truncate>
+        </a>
       </td>
       <td className="thread-user-cell">
-        <Truncate className="thread-user text-sm" title={thread.user_login}>
-          {thread.user_login}
-        </Truncate>
+        <a
+          className="thread-text-link"
+          onClick={() => appendFilter(`author:${thread.user_login}`)}
+        >
+          <Truncate className="thread-user text-sm" title={thread.user_login}>
+            {thread.user_login}
+          </Truncate>
+        </a>
       </td>
       <td className="thread-reason-cell">
         <ReasonLabelGroup reasonsStr={thread.reasons} />

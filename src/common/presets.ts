@@ -14,53 +14,13 @@ export type kPresetFilterType =
   | "bookmarked"
   | "review_requested"
   | "assigned";
-export type kPresetFilter = Record<kPresetFilterType, ThreadFilter>;
-export const kPresetFilterQueries: kPresetFilter = {
-  inbox: kDefaultFilter,
-  my_turn: {
-    AND: [
-      { archived: false, unread: true },
-      {
-        OR: [
-          { reasons: { contains: "|author|" } },
-          { reasons: { contains: "|comment|" } },
-          { reasons: { contains: "|manual|" } },
-          { reasons: { contains: "|mention|" } },
-        ],
-      },
-    ],
-  },
-  involved: {
-    AND: [
-      { archived: false },
-      {
-        OR: [
-          { reasons: { contains: "|author|" } },
-          { reasons: { contains: "|comment|" } },
-          { reasons: { contains: "|manual|" } },
-          { reasons: { contains: "|mention|" } },
-          { reasons: { contains: "|team_mention|" } },
-        ],
-      },
-    ],
-  },
-  bookmarked: {
-    AND: [{ archived: false, bookmarked: true }],
-  },
-  review_requested: {
-    AND: [{ archived: false, reasons: { contains: "|review_requested|" } }],
-  },
-  assigned: {
-    AND: [{ archived: false, reasons: { contains: "|assigned|" } }],
-  },
-};
 export const kPresetFilterSearches: Record<kPresetFilterType, string> = {
   inbox: "",
   my_turn: "unread:true reasons:author,comment,manual,mention",
   involved: "reasons:author,comment,manual,mention,team_mention",
   bookmarked: "bookmarked:true",
-  review_requested: "reasons:review_requested",
-  assigned: "reasons:assign",
+  review_requested: "reasons:review_requested bot:false",
+  assigned: "reasons:assign bot:false",
 };
 
 export function repoFilter(repoId: string): ThreadFilter {

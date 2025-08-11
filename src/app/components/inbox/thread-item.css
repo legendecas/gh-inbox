@@ -29,6 +29,11 @@
   padding: 0.6rem;
 }
 
+.thread-icon {
+  display: block;
+  cursor: pointer;
+}
+
 .thread-icon[data-state="open"] {
   color: #28a745;
 }
@@ -71,4 +76,10 @@
 
 .thread-updated-cell {
   width: 64px;
+}
+
+.thread-text-link {
+  cursor: pointer;
+  color: var(--fgColor-muted);
+  display: block;
 }

@@ -7,7 +7,7 @@ import type {
   RepoNamespace,
   SearchPreview,
 } from "../../common/ipc/preset-filter.ts";
-import { kPresetFilterQueries } from "../../common/presets.ts";
+import { kPresetFilterSearches } from "../../common/presets.ts";
 import { FilterBuilder } from "../../common/search-builder/filter-builder.ts";
 import { SearchParser } from "../../common/search-builder/search-parser.ts";
 import type { SavedSearch } from "../../generated/prisma/index.js";
@@ -18,8 +18,16 @@ export class PresetFilterService implements IService, PresetFilterEndpoint {
   namespace = "presetFilter";
 
   #db: Prisma;
+  #presetQueries;
   constructor(db: Prisma) {
     this.#db = db;
+    this.#presetQueries = Object.entries(kPresetFilterSearches).map(
+      ([type, search]) => {
+        const parsedQuery = new SearchParser().parse(search);
+        const filter = new FilterBuilder().fromRecord(parsedQuery).build();
+        return [type, filter] as const;
+      },
+    );
   }
 
   wire(ipcHandle: IpcHandle) {
@@ -42,7 +50,7 @@ export class PresetFilterService implements IService, PresetFilterEndpoint {
     options: FilterListOptions,
   ): Promise<PresetFilter[]> {
     return Promise.all(
-      Object.entries(kPresetFilterQueries).map(async ([type, filter]) => ({
+      this.#presetQueries.map(async ([type, filter]) => ({
         type,
         unread_count: await this.#db.instance.thread.count({
           where: {

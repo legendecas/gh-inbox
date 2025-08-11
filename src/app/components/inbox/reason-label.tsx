@@ -1,7 +1,8 @@
-import { Label, Truncate } from "@primer/react";
+import { Label, LabelGroup } from "@primer/react";
 import React from "react";
 
 import { parseStringListStr } from "../../../common/string-list";
+import { useFilterContext } from "../../hooks/use-filter";
 
 const kReasonVariant = {
   assign: "accent",
@@ -20,6 +21,8 @@ export function ReasonLabel({ reason }: { reason: string }) {
 }
 
 export function ReasonLabelGroup({ reasonsStr }: { reasonsStr: string }) {
+  const { appendFilter } = useFilterContext();
+
   let reasons = parseStringListStr(reasonsStr);
 
   // Remove "subscribed" if there are multiple reasons
@@ -28,10 +31,20 @@ export function ReasonLabelGroup({ reasonsStr }: { reasonsStr: string }) {
   }
 
   return (
-    <Truncate className="reason-label-group text-sm" title={reasons.join(", ")}>
+    <LabelGroup
+      className="reason-label-group text-sm w-[128px]"
+      visibleChildCount={1}
+      overflowStyle="overlay"
+    >
       {reasons.map((reason) => (
-        <ReasonLabel key={reason} reason={reason} />
+        <a
+          key={reason}
+          onClick={() => appendFilter(`reason:${reason}`)}
+          style={{ display: "block", cursor: "pointer" }}
+        >
+          <ReasonLabel reason={reason} />
+        </a>
       ))}
-    </Truncate>
+    </LabelGroup>
   );
 }

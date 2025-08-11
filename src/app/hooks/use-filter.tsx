@@ -13,6 +13,9 @@ export const FilterContext = createContext({
   setFilter: (_filter: string) => {
     /* no-op */
   },
+  appendFilter: (_filter: string) => {
+    /* no-op */
+  },
 });
 export function useFilterContext() {
   return useContext(FilterContext);
@@ -30,12 +33,21 @@ export function FilterProvider({ children }: React.PropsWithChildren) {
     setFilter(newFilter);
     setCurrentPage(1);
   }
+  function appendFilter(newFilter: string) {
+    let nf = filter.trim();
+    if (nf) {
+      nf += " ";
+    }
+    nf += newFilter.trim();
+    setFilter(nf);
+  }
 
   return (
     <FilterContext.Provider
       value={{
         filter,
         setFilter: setFilterAndClearPage,
+        appendFilter,
         currentPage,
         setCurrentPage,
         pageSize: kPageSize,

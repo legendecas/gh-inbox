@@ -21,14 +21,14 @@ export function LabelBadge({ label }: LabelProps) {
 }
 
 export function LabelBadgeGroup({ labels }: { labels: Label[] }) {
-  const { filter, setFilter } = useFilterContext();
+  const { appendFilter } = useFilterContext();
 
   return (
     <LabelGroup className="label-badge-group" as="span">
       {labels.map((label) => (
         <a
           key={label.id}
-          onClick={() => setFilter(`${filter} labels:"${label.name}"`)}
+          onClick={() => appendFilter(`labels:"${label.name}"`)}
         >
           <LabelBadge label={label} />
         </a>

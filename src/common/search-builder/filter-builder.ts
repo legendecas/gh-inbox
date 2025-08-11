@@ -6,6 +6,10 @@ const kTypeMap = {
   discussion: "Discussion",
 } as Record<string, string>;
 
+export const kTypeReverseMap = Object.fromEntries(
+  Object.entries(kTypeMap).map(([key, value]) => [value, key]),
+);
+
 export class FilterBuilder {
   #archived = false;
   #filters: ThreadFilter[] = [];
@@ -30,6 +34,10 @@ export class FilterBuilder {
         filter = this.filterRepo(values[0]);
       } else if (key === "owner") {
         filter = this.filterOwnerName(values[0]);
+      } else if (key === "author") {
+        filter = this.filterAuthor(values[0]);
+      } else if (key === "bot") {
+        filter = this.filterBot(values[0] === "true");
       } else if (key === "unread") {
         filter = this.filterUnread(values[0] === "true");
       } else if (key === "bookmarked") {
@@ -88,6 +96,46 @@ export class FilterBuilder {
       repository: {
         owner: {
           login: owner,
+        },
+      },
+    };
+  }
+
+  private filterBot(isBot: boolean): ThreadFilter {
+    const filter = [
+      {
+        subject: {
+          user_login: {
+            endsWith: "[bot]",
+          },
+        },
+      },
+      {
+        subject: {
+          user_login: {
+            endsWith: "-bot",
+          },
+        },
+      },
+    ];
+
+    if (!isBot) {
+      return {
+        NOT: {
+          OR: filter,
+        },
+      };
+    }
+    return {
+      OR: filter,
+    };
+  }
+
+  private filterAuthor(name: string): ThreadFilter {
+    return {
+      subject: {
+        user_login: {
+          equals: name,
         },
       },
     };
