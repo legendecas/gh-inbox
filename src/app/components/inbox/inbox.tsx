@@ -84,10 +84,10 @@ export function Inbox() {
             </SplitPageLayout.Pane>
             <SplitPageLayout.Content padding="none" width="full">
               <div
-                className="flex flex-col gap-y-[8px] overflow-scroll overscroll-contain"
+                className="flex flex-col gap-y-[8px] justify-start overflow-scroll overscroll-contain"
                 style={{ height: "calc(100vh - " + headerHeight + "px)" }}
               >
-                <div className="flex-1">
+                <div>
                   <ExpirationInfo />
                 </div>
                 <div className="flex-auto">
