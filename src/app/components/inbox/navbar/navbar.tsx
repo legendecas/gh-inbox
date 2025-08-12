@@ -9,7 +9,7 @@ import { usePathname } from "../../../hooks/use-location";
 import "./navbar.css";
 import { SearchBox } from "./search-box";
 
-export function Navbar() {
+export function Navbar({ headerHeight }: { headerHeight: number }) {
   const [_pathname, setPathname] = usePathname();
   const { endpoints } = useEndpointsContext();
   const { endpointId, setEndpointId } = useCurrentEndpointContext();
@@ -19,7 +19,10 @@ export function Navbar() {
   };
 
   return (
-    <div className="navbar flex flex-row items-center">
+    <div
+      className="navbar flex flex-row items-center"
+      style={{ height: headerHeight }}
+    >
       <div className="navbar-left flex flex-row items-center grow gap-x-[8px]">
         {endpoints.length === 1 ? (
           <Avatar

@@ -63,25 +63,36 @@ export function Inbox() {
     return <Spinner />;
   }
 
+  const headerHeight = 48;
+
   return (
     <CurrentEndpointProvider>
       <FilterProvider>
         <ThreadsProvider>
-          <SplitPageLayout>
+          <SplitPageLayout className="h-screen w-screen overflow-hidden">
             <SplitPageLayout.Header padding="none">
-              <Navbar />
+              <Navbar headerHeight={headerHeight} />
             </SplitPageLayout.Header>
             <SplitPageLayout.Pane
               position="start"
               padding="none"
               aria-label="Sidebar"
             >
-              <Sidebar />
+              <div style={{ height: "calc(100vh - " + headerHeight + "px)" }}>
+                <Sidebar />
+              </div>
             </SplitPageLayout.Pane>
-            <SplitPageLayout.Content padding="condensed" width="full">
-              <div className="flex flex-col gap-y-[8px]">
-                <ExpirationInfo />
-                <Content />
+            <SplitPageLayout.Content padding="none" width="full">
+              <div
+                className="flex flex-col gap-y-[8px] overflow-scroll overscroll-contain"
+                style={{ height: "calc(100vh - " + headerHeight + "px)" }}
+              >
+                <div className="flex-1">
+                  <ExpirationInfo />
+                </div>
+                <div className="flex-auto">
+                  <Content />
+                </div>
               </div>
             </SplitPageLayout.Content>
           </SplitPageLayout>
