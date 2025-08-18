@@ -1,7 +1,7 @@
 import { strict as assert } from "node:assert";
 import { test } from "node:test";
 
-import { getSubjectPathnameEssence } from "./fetch-notifications.ts";
+import { getSubjectPathnameEssence } from "./github-utils.ts";
 
 test("getSubjectPathnameEssence", (t) => {
   t.test("should return null for invalid URL", () => {

@@ -13,6 +13,7 @@ import { Button, RelativeTime, Truncate } from "@primer/react";
 import React from "react";
 
 import { type StateType, kSubjectType } from "../../../common/github-constants";
+import { getSubjectPathnameEssence } from "../../../common/github-utils";
 import type { ThreadItem } from "../../../common/ipc/threads";
 import { kTypeReverseMap } from "../../../common/search-builder/filter-builder";
 import { useFilterContext } from "../../hooks/use-filter";
@@ -93,7 +94,12 @@ export function ThreadItem({ thread, selected, setSelected }: ThreadItemProps) {
     refreshThreads();
   }
 
-  const repo = getRepoFromSubjectUrl(thread.subject_url);
+  const essence = getSubjectPathnameEssence(thread.subject_url);
+  if (!essence) {
+    return null;
+  }
+  const { owner, repoName } = essence;
+  const repo = `${owner}/${repoName}`;
 
   return (
     <tr className="thread-item" data-state={thread.unread ? "unread" : "read"}>
@@ -168,13 +174,4 @@ export function ThreadItem({ thread, selected, setSelected }: ThreadItemProps) {
       </td>
     </tr>
   );
-}
-
-function getRepoFromSubjectUrl(subjectUrl: string): string {
-  const url = new URL(subjectUrl);
-  const pathParts = url.pathname.split("/");
-  if (pathParts.length >= 4) {
-    return `${pathParts[2]}/${pathParts[3]}`;
-  }
-  return "";
 }
