@@ -13,7 +13,9 @@ export type kPresetFilterType =
   | "involved"
   | "bookmarked"
   | "review_requested"
-  | "assigned";
+  | "assigned"
+  | "mention"
+  | "archivable";
 export const kPresetFilterSearches: Record<kPresetFilterType, string> = {
   inbox: "",
   my_turn: "unread:true reasons:author,comment,manual,mention",
@@ -21,6 +23,8 @@ export const kPresetFilterSearches: Record<kPresetFilterType, string> = {
   bookmarked: "bookmarked:true",
   review_requested: "reasons:review_requested bot:false",
   assigned: "reasons:assign bot:false",
+  mention: "reasons:mention",
+  archivable: "state:closed bookmarked:false reasons:subscribed",
 };
 
 export function repoFilter(repoId: string): ThreadFilter {

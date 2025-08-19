@@ -42,6 +42,8 @@ export class FilterBuilder {
         filter = this.filterUnread(values[0] === "true");
       } else if (key === "bookmarked") {
         filter = this.filterBookmarked(values[0] === "true");
+      } else if (key === "states" || key === "state") {
+        filter = this.filterStates(values);
       } else if (key === "types" || key === "type") {
         filter = this.filterTypes(values);
       } else if (key === "labels" || key === "label") {
@@ -141,6 +143,16 @@ export class FilterBuilder {
     };
   }
 
+  private filterStates(states: string[]): ThreadFilter {
+    return {
+      subject: {
+        state: {
+          in: states,
+        },
+      },
+    };
+  }
+
   private filterTypes(types: string[]): ThreadFilter {
     return {
       OR: types.map((type) => ({
@@ -160,6 +172,11 @@ export class FilterBuilder {
   }
 
   private filterReasons(reasons: string[]): ThreadFilter {
+    if (reasons.length === 1 && reasons[0] === "subscribed") {
+      return {
+        reasons: `|subscribed|`,
+      };
+    }
     return {
       OR: reasons.map((reason) => ({
         reasons: { contains: `|${reason}|` },

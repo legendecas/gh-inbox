@@ -1,4 +1,5 @@
 import {
+  ArchiveIcon,
   BookmarkIcon,
   CodeReviewIcon,
   CommentDiscussionIcon,
@@ -6,6 +7,7 @@ import {
   type Icon,
   InboxIcon,
   LockIcon,
+  MentionIcon,
   PersonIcon,
   RepoIcon,
   SearchIcon,
@@ -49,6 +51,14 @@ const kPresetFilterSettings: Record<
   assigned: {
     name: "Assigned",
     icon: PersonIcon,
+  },
+  mention: {
+    name: "Mention",
+    icon: MentionIcon,
+  },
+  archivable: {
+    name: "Archivable",
+    icon: ArchiveIcon,
   },
 };
 
@@ -106,27 +116,31 @@ export function Sidebar() {
       })}
       <ActionList.Divider />
 
-      {(["assigned", "review_requested"] as const).map((type) => {
-        if (presetFilterMap[type] == null) return null;
-        const Icon = kPresetFilterSettings[type].icon;
-        return (
-          <ActionList.Item
-            key={type}
-            active={kPresetFilterSearches[type] === filter}
-            onSelect={() => {
-              setFilter(kPresetFilterSearches[type]);
-            }}
-          >
-            <ActionList.LeadingVisual>
-              <Icon />
-            </ActionList.LeadingVisual>
-            {kPresetFilterSettings[type].name}
-            <ActionList.TrailingVisual>
-              <CounterLabel>{presetFilterMap[type].unread_count}</CounterLabel>
-            </ActionList.TrailingVisual>
-          </ActionList.Item>
-        );
-      })}
+      {(["assigned", "review_requested", "mention", "archivable"] as const).map(
+        (type) => {
+          if (presetFilterMap[type] == null) return null;
+          const Icon = kPresetFilterSettings[type].icon;
+          return (
+            <ActionList.Item
+              key={type}
+              active={kPresetFilterSearches[type] === filter}
+              onSelect={() => {
+                setFilter(kPresetFilterSearches[type]);
+              }}
+            >
+              <ActionList.LeadingVisual>
+                <Icon />
+              </ActionList.LeadingVisual>
+              {kPresetFilterSettings[type].name}
+              <ActionList.TrailingVisual>
+                <CounterLabel>
+                  {presetFilterMap[type].unread_count}
+                </CounterLabel>
+              </ActionList.TrailingVisual>
+            </ActionList.Item>
+          );
+        },
+      )}
       <ActionList.Divider />
 
       {repoNamespaces.map((ns) => {
