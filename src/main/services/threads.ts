@@ -62,9 +62,11 @@ export class ThreadsService implements IService, ThreadEndpoint {
         const state = (
           subject?.merged === true
             ? kStateType.merged
-            : subject?.is_draft === true
-              ? kStateType.draft
-              : (subject?.state ?? kStateType.open)
+            : subject?.closed_at
+              ? kStateType.closed
+              : subject?.is_draft === true
+                ? kStateType.draft
+                : (subject?.state ?? kStateType.open)
         ) as StateType;
 
         return {
