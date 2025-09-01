@@ -4,11 +4,8 @@ import { useEndpointsContext } from "./use-endpoints";
 
 export const CurrentEndpointContext = createContext({
   endpointId: 0,
-  setEndpointId: (_id: number) => {
-    /* no-op */
-  },
   updateTime: 0,
-  setUpdateTime: (_time: number) => {
+  refresh: () => {
     /* no-op */
   },
 });
@@ -18,8 +15,7 @@ export function useCurrentEndpointContext() {
 }
 
 export function CurrentEndpointProvider({ children }: React.PropsWithChildren) {
-  const [updateTime, setUpdateTime] = useState(Date.now());
-  const { endpoints } = useEndpointsContext();
+  const { endpoints, updateTime, refreshEndpoints } = useEndpointsContext();
   const [currentEndpointId, setCurrentEndpointId] = useState(-1);
 
   useEffect(() => {
@@ -32,9 +28,8 @@ export function CurrentEndpointProvider({ children }: React.PropsWithChildren) {
     <CurrentEndpointContext.Provider
       value={{
         endpointId: currentEndpointId,
-        setEndpointId: setCurrentEndpointId,
         updateTime,
-        setUpdateTime,
+        refresh: refreshEndpoints,
       }}
     >
       {children}

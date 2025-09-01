@@ -1,8 +1,17 @@
 import { ArchiveIcon, CheckboxIcon, SyncIcon } from "@primer/octicons-react";
-import { Button, ButtonGroup, IconButton, PageHeader } from "@primer/react";
+import {
+  Button,
+  ButtonGroup,
+  IconButton,
+  PageHeader,
+  RelativeTime,
+  Text,
+} from "@primer/react";
 import React from "react";
 
 import { useCurrentEndpointContext } from "../../hooks/use-current-endpoint";
+import { useEndpointsContext } from "../../hooks/use-endpoints";
+import "./header.css";
 
 export function Header({
   selectedThreads,
@@ -12,6 +21,9 @@ export function Header({
   selectClosedThreads: () => void;
 }) {
   const ctx = useCurrentEndpointContext();
+  const { endpoints } = useEndpointsContext();
+  const endpoint = endpoints.find((e) => e.id === ctx.endpointId);
+
   async function archiveThreads() {
     await window.ipc.invoke(
       "threads",
@@ -19,7 +31,7 @@ export function Header({
       ctx.endpointId,
       Array.from(selectedThreads),
     );
-    ctx.setUpdateTime(Date.now());
+    ctx.refresh();
   }
 
   return (
@@ -48,11 +60,18 @@ export function Header({
       <PageHeader.LeadingAction></PageHeader.LeadingAction>
 
       <PageHeader.TrailingAction>
-        <IconButton
-          icon={SyncIcon}
-          aria-label="Refresh"
-          onClick={() => ctx.setUpdateTime(Date.now())}
-        />
+        <div className="flex flex-row items-center gap-x-[8px]">
+          <IconButton
+            icon={SyncIcon}
+            aria-label="Refresh"
+            onClick={() => ctx.refresh()}
+          />
+          <PageHeader.Description className="inbox-header-description">
+            <Text>
+              Last Sync · <RelativeTime date={endpoint?.last_run} />
+            </Text>
+          </PageHeader.Description>
+        </div>
       </PageHeader.TrailingAction>
 
       <PageHeader.Actions></PageHeader.Actions>

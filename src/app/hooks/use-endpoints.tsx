@@ -21,12 +21,18 @@ export function useEndpoints() {
     fetch();
   }, [updateTime]);
 
-  return [loading, endpoints, () => setUpdateTime(Date.now())] as const;
+  return [
+    loading,
+    endpoints,
+    updateTime,
+    () => setUpdateTime(Date.now()),
+  ] as const;
 }
 
 export const EndpointsContext = createContext({
   loading: true,
   endpoints: [] as EndpointData[],
+  updateTime: 0,
   refreshEndpoints: () => {
     /* no-op */
   },
@@ -37,9 +43,11 @@ export function useEndpointsContext() {
 }
 
 export function EndpointsProvider({ children }: { children: React.ReactNode }) {
-  const [loading, endpoints, refreshEndpoints] = useEndpoints();
+  const [loading, endpoints, updateTime, refreshEndpoints] = useEndpoints();
   return (
-    <EndpointsContext.Provider value={{ loading, endpoints, refreshEndpoints }}>
+    <EndpointsContext.Provider
+      value={{ loading, endpoints, updateTime, refreshEndpoints }}
+    >
       {children}
     </EndpointsContext.Provider>
   );

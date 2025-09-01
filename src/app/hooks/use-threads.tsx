@@ -26,7 +26,6 @@ export function ThreadsProvider({ children }: React.PropsWithChildren) {
     totalCount: 0,
     threads: [],
   });
-  const [updateTime, setUpdateTime] = useState(Date.now());
 
   useEffect(() => {
     const searchParser = new SearchParser();
@@ -56,15 +55,15 @@ export function ThreadsProvider({ children }: React.PropsWithChildren) {
     };
 
     fetch();
-  }, [ctx.updateTime, ctx.endpointId, updateTime, filter, page, pageSize]);
+  }, [ctx.updateTime, ctx.endpointId, filter, page, pageSize]);
 
   return (
     <ThreadsContext.Provider
       value={{
         threads: result.threads,
         totalCount: result.totalCount,
-        updateTime,
-        refreshThreads: () => setUpdateTime(Date.now()),
+        updateTime: ctx.updateTime,
+        refreshThreads: () => ctx.refresh(),
       }}
     >
       {children}
