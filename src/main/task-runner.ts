@@ -152,20 +152,13 @@ export class TaskRunner {
       endpoint.proxy_url,
     );
 
-    try {
-      const task = new FetchNotificationsTask(
-        this.#db,
-        gh,
-        endpoint.id,
-        this.#logger,
-        since,
-      );
-      await task.run();
-    } catch (error) {
-      this.#logger.error(
-        `Error running task for endpoint ${endpoint.id}:`,
-        error,
-      );
-    }
+    const task = new FetchNotificationsTask(
+      this.#db,
+      gh,
+      endpoint.id,
+      this.#logger,
+      since,
+    );
+    await task.run();
   }
 }
