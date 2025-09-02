@@ -6,6 +6,7 @@
   },
   "include": [],
   "references": [
+    { "path": "./src/app/tsconfig.json" },
     { "path": "./src/main/tsconfig.json" },
     { "path": "./src/preload/tsconfig.json" }
   ]

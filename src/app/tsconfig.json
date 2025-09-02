@@ -4,7 +4,8 @@
     "jsx": "react",
     "module": "esnext",
     "moduleResolution": "bundler",
-    "lib": ["ES2024", "DOM", "DOM.AsyncIterable", "DOM.Iterable"]
+    "lib": ["ES2024", "DOM", "DOM.AsyncIterable", "DOM.Iterable"],
+    "noEmit": true
   },
   "references": [{ "path": "../common" }],
   "include": ["./**/*.ts", "./**/*.tsx"]

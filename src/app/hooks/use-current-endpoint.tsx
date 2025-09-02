@@ -4,6 +4,9 @@ import { useEndpointsContext } from "./use-endpoints";
 
 export const CurrentEndpointContext = createContext({
   endpointId: 0,
+  setEndpointId: (_id: number) => {
+    /* no-op */
+  },
   updateTime: 0,
   refresh: () => {
     /* no-op */
@@ -28,6 +31,7 @@ export function CurrentEndpointProvider({ children }: React.PropsWithChildren) {
     <CurrentEndpointContext.Provider
       value={{
         endpointId: currentEndpointId,
+        setEndpointId: setCurrentEndpointId,
         updateTime,
         refresh: refreshEndpoints,
       }}
