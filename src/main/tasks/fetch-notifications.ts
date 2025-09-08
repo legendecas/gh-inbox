@@ -63,16 +63,11 @@ export class FetchNotificationsTask {
 
     let page: number | undefined = 1;
     while (true) {
-      try {
-        this.#logger.info(`Fetching page: ${page}`);
-        page = await this.runForPage(page, since, before);
-        if (page === undefined) {
-          this.#logger.info("All pages fetched");
-          break; // No more pages to fetch
-        }
-      } catch (error) {
-        this.#logger.error("Error fetching notifications: %s", error);
-        break; // Exit on error
+      this.#logger.info(`Fetching page: ${page}`);
+      page = await this.runForPage(page, since, before);
+      if (page === undefined) {
+        this.#logger.info("All pages fetched");
+        break; // No more pages to fetch
       }
     }
   }
@@ -123,6 +118,7 @@ export class FetchNotificationsTask {
         await this.updateThread(thread, seenRepositories, labels);
       } catch (error) {
         this.#logger.error(`Error processing thread ${thread.url}: %s`, error);
+        throw error;
       }
     }
 
