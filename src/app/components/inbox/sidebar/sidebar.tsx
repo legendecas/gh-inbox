@@ -93,8 +93,8 @@ export function Sidebar() {
           </ActionList.Item>
         );
       })}
-      <ActionList.Divider />
 
+      {searches.length > 0 ? <ActionList.Divider /> : null}
       {searches.map((sp) => {
         return (
           <ActionList.Item
@@ -114,8 +114,8 @@ export function Sidebar() {
           </ActionList.Item>
         );
       })}
-      <ActionList.Divider />
 
+      <ActionList.Divider />
       {(["assigned", "review_requested", "mention", "archivable"] as const).map(
         (type) => {
           if (presetFilterMap[type] == null) return null;
@@ -141,8 +141,8 @@ export function Sidebar() {
           );
         },
       )}
-      <ActionList.Divider />
 
+      {repoNamespaces.length > 0 ? <ActionList.Divider /> : null}
       {repoNamespaces.map((ns) => {
         const ownerFilter = `owner:${ns.owner}`;
         return (
