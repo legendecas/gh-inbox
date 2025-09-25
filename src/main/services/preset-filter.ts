@@ -104,24 +104,34 @@ export class PresetFilterService implements IService, PresetFilterEndpoint {
 
     const repoInfos: RepoInfo[] = await Promise.all(
       repos.map((repo) => {
-        return this.#db.instance.thread
-          .count({
+        return Promise.all([
+          this.#db.instance.thread.count({
             where: {
               endpoint_id: options.endpointId,
               repository_id: repo.id,
               archived: false,
               unread: true,
             },
-          })
-          .then((unreadCount) => ({
-            ...repo,
-            unread_count: unreadCount,
-          }));
+          }),
+          this.#db.instance.thread.count({
+            where: {
+              endpoint_id: options.endpointId,
+              repository_id: repo.id,
+              archived: false,
+            },
+          }),
+        ]).then(([unreadCount, inboxCount]) => ({
+          ...repo,
+          unread_count: unreadCount,
+          inbox_count: inboxCount,
+        }));
       }),
     );
 
     const namespaces = new Map<string, RepoNamespace>();
     for (const repo of repoInfos) {
+      if (repo.inbox_count === 0) continue; // Skip repos with zero inbox count
+
       const ownerFullName = ownerFromFullName(repo.full_name);
       const namespace = namespaces.get(ownerFullName);
       if (namespace) {

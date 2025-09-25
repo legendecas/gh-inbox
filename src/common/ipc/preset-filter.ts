@@ -6,6 +6,7 @@ export interface FilterListOptions {
 
 export interface RepoInfo extends Repository {
   unread_count: number;
+  inbox_count: number;
 }
 
 export interface RepoNamespace {
