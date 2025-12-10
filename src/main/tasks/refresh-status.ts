@@ -34,7 +34,7 @@ export class RefreshStatusTask extends BaseUpdateTask {
   }
 
   async run() {
-    const before = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(); // Fetch notifications from the last 24 hours
+    const before = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(); // Fetch notifications from the last 24 hours
     const savedSearches = await this.#db.instance.savedSearch.findMany({
       where: { endpoint_id: this.#endpointId },
     });
