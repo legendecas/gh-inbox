@@ -12,9 +12,11 @@ datasource db {
 }
 
 model Thread {
-  id         String   @id
-  reasons    String
-  updated_at DateTime
+  id      String @id
+  reasons String
+
+  updated_at   DateTime
+  refreshed_at DateTime?
 
   unread       Boolean
   last_read_at DateTime?

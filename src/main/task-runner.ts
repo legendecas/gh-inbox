@@ -2,6 +2,7 @@ import type { Endpoint } from "../generated/prisma/index.js";
 import type { Prisma } from "./database/prisma.ts";
 import { GitHubClient } from "./github/client.js";
 import { FetchNotificationsTask } from "./tasks/fetch-notifications.ts";
+import { RefreshStatusTask } from "./tasks/refresh-status.ts";
 import { type Logger } from "./utils/logger.ts";
 
 const kTaskRunnerInterval = 3 * 60 * 1000; // 3 minutes
@@ -160,5 +161,13 @@ export class TaskRunner {
       since,
     );
     await task.run();
+
+    const refresh = new RefreshStatusTask(
+      this.#db,
+      gh,
+      endpoint.id,
+      this.#logger,
+    );
+    await refresh.run();
   }
 }
