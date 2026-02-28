@@ -35,14 +35,24 @@ export function Navbar({ headerHeight }: { headerHeight: number }) {
             <ActionMenu.Button>
               Endpoint: {endpoints.find((e) => e.id === endpointId)?.url}
             </ActionMenu.Button>
-            <ActionMenu.Overlay>
+            <ActionMenu.Overlay style={{ minWidth: "max-content" }}>
               <ActionList>
-                {endpoints.map((endpoint) => (
+                {endpoints.map((endpoint, index) => (
                   <ActionList.Item
                     key={endpoint.id}
                     onSelect={() => setEndpointId(endpoint.id)}
+                    sx={{ whiteSpace: "nowrap" }}
                   >
-                    {endpoint.url}
+                    <span
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        gap: "2rem",
+                      }}
+                    >
+                      <span>{endpoint.url}</span>
+                      {index < 9 && <kbd>⌘{index + 1}</kbd>}
+                    </span>
                   </ActionList.Item>
                 ))}
               </ActionList>

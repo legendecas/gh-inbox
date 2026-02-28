@@ -27,6 +27,30 @@ export function CurrentEndpointProvider({ children }: React.PropsWithChildren) {
     }
   }, [endpoints, currentEndpointId]);
 
+  useEffect(() => {
+    const KEY_CODE_1 = "1".charCodeAt(0);
+    const KEY_CODE_9 = "9".charCodeAt(0);
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (!event.metaKey) return;
+      const keyCode = event.key.charCodeAt(0);
+      if (
+        event.key.length !== 1 ||
+        keyCode < KEY_CODE_1 ||
+        keyCode > KEY_CODE_9
+      )
+        return;
+      const index = keyCode - KEY_CODE_1;
+      const endpoint = endpoints[index];
+      if (!endpoint) return;
+      event.preventDefault();
+      setCurrentEndpointId(endpoint.id);
+    }
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [endpoints]);
+
   return (
     <CurrentEndpointContext.Provider
       value={{
