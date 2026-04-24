@@ -10,12 +10,14 @@ import { PresetFilterService } from "./services/preset-filter.ts";
 import { ThreadsService } from "./services/threads.ts";
 import { TaskRunner } from "./task-runner.ts";
 import { type Logger, flushLogger, initializeLogger } from "./utils/logger.ts";
+import { WebServer } from "./web-server.ts";
 
 export class Application {
   #db!: Prisma;
   #taskRunner!: TaskRunner;
   #mainWindow?: BrowserWindow;
   #logger!: Logger;
+  #webServer?: WebServer;
 
   get taskRunner() {
     return this.#taskRunner;
@@ -49,10 +51,14 @@ export class Application {
     serviceManager.registerService(new PresetFilterService(this.#db));
     serviceManager.registerService(new EndpointService(this, this.#db));
     serviceManager.wireAll(ipcMain);
+
+    this.#webServer = new WebServer(serviceManager.services, this.#logger);
+    this.#webServer.start();
   }
 
   async onQuit() {
     this.#logger.info("Application is quitting...");
+    this.#webServer?.close();
     this.#taskRunner.close();
     await this.#db.close();
     flushLogger();

@@ -17,6 +17,10 @@ export class ServiceManager {
     this.#services.set(name, service);
   }
 
+  get services() {
+    return this.#services;
+  }
+
   wireAll(ipcMain: Electron.IpcMain) {
     for (const service of this.#services.values()) {
       const ipcHandle = new IpcHandle(ipcMain, service, this.#logger);
