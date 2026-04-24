@@ -1,6 +1,7 @@
 import type { Endpoint } from "../generated/prisma/index.js";
 import type { Prisma } from "./database/prisma.ts";
 import { GitHubClient } from "./github/client.js";
+import { CleanupArchivedTask } from "./tasks/cleanup-archived.ts";
 import { FetchNotificationsTask } from "./tasks/fetch-notifications.ts";
 import { RefreshStatusTask } from "./tasks/refresh-status.ts";
 import { type Logger } from "./utils/logger.ts";
@@ -88,6 +89,7 @@ export class TaskRunner {
         );
       }
     }
+    await this.runCleanup();
     this.#logger.info("TaskRunner completed.");
     this.reschedule(); // Reschedule after running
   }
@@ -143,6 +145,11 @@ export class TaskRunner {
         data: { last_run: now },
       });
     }
+  }
+
+  private async runCleanup() {
+    const task = new CleanupArchivedTask(this.#db, this.#logger);
+    await task.run();
   }
 
   private async runTasksForEndpoint(endpoint: Endpoint, since?: Date) {
