@@ -23,6 +23,11 @@ export class WebServer {
     const app = express();
     app.use(express.json());
 
+    app.use("/api", (_req, res, next) => {
+      res.setHeader("Cache-Control", "no-store");
+      next();
+    });
+
     app.post("/api/ipc", async (req, res) => {
       const { namespace, channel, args = [] } = req.body;
       const service = [...this.#services.values()].find(
@@ -68,10 +73,31 @@ export class WebServer {
       }
     });
 
-    app.use(express.static(kAppDir));
+    app.use(
+      express.static(kAppDir, {
+        etag: true,
+        setHeaders(res, filePath) {
+          if (filePath.endsWith("index.html")) {
+            res.setHeader("Cache-Control", "no-cache, must-revalidate");
+            return;
+          }
+
+          if (filePath.includes(`${path.sep}assets${path.sep}`)) {
+            res.setHeader(
+              "Cache-Control",
+              "public, max-age=31536000, immutable",
+            );
+            return;
+          }
+
+          res.setHeader("Cache-Control", "no-cache, must-revalidate");
+        },
+      }),
+    );
 
     // SPA fallback
     app.get("*splat", (_req, res) => {
+      res.setHeader("Cache-Control", "no-cache, must-revalidate");
       res.sendFile(path.join(kAppDir, "index.html"));
     });
 
