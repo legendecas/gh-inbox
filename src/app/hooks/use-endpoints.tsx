@@ -1,11 +1,24 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 import type { EndpointData } from "../../common/ipc/endpoint.js";
+
+const kFocusRefreshIntervalMs = 3 * 60 * 1000;
 
 export function useEndpoints() {
   const [updateTime, setUpdateTime] = useState(Date.now());
   const [endpoints, setEndpoints] = useState<EndpointData[]>([]);
   const [loading, setLoading] = useState(true);
+  const lastFocusRefreshRef = useRef(0);
+  const refreshEndpoints = useCallback(() => {
+    setUpdateTime(Date.now());
+  }, []);
 
   useEffect(() => {
     const fetch = async () => {
@@ -21,12 +34,29 @@ export function useEndpoints() {
     fetch();
   }, [updateTime]);
 
-  return [
-    loading,
-    endpoints,
-    updateTime,
-    () => setUpdateTime(Date.now()),
-  ] as const;
+  useEffect(() => {
+    const refreshIfVisible = () => {
+      if (document.visibilityState === "hidden") {
+        return;
+      }
+
+      const now = Date.now();
+      if (now - lastFocusRefreshRef.current < kFocusRefreshIntervalMs) {
+        return;
+      }
+      lastFocusRefreshRef.current = now;
+      refreshEndpoints();
+    };
+
+    window.addEventListener("focus", refreshIfVisible);
+    document.addEventListener("visibilitychange", refreshIfVisible);
+    return () => {
+      window.removeEventListener("focus", refreshIfVisible);
+      document.removeEventListener("visibilitychange", refreshIfVisible);
+    };
+  }, [refreshEndpoints]);
+
+  return [loading, endpoints, updateTime, refreshEndpoints] as const;
 }
 
 export const EndpointsContext = createContext({
