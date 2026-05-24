@@ -19,6 +19,12 @@
 
 .title {
   color: #0366d6;
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
+  white-space: nowrap;
 }
 
 .thread-item[data-state="read"] .title {
@@ -87,4 +93,31 @@
 
 .thread-title-cell .title {
   overflow-wrap: anywhere;
+}
+
+@media (max-width: 900px) {
+  .thread-item td {
+    padding: 0.45rem 0.5rem;
+  }
+
+  .thread-reason-cell,
+  .thread-user-cell {
+    display: none;
+  }
+}
+
+@media (max-width: 700px) {
+  .thread-item td {
+    padding: 0.35rem 0.4rem;
+  }
+
+  .thread-repo-cell {
+    display: none;
+  }
+
+  .thread-checkbox-cell,
+  .thread-bookmark-cell,
+  .thread-icon-cell {
+    width: 34px;
+  }
 }
