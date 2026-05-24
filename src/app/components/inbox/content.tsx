@@ -1,4 +1,4 @@
-import { PageLayout, Pagination } from "@primer/react";
+import { Pagination } from "@primer/react";
 import React, { useEffect, useState } from "react";
 
 import { kPageSize } from "../../../common/presets";
@@ -39,19 +39,15 @@ export function Content() {
   }, [threads]);
 
   return (
-    <PageLayout
-      containerWidth="full"
-      padding="none"
-      columnGap="condensed"
-      rowGap="condensed"
-    >
-      <PageLayout.Header>
+    <div className="threads-content">
+      <div className="threads-toolbar">
         <Header
           selectedThreads={selectedSet}
           selectClosedThreads={selectClosedThreads}
         />
-      </PageLayout.Header>
-      <PageLayout.Content>
+      </div>
+
+      <div className="threads-list">
         <table className="threads-table w-full">
           <tbody>
             {threads.map((thread) => (
@@ -64,7 +60,9 @@ export function Content() {
             ))}
           </tbody>
         </table>
+      </div>
 
+      <div className="threads-pagination">
         <Pagination
           pageCount={Math.ceil(totalCount / kPageSize)}
           currentPage={currentPage}
@@ -73,7 +71,7 @@ export function Content() {
           }}
           showPages={{ narrow: false }}
         />
-      </PageLayout.Content>
-    </PageLayout>
+      </div>
+    </div>
   );
 }

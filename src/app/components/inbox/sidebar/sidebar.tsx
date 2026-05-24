@@ -143,10 +143,11 @@ export function Sidebar() {
       )}
 
       {repoNamespaces.length > 0 ? <ActionList.Divider /> : null}
-      {repoNamespaces.map((ns) => {
+      {repoNamespaces.map((ns, index) => {
         const ownerFilter = `owner:${ns.owner}`;
         return (
           <Fragment key={ns.owner}>
+            {index > 0 ? <ActionList.Divider /> : null}
             <ActionList.Item
               key={ns.owner}
               active={ownerFilter === filter}

@@ -27,6 +27,7 @@
 
 .thread-item td {
   padding: 0.6rem;
+  overflow: hidden;
 }
 
 .thread-icon {
@@ -82,4 +83,8 @@
   cursor: pointer;
   color: var(--fgColor-muted);
   display: block;
+}
+
+.thread-title-cell .title {
+  overflow-wrap: anywhere;
 }

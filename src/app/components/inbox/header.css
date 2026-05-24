@@ -1,3 +1,8 @@
+.inbox-header {
+  width: 100%;
+  padding: 8px 12px;
+}
+
 .inbox-header-description {
   padding-top: 0 !important;
 }

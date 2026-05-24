@@ -69,7 +69,7 @@ export function Inbox() {
     <CurrentEndpointProvider>
       <FilterProvider>
         <ThreadsProvider>
-          <SplitPageLayout className="h-screen w-screen overflow-hidden">
+          <SplitPageLayout className="inbox-shell">
             <SplitPageLayout.Header padding="none">
               <Navbar headerHeight={headerHeight} />
             </SplitPageLayout.Header>
@@ -78,19 +78,16 @@ export function Inbox() {
               padding="none"
               aria-label="Sidebar"
             >
-              <div style={{ height: "calc(100vh - " + headerHeight + "px)" }}>
+              <div className="inbox-sidebar-viewport">
                 <Sidebar />
               </div>
             </SplitPageLayout.Pane>
             <SplitPageLayout.Content padding="none" width="full">
-              <div
-                className="flex flex-col gap-y-[8px] justify-start overflow-scroll overscroll-contain"
-                style={{ height: "calc(100vh - " + headerHeight + "px)" }}
-              >
-                <div>
+              <div className="inbox-content-viewport">
+                <div className="inbox-expiration">
                   <ExpirationInfo />
                 </div>
-                <div className="flex-auto">
+                <div className="inbox-content-body">
                   <Content />
                 </div>
               </div>

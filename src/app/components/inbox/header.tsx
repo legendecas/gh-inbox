@@ -35,7 +35,7 @@ export function Header({
   }
 
   return (
-    <PageHeader role="banner" aria-label="Banner" className="w-full">
+    <PageHeader role="banner" aria-label="Banner" className="inbox-header">
       <PageHeader.TitleArea>
         <PageHeader.Title>
           <div className="flex flex-row items-center gap-x-[8px]">
