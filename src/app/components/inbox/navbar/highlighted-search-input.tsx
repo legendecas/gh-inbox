@@ -1,8 +1,7 @@
 import React, { useCallback, useRef } from "react";
+
 import { kFilterKeys } from "../../../../common/search-builder/filter-keys";
 import "./highlighted-search-input.css";
-
-
 
 const kFilterPattern = /([-\w]+):(?:"([^"]*)"|([^\s"]+))/g;
 

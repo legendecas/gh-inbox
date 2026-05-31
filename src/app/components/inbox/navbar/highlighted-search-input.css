@@ -4,7 +4,13 @@
 }
 
 .highlighted-search-input__highlight {
-  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, monospace;
+  font-family:
+    ui-monospace,
+    SFMono-Regular,
+    SF Mono,
+    Menlo,
+    Consolas,
+    monospace;
   font-size: 14px;
   line-height: 20px;
   padding: 5px 12px;
@@ -28,7 +34,13 @@
 }
 
 .highlighted-search-input__textarea {
-  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, monospace;
+  font-family:
+    ui-monospace,
+    SFMono-Regular,
+    SF Mono,
+    Menlo,
+    Consolas,
+    monospace;
   font-size: 14px;
   line-height: 20px;
   padding: 5px 12px;

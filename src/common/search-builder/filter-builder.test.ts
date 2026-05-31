@@ -64,10 +64,7 @@ test("FilterBuilder", () => {
     assert.deepEqual(result, {
       AND: [
         {
-          OR: [
-            { subject_type: "Issue" },
-            { subject_type: "PullRequest" },
-          ],
+          OR: [{ subject_type: "Issue" }, { subject_type: "PullRequest" }],
         },
         { subject_title: { contains: "fix" } },
       ],
@@ -81,10 +78,7 @@ test("FilterBuilder", () => {
       .fromRecord({ state: ["open"], unread: ["true"] })
       .build();
     assert.deepEqual(result, {
-      AND: [
-        { subject: { state: { in: ["open"] } } },
-        { unread: true },
-      ],
+      AND: [{ subject: { state: { in: ["open"] } } }, { unread: true }],
       archived: false,
     });
   });
