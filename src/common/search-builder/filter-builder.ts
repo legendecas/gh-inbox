@@ -17,6 +17,17 @@ export class FilterBuilder {
   fromRecord(record: Record<string, string[]>): this {
     // eslint-disable-next-line prefer-const
     for (let [key, values] of Object.entries(record)) {
+      if (key === "$keyword") {
+        // Split on whitespace into individual AND terms.
+        const terms = values[0].split(/\s+/).filter(Boolean);
+        for (const term of terms) {
+          this.#filters.push({
+            subject_title: { contains: term },
+          });
+        }
+        continue;
+      }
+
       if (key === "archived") {
         this.filterArchived(values[0] === "true");
         continue;
