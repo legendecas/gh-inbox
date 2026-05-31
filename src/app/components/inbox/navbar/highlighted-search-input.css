@@ -1,0 +1,174 @@
+.highlighted-search-input {
+  position: relative;
+  width: 100%;
+}
+
+.highlighted-search-input__highlight {
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, monospace;
+  font-size: 14px;
+  line-height: 20px;
+  padding: 5px 12px;
+  margin: 0;
+  border: 1px solid var(--borderColor-default, #d0d7de);
+  border-radius: 6px;
+  width: 100%;
+  white-space: pre;
+  overflow-wrap: normal;
+  overflow: hidden;
+  word-break: normal;
+  background: var(--bgColor-default, #ffffff);
+  box-sizing: border-box;
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 0;
+  border-color: transparent;
+  color: var(--fgColor-default, #1f2328);
+}
+
+.highlighted-search-input__textarea {
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, monospace;
+  font-size: 14px;
+  line-height: 20px;
+  padding: 5px 12px;
+  margin: 0;
+  border: 1px solid var(--borderColor-default, #d0d7de);
+  border-radius: 6px;
+  width: 100%;
+  white-space: pre;
+  overflow-wrap: normal;
+  overflow: hidden;
+  word-break: normal;
+  background: transparent;
+  box-sizing: border-box;
+  position: relative;
+  resize: none;
+  color: transparent;
+  caret-color: var(--fgColor-default, #1f2328);
+  outline: none;
+  z-index: 1;
+}
+
+.highlighted-search-input__textarea:focus {
+  outline: 2px solid var(--accent-emphasis, #0969da);
+  outline-offset: -2px;
+}
+
+.highlighted-search-input__textarea::placeholder {
+  color: var(--fgColor-muted, #656d76);
+}
+
+.highlighted-search-input__keyword {
+  color: var(--fgColor-muted, #656d76);
+}
+
+/* Invalid filter */
+.highlighted-search-input__filter-invalid {
+  color: var(--color-danger-fg, #cf222e);
+  background-color: var(--color-danger-subtle, #ffebe9);
+  border-radius: 3px;
+  padding: 1px 2px;
+  margin: -1px -2px;
+}
+
+/* Per-key filter colors */
+.highlighted-search-input__filter-repo {
+  color: #0550ae;
+  background-color: #ddf4ff;
+  border-radius: 3px;
+  padding: 1px 2px;
+  margin: -1px -2px;
+}
+
+.highlighted-search-input__filter-repo_id {
+  color: #5e5ec9;
+  background-color: #e9e9ff;
+  border-radius: 3px;
+  padding: 1px 2px;
+  margin: -1px -2px;
+}
+
+.highlighted-search-input__filter-owner {
+  color: #1a7f37;
+  background-color: #dafbe1;
+  border-radius: 3px;
+  padding: 1px 2px;
+  margin: -1px -2px;
+}
+
+.highlighted-search-input__filter-author {
+  color: #bc4c00;
+  background-color: #fff1e5;
+  border-radius: 3px;
+  padding: 1px 2px;
+  margin: -1px -2px;
+}
+
+.highlighted-search-input__filter-bot {
+  color: #8250df;
+  background-color: #fbefff;
+  border-radius: 3px;
+  padding: 1px 2px;
+  margin: -1px -2px;
+}
+
+.highlighted-search-input__filter-unread {
+  color: #0a7e8c;
+  background-color: #d7f9fc;
+  border-radius: 3px;
+  padding: 1px 2px;
+  margin: -1px -2px;
+}
+
+.highlighted-search-input__filter-bookmarked {
+  color: #9a6700;
+  background-color: #fff8c5;
+  border-radius: 3px;
+  padding: 1px 2px;
+  margin: -1px -2px;
+}
+
+.highlighted-search-input__filter-state,
+.highlighted-search-input__filter-states {
+  color: #bd3c7a;
+  background-color: #ffeaf5;
+  border-radius: 3px;
+  padding: 1px 2px;
+  margin: -1px -2px;
+}
+
+.highlighted-search-input__filter-type,
+.highlighted-search-input__filter-types {
+  color: #1b7c83;
+  background-color: #d5f5f8;
+  border-radius: 3px;
+  padding: 1px 2px;
+  margin: -1px -2px;
+}
+
+.highlighted-search-input__filter-label,
+.highlighted-search-input__filter-labels {
+  color: #4c731c;
+  background-color: #e3f2c9;
+  border-radius: 3px;
+  padding: 1px 2px;
+  margin: -1px -2px;
+}
+
+.highlighted-search-input__filter-reason,
+.highlighted-search-input__filter-reasons {
+  color: #6e3da3;
+  background-color: #f3edff;
+  border-radius: 3px;
+  padding: 1px 2px;
+  margin: -1px -2px;
+}
+
+.highlighted-search-input__filter-archived {
+  color: #656d76;
+  background-color: #eaeef2;
+  border-radius: 3px;
+  padding: 1px 2px;
+  margin: -1px -2px;
+}

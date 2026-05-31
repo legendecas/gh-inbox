@@ -1,0 +1,18 @@
+export const kFilterKeys = new Set([
+  "repo",
+  "repo_id",
+  "owner",
+  "author",
+  "bot",
+  "unread",
+  "bookmarked",
+  "states",
+  "state",
+  "types",
+  "type",
+  "labels",
+  "label",
+  "reasons",
+  "reason",
+  "archived",
+]);

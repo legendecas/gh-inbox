@@ -1,7 +1,7 @@
-import { TextInput } from "@primer/react";
 import React, { useEffect, useRef, useState } from "react";
 
 import { useFilterContext } from "../../../hooks/use-filter";
+import { HighlightedSearchInput } from "./highlighted-search-input";
 
 export function SearchBox() {
   const { filter, setFilter } = useFilterContext();
@@ -13,8 +13,7 @@ export function SearchBox() {
     setInputValue(filter);
   }, [filter]);
 
-  function onChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const value = event.target.value;
+  function onChange(value: string) {
     setInputValue(value);
     // Debounce
     if (timerRef.current) clearTimeout(timerRef.current);
@@ -23,21 +22,20 @@ export function SearchBox() {
     }, 2000);
   }
 
-  function onKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
+  function onKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (event.key === "Enter") {
+      event.preventDefault();
       if (timerRef.current) clearTimeout(timerRef.current);
       setFilter(inputValue);
     }
   }
 
   return (
-    <TextInput
+    <HighlightedSearchInput
       placeholder="Search..."
-      monospace={true}
       value={inputValue}
       onChange={onChange}
       onKeyDown={onKeyDown}
-      className="w-full"
     />
   );
 }
