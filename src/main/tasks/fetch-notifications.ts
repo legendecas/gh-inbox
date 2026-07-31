@@ -162,8 +162,10 @@ export class FetchNotificationsTask extends BaseUpdateTask {
     }
     const { number: subjectNumber } = subjectUrlInfo;
 
-    const found = await this.#db.instance.thread.findUnique({
-      where: { id },
+    // GitHub may return different thread ids for the same PR/issue over time.
+    // Key on subject_url so each subject maps to a single row.
+    const found = await this.#db.instance.thread.findFirst({
+      where: { endpoint_id: this.#endpointId, subject_url: subjectUrl },
     });
 
     if (found) {
@@ -180,7 +182,7 @@ export class FetchNotificationsTask extends BaseUpdateTask {
       }
 
       await this.#db.instance.thread.update({
-        where: { id },
+        where: { id: found.id },
         data: {
           reasons: reasonsStr,
           updated_at,

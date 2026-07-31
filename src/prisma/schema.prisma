@@ -40,6 +40,7 @@ model Thread {
   repository Repository? @relation(fields: [repository_id, endpoint_id], references: [id, endpoint_id])
 
   @@unique([endpoint_id, id])
+  @@index([endpoint_id, subject_url])
 }
 
 model Repository {

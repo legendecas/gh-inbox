@@ -9,6 +9,7 @@ import { EndpointService } from "./services/endpoint.ts";
 import { PresetFilterService } from "./services/preset-filter.ts";
 import { ThreadsService } from "./services/threads.ts";
 import { TaskRunner } from "./task-runner.ts";
+import { DedupeThreadsTask } from "./tasks/dedupe-threads.ts";
 import { type Logger, flushLogger, initializeLogger } from "./utils/logger.ts";
 import { WebServer } from "./web-server.ts";
 
@@ -42,6 +43,11 @@ export class Application {
     }
 
     this.#db = new Prisma(databasePath);
+
+    // Merge duplicate rows created before the sync task keyed on subject_url.
+    await new DedupeThreadsTask(this.#db, this.#logger).run().catch((error) => {
+      this.#logger.error("Failed to dedupe threads:", error);
+    });
 
     this.#taskRunner = new TaskRunner(this.#db, this.#logger);
     await this.#taskRunner.schedule();
