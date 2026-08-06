@@ -41,6 +41,9 @@ model Thread {
 
   @@unique([endpoint_id, id])
   @@index([endpoint_id, subject_url])
+  @@index([endpoint_id, updated_at])
+  @@index([endpoint_id, repository_id])
+  @@index([endpoint_id, repository_id, subject_number])
 }
 
 model Repository {
@@ -62,6 +65,7 @@ model Repository {
   owner Owner? @relation(fields: [endpoint_id, owner_id], references: [endpoint_id, id])
 
   @@unique([endpoint_id, id])
+  @@index([endpoint_id, full_name])
 }
 
 model Owner {
@@ -75,6 +79,7 @@ model Owner {
   repositories Repository[]
 
   @@unique([endpoint_id, id])
+  @@index([endpoint_id, login])
 }
 
 model Label {
