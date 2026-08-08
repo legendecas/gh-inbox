@@ -34,12 +34,13 @@ export function Content() {
     setSelected(new Set(selectedSet));
   };
 
-  // Clear the selection only when the visible thread set actually changes
-  // (filter/page/refresh that alters the list), not on refreshes that merely
-  // update thread state (e.g. marking a thread as read when opening it).
   const threadIds = threads.map((thread) => thread.id).join(",");
   useEffect(() => {
-    setSelected(new Set());
+    const visibleThreadIds = new Set(threadIds.split(","));
+    setSelected(
+      (selected) =>
+        new Set([...selected].filter((id) => visibleThreadIds.has(id))),
+    );
   }, [threadIds]);
 
   return (
