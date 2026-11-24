@@ -4,6 +4,7 @@ import { SearchParser } from "../../common/search-builder/search-parser.ts";
 import type { Thread } from "../../generated/prisma/index.js";
 import type { Prisma } from "../database/prisma.ts";
 import type { GitHubClient } from "../github/client.ts";
+import { isNotFoundError } from "../github/errors.ts";
 import type { Discussion, Issue, PullRequest } from "../github/types.ts";
 import type { Logger } from "../utils/logger.ts";
 import { BaseUpdateTask } from "./base.ts";
@@ -87,7 +88,20 @@ export class RefreshStatusTask extends BaseUpdateTask {
 
   async refreshThread(thread: Thread): Promise<void> {
     const apiPathname = new URL(thread.subject_url).pathname;
-    const response = await this.#gh.instance.request(`GET ${apiPathname}`);
+    const response = await this.#gh.instance
+      .request(`GET ${apiPathname}`)
+      .catch((error: unknown) => {
+        if (!isNotFoundError(error)) {
+          throw error;
+        }
+        return null;
+      });
+    if (response === null) {
+      this.#logger.warn(
+        `Subject no longer exists for thread ${thread.id}: ${apiPathname}`,
+      );
+      return;
+    }
     if (response.status !== 200) {
       this.#logger.error(
         `Failed GitHub request for ${apiPathname}: %j`,

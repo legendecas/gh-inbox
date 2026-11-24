@@ -6,6 +6,7 @@ import {
 } from "../../common/string-list.ts";
 import type { Prisma } from "../database/prisma.ts";
 import { GitHubClient } from "../github/client.ts";
+import { isNotFoundError } from "../github/errors.ts";
 import type {
   Discussion,
   Issue,
@@ -234,9 +235,18 @@ export class FetchNotificationsTask extends BaseUpdateTask {
       return; // Skip subjects with invalid URLs
     }
     const { pathname } = subjectUrlInfo;
-    const resp = await this.#gh.instance.request<
-      Issue | PullRequest | Discussion
-    >(`GET ${pathname}` as any);
+    const resp = await this.#gh.instance
+      .request<Issue | PullRequest | Discussion>(`GET ${pathname}` as any)
+      .catch((error: unknown) => {
+        if (!isNotFoundError(error)) {
+          throw error;
+        }
+        return null;
+      });
+    if (resp === null) {
+      this.#logger.warn(`Subject no longer exists: ${subject.url}`);
+      return;
+    }
     if (resp.status !== 200) {
       throw new Error(`Failed to fetch subject: ${resp.data}`);
     }
